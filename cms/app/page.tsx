@@ -2638,35 +2638,7 @@ export default function CMSDashboard() {
       content: {
         isDynamic: true,
         ogImage: '/buy_hero.png',
-        dynamicSections: [
-          {
-            id: 'hero-3-' + timestamp,
-            type: 'hero-3',
-            name: 'Hero Section 3',
-            title: 'Explore Prime Real Estate In Dubai',
-            description: 'Curated luxury properties, off-plan projects and master developments across top communities.',
-            detailHtml: '<h2>Explore Prime Real Estate In Dubai</h2><p>Curated luxury properties, off-plan projects and master developments across top communities.</p>',
-            bgImage: '/1793598348_buy-hero.png',
-          },
-          {
-            id: 'amenity-1-' + timestamp,
-            type: 'amenity-1',
-            name: 'Amenity Section 1',
-            title: 'Key Features & Amenities',
-            description: 'Explore the handpicked luxury amenities and lifestyle facilities curated for this address.',
-            buttonText: 'See All Listing',
-            buttonColor: '#BFA16A',
-            selectedAmenities: ['Private Pool', 'Gym & Fitness', 'Concierge Service'],
-          },
-          {
-            id: 'trending-projects-' + timestamp,
-            type: 'trending-projects',
-            name: 'Trending Projects',
-            title: 'Trending Projects',
-            description: 'Top off-plan projects and newly launched luxury developments in Dubai.',
-            selectedProjects: [],
-          },
-        ],
+        dynamicSections: [],
       },
     };
 
@@ -2692,41 +2664,7 @@ export default function CMSDashboard() {
     const existingDyn = Array.isArray(page.content?.dynamicSections)
       ? page.content.dynamicSections
       : [];
-    if (existingDyn.length > 0) {
-      setDynamicSections(existingDyn);
-    } else if (Boolean(page.content?.isDynamic)) {
-      setDynamicSections([
-        {
-          id: 'hero-3-' + Date.now().toString().slice(-4),
-          type: 'hero-3',
-          name: 'Hero Section 3',
-          title: page.title || 'Explore Prime Real Estate',
-          description: page.meta_description || 'Curated luxury properties and master developments.',
-          detailHtml: '<h2>' + (page.title || 'Explore Real Estate') + '</h2><p>' + (page.meta_description || '') + '</p>',
-          bgImage: '/1793598348_buy-hero.png',
-        },
-        {
-          id: 'amenity-1-' + Date.now().toString().slice(-4),
-          type: 'amenity-1',
-          name: 'Amenity Section 1',
-          title: 'Key Features & Amenities',
-          description: 'Explore the handpicked luxury amenities and lifestyle facilities.',
-          buttonText: 'See All Listing',
-          buttonColor: '#BFA16A',
-          selectedAmenities: [],
-        },
-        {
-          id: 'trending-projects-' + Date.now().toString().slice(-4),
-          type: 'trending-projects',
-          name: 'Trending Projects',
-          title: 'Trending Projects',
-          description: 'Top off-plan projects and newly launched luxury developments in Dubai.',
-          selectedProjects: [],
-        },
-      ]);
-    } else {
-      setDynamicSections([]);
-    }
+    setDynamicSections(existingDyn);
 
     // Section 1: Hero
     const hero = page.content?.hero || {};

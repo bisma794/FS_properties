@@ -5,8 +5,21 @@ import {
   AVAILABLE_DYNAMIC_COMPONENTS,
   DynamicComponentDefinition,
   DynamicSectionInstance,
+  DynamicCategory,
 } from './dynamicPageTypes';
 import RichTextSummernote from './RichTextSummernote';
+
+const CATEGORIES: Array<'All' | DynamicCategory> = [
+  'All',
+  'Hero',
+  'Properties',
+  'Community',
+  'Developer',
+  'The Valley',
+  'Blog',
+  'Advisory',
+  'General',
+];
 
 interface DynamicPageBuilderProps {
   // General Tab Fields
@@ -63,7 +76,22 @@ export default function DynamicPageBuilder({
   developerCards,
 }: DynamicPageBuilderProps) {
   const [isComponentDropdownOpen, setIsComponentDropdownOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<'All' | DynamicCategory>('All');
+  const [searchQuery, setSearchQuery] = useState('');
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+  // Filter components based on category and search query
+  const filteredComponents = AVAILABLE_DYNAMIC_COMPONENTS.filter((comp) => {
+    const matchesCategory = selectedCategory === 'All' || comp.category === selectedCategory;
+    const q = searchQuery.toLowerCase().trim();
+    const matchesSearch =
+      !q ||
+      comp.name.toLowerCase().includes(q) ||
+      comp.defaultTitle.toLowerCase().includes(q) ||
+      comp.category.toLowerCase().includes(q) ||
+      comp.defaultDescription.toLowerCase().includes(q);
+    return matchesCategory && matchesSearch;
+  });
 
   // Add Component to Dynamic Page
   const handleAddComponent = (def: DynamicComponentDefinition) => {
@@ -77,10 +105,12 @@ export default function DynamicPageBuilder({
       name: instanceName,
       title: def.defaultTitle,
       description: def.defaultDescription,
-      detailHtml: def.category === 'Hero' || def.category === 'Content'
-        ? `<h2>${def.defaultTitle}</h2><p>${def.defaultDescription}</p>`
-        : '',
+      detailHtml:
+        def.category === 'Hero' || def.category === 'General' || def.category === 'Advisory'
+          ? `<h2>${def.defaultTitle}</h2><p>${def.defaultDescription}</p>`
+          : '',
       buttonText: def.type === 'amenity-1' ? 'See All Listing' : 'Learn More',
+      buttonLink: '/buy',
       buttonColor: '#BFA16A',
       selectedAmenities: [],
       selectedProjects: [],
@@ -132,6 +162,9 @@ export default function DynamicPageBuilder({
   };
 
   const currentSection = dynamicSections.find((s) => s.id === activeSectionTab);
+  const currentDef = currentSection
+    ? AVAILABLE_DYNAMIC_COMPONENTS.find((c) => c.type === currentSection.type)
+    : undefined;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -139,7 +172,7 @@ export default function DynamicPageBuilder({
       {/* LEFT SIDEBAR: GENERAL TAB + DYNAMIC SECTION TABS WITH DRAG&DROP */}
       {/* ============================================================== */}
       <aside className="lg:col-span-3 bg-white rounded-2xl border border-[#E5E0D8] p-3 shadow-xs space-y-2 sticky top-28 max-h-[85vh] overflow-y-auto">
-        {/* TAB 1: General (Matches Reference Image 1) */}
+        {/* TAB 1: General Settings */}
         <button
           type="button"
           onClick={() => setActiveSectionTab('basic')}
@@ -160,7 +193,9 @@ export default function DynamicPageBuilder({
           <p className="text-[10px] font-bold text-[#888888] uppercase tracking-wider">
             Added Sections ({dynamicSections.length})
           </p>
-          <span className="text-[10px] text-[#BFA16A] font-medium">Drag to reorder</span>
+          {dynamicSections.length > 1 && (
+            <span className="text-[10px] text-[#BFA16A] font-medium">Drag to reorder</span>
+          )}
         </div>
 
         {/* Dynamic Section Tabs (Drag and Drop List) */}
@@ -201,76 +236,163 @@ export default function DynamicPageBuilder({
               </div>
             );
           })}
+
+          {dynamicSections.length === 0 && (
+            <div className="p-4 text-center border border-dashed border-[#E5E0D8] rounded-xl bg-[#FAF9F6]/50">
+              <p className="text-xs text-[#888888] font-medium">No sections added yet.</p>
+              <p className="text-[10px] text-[#A39982] mt-0.5">Click below to add any section from the website.</p>
+            </div>
+          )}
         </div>
 
-        {/* Dropdown / Component Selector Trigger (Matches Image 2) */}
-        <div className="pt-2 border-t border-[#F0ECE1] relative">
+        {/* Add Section / Component Trigger Button */}
+        <div className="pt-2 border-t border-[#F0ECE1]">
           <button
             type="button"
-            onClick={() => setIsComponentDropdownOpen(!isComponentDropdownOpen)}
+            onClick={() => setIsComponentDropdownOpen(true)}
             className="w-full py-2.5 px-3 bg-[#FAF9F6] hover:bg-[#F2ECE1] border border-dashed border-[#BFA16A] rounded-xl text-xs font-bold text-[#BFA16A] flex items-center justify-center gap-2 transition cursor-pointer shadow-2xs"
           >
             <span>+</span> Add Section / Component
-            <span className="text-[9px]">{isComponentDropdownOpen ? '▲' : '▼'}</span>
+            <span className="text-[9px]">▼</span>
           </button>
-
-          {/* Component Selection Dropdown (Matches Reference Image 2) */}
-          {isComponentDropdownOpen && (
-            <div className="absolute left-0 bottom-full mb-2 w-[340px] bg-white border border-[#E5E0D8] rounded-2xl shadow-2xl z-50 p-3 max-h-[420px] overflow-y-auto space-y-2">
-              <div className="border-b border-[#E5E0D8] pb-2 flex items-center justify-between">
-                <span className="text-[11px] font-bold text-[#737373] uppercase tracking-wider">
-                  Select Component To Add
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setIsComponentDropdownOpen(false)}
-                  className="text-xs text-[#888888] hover:text-[#171717]"
-                >
-                  ✕
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 gap-2 pt-1">
-                {AVAILABLE_DYNAMIC_COMPONENTS.map((comp) => (
-                  <button
-                    key={comp.type}
-                    type="button"
-                    onClick={() => handleAddComponent(comp)}
-                    className="flex items-center gap-3 p-2 rounded-xl border border-[#E5E0D8] hover:border-[#BFA16A] hover:bg-[#FAF9F6] transition text-left group cursor-pointer"
-                  >
-                    <div className="w-14 h-10 rounded-lg overflow-hidden bg-[#FAF9F6] border border-[#E5E0D8] shrink-0 flex items-center justify-center">
-                      <img
-                        src={comp.previewImage}
-                        alt={comp.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => (e.currentTarget.src = '/buy_hero.png')}
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs font-bold text-[#171717] group-hover:text-[#BFA16A] transition-colors truncate">
-                        {comp.name}
-                      </div>
-                      <div className="text-[10px] text-[#737373] truncate">
-                        {comp.category} • {comp.defaultTitle}
-                      </div>
-                    </div>
-                    <span className="text-[#BFA16A] font-bold text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                      +
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </aside>
 
       {/* ============================================================== */}
-      {/* RIGHT WORKSPACE: ACTIVE TAB EDITOR (MATCHES IMAGES 1, 3, 4, 5)  */}
+      {/* COMPONENT SELECTION MODAL (Comprehensive Website Catalog)        */}
+      {/* ============================================================== */}
+      {isComponentDropdownOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-[#E5E0D8] shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
+            {/* Modal Header */}
+            <div className="p-4 sm:p-6 border-b border-[#E5E0D8] flex items-center justify-between bg-[#FAF9F6]">
+              <div>
+                <h3 className="text-lg sm:text-xl font-bold text-[#171717]">Add Website Section / Component</h3>
+                <p className="text-xs text-[#737373] mt-0.5">
+                  Choose from any fixed page section across the entire website ({AVAILABLE_DYNAMIC_COMPONENTS.length} sections available).
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsComponentDropdownOpen(false)}
+                className="w-8 h-8 rounded-full bg-white border border-[#E5E0D8] hover:bg-[#171717] hover:text-white flex items-center justify-center text-sm font-bold transition"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Search & Category Filter Bar */}
+            <div className="p-4 border-b border-[#E5E0D8] bg-white space-y-3">
+              {/* Search Bar */}
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-[#888888]">🔍</span>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search by section name, category or keywords (e.g. Hero, Villa, Amenities, Valley, Blog)..."
+                  className="w-full pl-10 pr-4 py-2 bg-[#FAF9F6] border border-[#D5D0C7] rounded-xl text-xs sm:text-sm text-[#171717] focus:outline-none focus:border-[#BFA16A]"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#888888] hover:text-[#171717]"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+
+              {/* Category Pills */}
+              <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-1">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer shrink-0 ${
+                      selectedCategory === cat
+                        ? 'bg-[#BFA16A] text-white shadow-2xs'
+                        : 'bg-[#FAF9F6] text-[#525252] border border-[#E5E0D8] hover:border-[#BFA16A]'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Components Grid */}
+            <div className="p-4 sm:p-6 overflow-y-auto flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredComponents.map((comp) => (
+                <div
+                  key={comp.type}
+                  onClick={() => handleAddComponent(comp)}
+                  className="border border-[#E5E0D8] hover:border-[#BFA16A] hover:shadow-md rounded-2xl p-3 bg-white transition group cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="space-y-2.5">
+                    {/* Thumbnail Preview */}
+                    <div className="w-full h-32 rounded-xl overflow-hidden bg-[#FAF9F6] border border-[#E5E0D8]/60 relative">
+                      <img
+                        src={comp.previewImage}
+                        alt={comp.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => (e.currentTarget.src = '/buy_hero.png')}
+                      />
+                      <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-xs text-[10px] font-bold text-white uppercase tracking-wider">
+                        {comp.category}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h4 className="text-sm font-bold text-[#171717] group-hover:text-[#BFA16A] transition-colors">
+                        {comp.name}
+                      </h4>
+                      <p className="text-xs text-[#737373] mt-1 line-clamp-2 leading-relaxed">
+                        {comp.defaultDescription}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 mt-3 border-t border-[#F0ECE1] flex items-center justify-between text-xs">
+                    <span className="text-[11px] text-[#A39982] font-mono">{comp.defaultTitle}</span>
+                    <span className="font-bold text-[#BFA16A] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                      + Add Section
+                    </span>
+                  </div>
+                </div>
+              ))}
+
+              {filteredComponents.length === 0 && (
+                <div className="col-span-full py-16 text-center text-[#888888] space-y-2">
+                  <p className="text-base font-semibold">No components match your search.</p>
+                  <p className="text-xs">Try selecting a different category or clearing the search box.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-3 bg-[#FAF9F6] border-t border-[#E5E0D8] flex items-center justify-between text-xs text-[#737373]">
+              <span>Showing {filteredComponents.length} of {AVAILABLE_DYNAMIC_COMPONENTS.length} total website sections</span>
+              <button
+                type="button"
+                onClick={() => setIsComponentDropdownOpen(false)}
+                className="px-4 py-1.5 rounded-lg border border-[#D5D0C7] bg-white hover:bg-neutral-50 text-xs font-semibold text-[#171717]"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* RIGHT WORKSPACE: ACTIVE TAB EDITOR                             */}
       {/* ============================================================== */}
       <main className="lg:col-span-9 bg-white rounded-2xl border border-[#E5E0D8] p-6 lg:p-8 shadow-xs">
         {/* ------------------------------------------------------------ */}
-        {/* CASE 1: GENERAL TAB (Matches Reference Image 1)               */}
+        {/* CASE 1: GENERAL TAB                                          */}
         {/* ------------------------------------------------------------ */}
         {activeSectionTab === 'basic' && (
           <div className="space-y-6">
@@ -278,7 +400,7 @@ export default function DynamicPageBuilder({
               <div>
                 <h3 className="text-xl font-bold text-[#171717]">General Settings</h3>
                 <p className="text-xs text-[#737373] mt-0.5">
-                  Set the page name, URL slug, SEO metadata and social sharing image.
+                  Set the page title, URL slug, SEO metadata and social sharing image.
                 </p>
               </div>
               <span className="text-xs font-semibold text-[#BFA16A] bg-[#BFA16A]/10 px-3 py-1 rounded-full border border-[#BFA16A]/30">
@@ -362,9 +484,9 @@ export default function DynamicPageBuilder({
               />
             </div>
 
-            {/* Row 4: OG Image Upload (Matches Image 1) */}
+            {/* Row 4: OG Image Upload */}
             <div>
-              <label className="block text-xs font-semibold text-[#525252] mb-1.5">OG Image</label>
+              <label className="block text-xs font-semibold text-[#525252] mb-1.5">OG Social Share Image</label>
               <div className="relative w-80 h-44 rounded-2xl border-2 border-dashed border-[#D5D0C7] overflow-hidden group bg-[#FAF9F6] flex flex-col items-center justify-center cursor-pointer hover:bg-[#F2ECE1]/30 transition">
                 {pageOgImage ? (
                   <img
@@ -391,126 +513,139 @@ export default function DynamicPageBuilder({
               </div>
             </div>
 
-            {/* Multi-Component Selector Bar below General Settings (Matches Image 2) */}
-            <div className="pt-6 border-t border-[#E5E0D8] space-y-3">
-              <label className="block text-xs font-bold text-[#171717] uppercase tracking-wider">
-                Select Components
-              </label>
-
-              {/* Selected Components Tags Box (Matches Image 2) */}
-              <div className="p-3 bg-white border border-[#0066FF] rounded-xl shadow-xs space-y-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  {dynamicSections.map((sec) => {
-                    const compDef = AVAILABLE_DYNAMIC_COMPONENTS.find((c) => c.type === sec.type);
-                    return (
-                      <div
-                        key={sec.id}
-                        className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[#FAF9F6] border border-[#E5E0D8] text-xs font-medium text-[#171717] shadow-2xs"
-                      >
-                        <img
-                          src={compDef?.previewImage || sec.bgImage || '/buy_hero.png'}
-                          alt={sec.name}
-                          className="w-8 h-5 object-cover rounded"
-                          onError={(e) => (e.currentTarget.src = '/buy_hero.png')}
-                        />
-                        <span>{sec.name}</span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveComponent(sec.id)}
-                          className="text-[#888888] hover:text-rose-500 font-bold ml-1 text-xs"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    );
-                  })}
-                  {dynamicSections.length === 0 && (
-                    <span className="text-xs text-[#888888] italic py-1">
-                      No components selected yet. Click below to add.
-                    </span>
-                  )}
+            {/* Added Sections Preview & Quick Add Callout */}
+            <div className="pt-6 border-t border-[#E5E0D8] space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-sm font-bold text-[#171717] uppercase tracking-wider">
+                    Page Sections ({dynamicSections.length})
+                  </h4>
+                  <p className="text-xs text-[#737373]">
+                    {dynamicSections.length === 0
+                      ? 'No sections have been added yet. Click "+ Add Section / Component" to start building your page.'
+                      : 'These sections are currently stacked on this page. Drag in the sidebar to reorder.'}
+                  </p>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setIsComponentDropdownOpen(true)}
+                  className="px-4 py-2 bg-[#BFA16A] hover:bg-[#aa8e59] text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5"
+                >
+                  <span>+</span> Add Section
+                </button>
               </div>
 
-              {/* Quick Component Picker Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-2">
-                {AVAILABLE_DYNAMIC_COMPONENTS.map((comp) => {
-                  const isAdded = dynamicSections.some((s) => s.type === comp.type);
-                  return (
-                    <button
-                      key={comp.type}
-                      type="button"
-                      onClick={() => handleAddComponent(comp)}
-                      className={`flex flex-col items-center p-3 rounded-xl border text-center transition cursor-pointer ${
-                        isAdded
-                          ? 'border-[#BFA16A] bg-[#FAF9F6]'
-                          : 'border-[#E5E0D8] bg-white hover:border-[#BFA16A]'
-                      }`}
+              {/* Tag Badges for Added Sections */}
+              {dynamicSections.length > 0 && (
+                <div className="p-3 bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl flex flex-wrap gap-2">
+                  {dynamicSections.map((sec, i) => (
+                    <div
+                      key={sec.id}
+                      onClick={() => setActiveSectionTab(sec.id)}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-[#E5E0D8] hover:border-[#BFA16A] text-xs font-semibold text-[#171717] shadow-2xs cursor-pointer transition"
                     >
-                      <div className="w-full h-16 rounded-lg overflow-hidden bg-white border border-[#E5E0D8] mb-2">
-                        <img
-                          src={comp.previewImage}
-                          alt={comp.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => (e.currentTarget.src = '/buy_hero.png')}
-                        />
-                      </div>
-                      <span className="text-xs font-bold text-[#171717] truncate w-full">{comp.name}</span>
-                      <span className="text-[10px] text-[#BFA16A] mt-0.5">
-                        {isAdded ? '+ Add Another' : '+ Add Component'}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+                      <span className="text-[10px] text-[#A39982] font-mono">#{i + 1}</span>
+                      <span>{sec.name}</span>
+                      <button
+                        type="button"
+                        onClick={(e) => handleRemoveComponent(sec.id, e)}
+                        className="text-[#888888] hover:text-rose-500 font-bold ml-1 text-xs"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}
 
         {/* ------------------------------------------------------------ */}
-        {/* CASE 2: HERO SECTION EDITOR (Matches Reference Image 3)      */}
+        {/* CASE 2: DYNAMIC SECTION ACTIVE EDITOR (All 36 Sections)        */}
         {/* ------------------------------------------------------------ */}
-        {currentSection && currentSection.type.startsWith('hero-') && (
+        {currentSection && activeSectionTab !== 'basic' && (
           <div className="space-y-6">
-            <div className="border-b border-[#E5E0D8] pb-4 flex items-center justify-between">
+            {/* Header with Title and Delete Button */}
+            <div className="border-b border-[#E5E0D8] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h3 className="text-xl font-bold text-[#171717]">{currentSection.name}</h3>
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-md bg-[#BFA16A]/10 border border-[#BFA16A]/30 text-[10px] font-bold text-[#BFA16A] uppercase tracking-wider">
+                    {currentDef?.category || 'Custom Section'}
+                  </span>
+                  <span className="text-xs text-[#888888] font-mono">Type: {currentSection.type}</span>
+                </div>
+                <h3 className="text-xl font-bold text-[#171717] mt-1">{currentSection.name}</h3>
                 <p className="text-xs text-[#737373] mt-0.5">
-                  Configure headline, typography, rich-text detail, and hero background asset.
+                  {currentDef?.defaultDescription || 'Configure content, headline, media and settings.'}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => handleRemoveComponent(currentSection.id)}
-                className="text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-200 transition"
+                className="self-start sm:self-auto text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 px-3.5 py-2 rounded-xl border border-rose-200 transition"
               >
-                Delete Section
+                Delete This Section
               </button>
             </div>
 
-            {/* Thumbnail Preview Banner */}
-            <div className="relative w-64 h-36 rounded-xl overflow-hidden border border-[#E5E0D8] bg-[#FAF9F6]">
-              <img
-                src={currentSection.bgImage || '/buy_hero.png'}
-                alt={currentSection.name}
-                className="w-full h-full object-cover"
-                onError={(e) => (e.currentTarget.src = '/buy_hero.png')}
-              />
-              <label className="absolute bottom-2 right-2 bg-white/90 backdrop-blur-xs p-1.5 rounded-lg shadow-sm cursor-pointer text-xs font-bold text-[#171717] hover:bg-white transition border border-[#E5E0D8]">
-                <span>✏️ Change Image</span>
+            {/* Display Label (Renaming the section in the list) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="md:col-span-1">
+                <label className="block text-xs font-semibold text-[#525252] mb-1">
+                  Sidebar Display Name
+                </label>
                 <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) =>
-                    e.target.files?.[0] &&
-                    handleFileUpload(e.target.files[0], (url) => updateSection(currentSection.id, { bgImage: url }))
-                  }
+                  type="text"
+                  value={currentSection.name || ''}
+                  onChange={(e) => updateSection(currentSection.id, { name: e.target.value })}
+                  placeholder="e.g. Hero Section 1"
+                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717]"
                 />
-              </label>
+              </div>
+
+              {/* Preview Asset / Background Image */}
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold text-[#525252] mb-1">
+                  Section Media / Background Asset
+                </label>
+                <div className="flex items-center gap-4">
+                  <div className="w-24 h-16 rounded-xl overflow-hidden border border-[#E5E0D8] bg-[#FAF9F6] shrink-0">
+                    <img
+                      src={currentSection.bgImage || currentDef?.previewImage || '/buy_hero.png'}
+                      alt={currentSection.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => (e.currentTarget.src = '/buy_hero.png')}
+                    />
+                  </div>
+                  <label className="px-4 py-2 rounded-xl bg-white border border-[#D5D0C7] hover:border-[#BFA16A] text-xs font-semibold text-[#171717] cursor-pointer transition shadow-2xs">
+                    <span>Upload New Image</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) =>
+                        e.target.files?.[0] &&
+                        handleFileUpload(e.target.files[0], (url) =>
+                          updateSection(currentSection.id, { bgImage: url })
+                        )
+                      }
+                    />
+                  </label>
+                  {currentSection.bgImage && (
+                    <button
+                      type="button"
+                      onClick={() => updateSection(currentSection.id, { bgImage: '' })}
+                      className="text-xs text-rose-500 hover:underline"
+                    >
+                      Reset Image
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
 
-            {/* Main Title & Subtitle */}
+            {/* Main Headline & Subtitle */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-[#525252] mb-1">Title / Headline</label>
@@ -535,612 +670,310 @@ export default function DynamicPageBuilder({
               </div>
             </div>
 
-            {/* Summernote / RichText Editor for Detail (Matches Reference Image 3) */}
-            <div>
-              <RichTextSummernote
-                label="Detail"
-                value={currentSection.detailHtml || ''}
-                onChange={(html) => updateSection(currentSection.id, { detailHtml: html })}
-                placeholder="Enter full content..."
-                minHeight="280px"
-              />
-            </div>
-          </div>
-        )}
-
-        {/* ------------------------------------------------------------ */}
-        {/* CASE 3: AMENITY SECTION 1 EDITOR (Matches Reference Image 4) */}
-        {/* ------------------------------------------------------------ */}
-        {currentSection && currentSection.type === 'amenity-1' && (
-          <div className="space-y-6">
-            <div className="border-b border-[#E5E0D8] pb-4 flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-bold text-[#171717]">{currentSection.name}</h3>
-                <p className="text-xs text-[#737373] mt-0.5">
-                  Configure section title, description, button text, button color, and amenities selection.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleRemoveComponent(currentSection.id)}
-                className="text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-200 transition"
-              >
-                Delete Section
-              </button>
-            </div>
-
-            {/* Thumbnail Preview Banner */}
-            <div className="w-48 h-28 rounded-xl overflow-hidden border border-[#E5E0D8] bg-[#FAF9F6]">
-              <img
-                src="/affordable-plans.png"
-                alt="Amenity Section Preview"
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Title (Matches Reference Image 4) */}
-            <div>
-              <label className="block text-xs font-semibold text-[#525252] mb-1">Title</label>
-              <input
-                type="text"
-                value={currentSection.title || ''}
-                onChange={(e) => updateSection(currentSection.id, { title: e.target.value })}
-                placeholder="Enter Title"
-                className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717] focus:outline-none focus:border-[#BFA16A]"
-              />
-            </div>
-
-            {/* Description (Matches Reference Image 4) */}
-            <div>
-              <label className="block text-xs font-semibold text-[#525252] mb-1">Description</label>
-              <textarea
-                rows={3}
-                value={currentSection.description || ''}
-                onChange={(e) => updateSection(currentSection.id, { description: e.target.value })}
-                placeholder="Enter Description"
-                className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717] focus:outline-none focus:border-[#BFA16A]"
-              />
-            </div>
-
-            {/* Button Text & Button Color (Matches Reference Image 4) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* CTA Button Configuration */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-xl bg-[#FAF9F6] border border-[#E5E0D8]">
               <div>
                 <label className="block text-xs font-semibold text-[#525252] mb-1">Button Text</label>
                 <input
                   type="text"
-                  value={currentSection.buttonText || 'See All Listing'}
+                  value={currentSection.buttonText || ''}
                   onChange={(e) => updateSection(currentSection.id, { buttonText: e.target.value })}
-                  placeholder="See All Listing"
-                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717] focus:outline-none focus:border-[#BFA16A]"
+                  placeholder="e.g. Explore Opportunities"
+                  className="w-full bg-white border border-[#E5E0D8] rounded-xl px-3.5 py-2 text-sm text-[#171717]"
                 />
               </div>
-
               <div>
-                <label className="block text-xs font-semibold text-[#525252] mb-1">Button Color</label>
-                <div className="flex items-center gap-3">
+                <label className="block text-xs font-semibold text-[#525252] mb-1">Button Link URL</label>
+                <input
+                  type="text"
+                  value={currentSection.buttonLink || ''}
+                  onChange={(e) => updateSection(currentSection.id, { buttonLink: e.target.value })}
+                  placeholder="e.g. /buy or /communities"
+                  className="w-full bg-white border border-[#E5E0D8] rounded-xl px-3.5 py-2 text-sm text-[#171717]"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-[#525252] mb-1">Button Accent Color</label>
+                <div className="flex items-center gap-2">
                   <input
                     type="color"
                     value={currentSection.buttonColor || '#BFA16A'}
                     onChange={(e) => updateSection(currentSection.id, { buttonColor: e.target.value })}
-                    className="w-12 h-10 rounded-xl cursor-pointer border border-[#E5E0D8] p-1 bg-white"
+                    className="w-10 h-9 rounded-lg border border-[#E5E0D8] cursor-pointer p-0.5 bg-white"
                   />
                   <input
                     type="text"
                     value={currentSection.buttonColor || '#BFA16A'}
                     onChange={(e) => updateSection(currentSection.id, { buttonColor: e.target.value })}
-                    className="w-32 bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-3 py-2 text-sm font-mono text-[#171717]"
-                  />
-                  <div
-                    className="h-3 flex-1 rounded-full border border-black/10"
-                    style={{ backgroundColor: currentSection.buttonColor || '#BFA16A' }}
+                    className="w-28 bg-white border border-[#E5E0D8] rounded-xl px-3 py-2 text-xs font-mono text-[#171717]"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Amenities Multi-Select (Matches Reference Image 4: "Please select (max 8)") */}
-            <div className="space-y-2">
-              <label className="block text-xs font-semibold text-[#525252]">
-                Amenities <span className="text-[#888888] font-normal">(Please select max 8)</span>
-              </label>
+            {/* RichText Editor (For Content, Story, Hero Detail or Guides) */}
+            {(currentSection.type.startsWith('hero-') ||
+              currentSection.type === 'content-1' ||
+              currentSection.type === 'about-story' ||
+              currentSection.type === 'valley-why' ||
+              currentSection.type === 'offplan-guide') && (
+              <div>
+                <RichTextSummernote
+                  label="Detailed Rich Content / Editorial Story"
+                  value={currentSection.detailHtml || ''}
+                  onChange={(html) => updateSection(currentSection.id, { detailHtml: html })}
+                  placeholder="Write rich content, headings, styled paragraphs, and comparison tables..."
+                  minHeight="240px"
+                />
+              </div>
+            )}
 
-              <div className="p-4 bg-[#FAF9F6] rounded-xl border border-[#E5E0D8] space-y-3">
-                <div className="flex flex-wrap gap-2">
-                  {(currentSection.selectedAmenities || []).map((amName) => (
-                    <span
-                      key={amName}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#BFA16A] text-white rounded-lg text-xs font-medium shadow-2xs"
-                    >
-                      {amName}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          updateSection(currentSection.id, {
-                            selectedAmenities: (currentSection.selectedAmenities || []).filter((a) => a !== amName),
-                          })
-                        }
-                        className="hover:text-black font-bold ml-1"
+            {/* Special Picker: Amenities (If Amenities section) */}
+            {currentSection.type === 'amenity-1' && (
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold text-[#525252]">
+                  Select Featured Amenities <span className="text-[#888888] font-normal">(max 8)</span>
+                </label>
+                <div className="p-4 bg-[#FAF9F6] rounded-xl border border-[#E5E0D8] space-y-3">
+                  <div className="flex flex-wrap gap-2">
+                    {(currentSection.selectedAmenities || []).map((amName) => (
+                      <span
+                        key={amName}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#BFA16A] text-white rounded-lg text-xs font-medium shadow-2xs"
                       >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                  {(currentSection.selectedAmenities || []).length === 0 && (
-                    <span className="text-xs text-[#888888] italic">No amenities selected yet.</span>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 pt-2 border-t border-[#E5E0D8]/60">
-                  {amenitiesList.slice(0, 20).map((am) => {
-                    const isSelected = (currentSection.selectedAmenities || []).includes(am.name);
-                    return (
-                      <button
-                        key={am.id || am.name}
-                        type="button"
-                        onClick={() => {
-                          const current = currentSection.selectedAmenities || [];
-                          if (isSelected) {
+                        {amName}
+                        <button
+                          type="button"
+                          onClick={() =>
                             updateSection(currentSection.id, {
-                              selectedAmenities: current.filter((x) => x !== am.name),
-                            });
-                          } else {
-                            if (current.length >= 8) {
-                              alert('Maximum 8 amenities allowed for this section.');
-                              return;
-                            }
-                            updateSection(currentSection.id, {
-                              selectedAmenities: [...current, am.name],
-                            });
+                              selectedAmenities: (currentSection.selectedAmenities || []).filter((a) => a !== amName),
+                            })
                           }
-                        }}
-                        className={`px-3 py-2 text-xs rounded-lg border text-left font-medium transition cursor-pointer flex items-center justify-between ${
-                          isSelected
-                            ? 'bg-[#BFA16A] text-white border-[#BFA16A]'
-                            : 'bg-white text-[#525252] border-[#E5E0D8] hover:border-[#BFA16A]'
-                        }`}
-                      >
-                        <span className="truncate">{am.name}</span>
-                        <span>{isSelected ? '✓' : '+'}</span>
-                      </button>
-                    );
-                  })}
+                          className="hover:text-black font-bold ml-1"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                    {(currentSection.selectedAmenities || []).length === 0 && (
+                      <span className="text-xs text-[#888888] italic">Default luxury amenities will be displayed.</span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 pt-2 border-t border-[#E5E0D8]/60 max-h-48 overflow-y-auto">
+                    {amenitiesList.map((am) => {
+                      const isSelected = (currentSection.selectedAmenities || []).includes(am.name);
+                      return (
+                        <button
+                          key={am.id || am.name}
+                          type="button"
+                          onClick={() => {
+                            const cur = currentSection.selectedAmenities || [];
+                            if (isSelected) {
+                              updateSection(currentSection.id, { selectedAmenities: cur.filter((x) => x !== am.name) });
+                            } else {
+                              if (cur.length >= 8) {
+                                alert('Maximum 8 amenities allowed.');
+                                return;
+                              }
+                              updateSection(currentSection.id, { selectedAmenities: [...cur, am.name] });
+                            }
+                          }}
+                          className={`px-3 py-2 text-xs rounded-lg border text-left font-medium transition cursor-pointer flex items-center justify-between ${
+                            isSelected ? 'bg-[#BFA16A] text-white border-[#BFA16A]' : 'bg-white text-[#525252] border-[#E5E0D8] hover:border-[#BFA16A]'
+                          }`}
+                        >
+                          <span className="truncate">{am.name}</span>
+                          <span>{isSelected ? '✓' : '+'}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
+            )}
 
-        {/* ------------------------------------------------------------ */}
-        {/* CASE 4: TRENDING PROJECTS EDITOR (Matches Reference Image 5) */}
-        {/* ------------------------------------------------------------ */}
-        {currentSection && currentSection.type === 'trending-projects' && (
-          <div className="space-y-6">
-            <div className="border-b border-[#E5E0D8] pb-4 flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-bold text-[#171717]">{currentSection.name}</h3>
-                <p className="text-xs text-[#737373] mt-0.5">
-                  Configure section title, description, and selected off-plan project cards.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleRemoveComponent(currentSection.id)}
-                className="text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-200 transition"
-              >
-                Delete Section
-              </button>
-            </div>
-
-            {/* Thumbnail Preview Banner */}
-            <div className="w-56 h-28 rounded-xl overflow-hidden border border-[#E5E0D8] bg-[#FAF9F6]">
-              <img
-                src="/1793600655_al-marjan.png"
-                alt="Trending Projects Preview"
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Title (Matches Reference Image 5) */}
-            <div>
-              <label className="block text-xs font-semibold text-[#525252] mb-1">Title</label>
-              <input
-                type="text"
-                value={currentSection.title || ''}
-                onChange={(e) => updateSection(currentSection.id, { title: e.target.value })}
-                placeholder="Enter Title"
-                className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717] focus:outline-none focus:border-[#BFA16A]"
-              />
-            </div>
-
-            {/* Description (Matches Reference Image 5) */}
-            <div>
-              <label className="block text-xs font-semibold text-[#525252] mb-1">Description</label>
-              <textarea
-                rows={3}
-                value={currentSection.description || ''}
-                onChange={(e) => updateSection(currentSection.id, { description: e.target.value })}
-                placeholder="Enter Description"
-                className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717] focus:outline-none focus:border-[#BFA16A]"
-              />
-            </div>
-
-            {/* Project Selection */}
-            <div className="space-y-2">
-              <label className="block text-xs font-semibold text-[#525252]">
-                Select Projects To Feature
-              </label>
-              <div className="p-4 bg-[#FAF9F6] rounded-xl border border-[#E5E0D8] space-y-3">
-                <div className="flex flex-wrap gap-2">
-                  {(currentSection.selectedProjects || []).map((pTitle) => (
-                    <span
-                      key={pTitle}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#171717] text-white rounded-lg text-xs font-medium shadow-2xs"
-                    >
-                      {pTitle}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          updateSection(currentSection.id, {
-                            selectedProjects: (currentSection.selectedProjects || []).filter((x) => x !== pTitle),
-                          })
-                        }
-                        className="hover:text-rose-400 font-bold ml-1"
+            {/* Special Picker: Off-Plan Projects */}
+            {(currentSection.type === 'trending-projects' ||
+              currentSection.type === 'recommended-opportunities' ||
+              currentSection.type === 'similar-projects' ||
+              currentSection.type === 'developer-projects') && (
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold text-[#525252]">
+                  Select Projects To Feature
+                </label>
+                <div className="p-4 bg-[#FAF9F6] rounded-xl border border-[#E5E0D8] space-y-3">
+                  <div className="flex flex-wrap gap-2">
+                    {(currentSection.selectedProjects || []).map((pTitle) => (
+                      <span
+                        key={pTitle}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#171717] text-white rounded-lg text-xs font-medium shadow-2xs"
                       >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                  {(currentSection.selectedProjects || []).length === 0 && (
-                    <span className="text-xs text-[#888888] italic">
-                      All published off-plan projects will be featured automatically.
-                    </span>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 pt-2 border-t border-[#E5E0D8]/60 max-h-48 overflow-y-auto">
-                  {offplansList.map((op) => {
-                    const isSelected = (currentSection.selectedProjects || []).includes(op.title);
-                    return (
-                      <button
-                        key={op.id || op.title}
-                        type="button"
-                        onClick={() => {
-                          const current = currentSection.selectedProjects || [];
-                          updateSection(currentSection.id, {
-                            selectedProjects: isSelected
-                              ? current.filter((x) => x !== op.title)
-                              : [...current, op.title],
-                          });
-                        }}
-                        className={`p-2 rounded-lg border text-left text-xs transition flex items-center justify-between ${
-                          isSelected
-                            ? 'bg-[#171717] text-white border-[#171717]'
-                            : 'bg-white text-[#525252] border-[#E5E0D8] hover:border-[#171717]'
-                        }`}
-                      >
-                        <span className="truncate font-semibold">{op.title}</span>
-                        <span className="text-[10px] shrink-0 ml-1 opacity-70">
-                          {isSelected ? '✓' : '+'}
-                        </span>
-                      </button>
-                    );
-                  })}
+                        {pTitle}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            updateSection(currentSection.id, {
+                              selectedProjects: (currentSection.selectedProjects || []).filter((x) => x !== pTitle),
+                            })
+                          }
+                          className="hover:text-rose-400 font-bold ml-1"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                    {(currentSection.selectedProjects || []).length === 0 && (
+                      <span className="text-xs text-[#888888] italic">All active projects will be displayed dynamically.</span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 pt-2 border-t border-[#E5E0D8]/60 max-h-48 overflow-y-auto">
+                    {offplansList.map((op) => {
+                      const isSelected = (currentSection.selectedProjects || []).includes(op.title);
+                      return (
+                        <button
+                          key={op.id || op.title}
+                          type="button"
+                          onClick={() => {
+                            const cur = currentSection.selectedProjects || [];
+                            updateSection(currentSection.id, {
+                              selectedProjects: isSelected ? cur.filter((x) => x !== op.title) : [...cur, op.title],
+                            });
+                          }}
+                          className={`p-2 rounded-lg border text-left text-xs transition flex items-center justify-between ${
+                            isSelected ? 'bg-[#171717] text-white border-[#171717]' : 'bg-white text-[#525252] border-[#E5E0D8] hover:border-[#171717]'
+                          }`}
+                        >
+                          <span className="truncate font-semibold">{op.title}</span>
+                          <span className="text-[10px] shrink-0 ml-1 opacity-70">{isSelected ? '✓' : '+'}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
+            )}
 
-        {/* ------------------------------------------------------------ */}
-        {/* CASE 5: CONTENT SECTION 1 (Summernote Editor)                */}
-        {/* ------------------------------------------------------------ */}
-        {currentSection && currentSection.type === 'content-1' && (
-          <div className="space-y-6">
-            <div className="border-b border-[#E5E0D8] pb-4 flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-bold text-[#171717]">{currentSection.name}</h3>
-                <p className="text-xs text-[#737373] mt-0.5">
-                  Full rich-text story editor for article paragraphs, headings, image embeds, and comparison tables.
-                </p>
+            {/* Special Picker: Communities */}
+            {(currentSection.type === 'explore-more' ||
+              currentSection.type === 'explore-community' ||
+              currentSection.type === 'communities-grid' ||
+              currentSection.type === 'community-comparison') && (
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold text-[#525252]">Featured Communities</label>
+                <div className="p-4 bg-[#FAF9F6] rounded-xl border border-[#E5E0D8] space-y-3">
+                  <div className="flex flex-wrap gap-2">
+                    {(currentSection.selectedCommunities || []).map((cName) => (
+                      <span
+                        key={cName}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#BFA16A] text-white rounded-lg text-xs font-medium shadow-2xs"
+                      >
+                        {cName}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            updateSection(currentSection.id, {
+                              selectedCommunities: (currentSection.selectedCommunities || []).filter((x) => x !== cName),
+                            })
+                          }
+                          className="hover:text-black font-bold ml-1"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                    {(currentSection.selectedCommunities || []).length === 0 && (
+                      <span className="text-xs text-[#888888] italic">All top master communities will be featured.</span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 pt-2 border-t border-[#E5E0D8]/60 max-h-48 overflow-y-auto">
+                    {communitiesList.map((c) => {
+                      const isSelected = (currentSection.selectedCommunities || []).includes(c.name);
+                      return (
+                        <button
+                          key={c.id || c.name}
+                          type="button"
+                          onClick={() => {
+                            const cur = currentSection.selectedCommunities || [];
+                            updateSection(currentSection.id, {
+                              selectedCommunities: isSelected ? cur.filter((x) => x !== c.name) : [...cur, c.name],
+                            });
+                          }}
+                          className={`p-2 rounded-lg border text-xs text-left transition flex items-center justify-between ${
+                            isSelected ? 'bg-[#BFA16A] text-white border-[#BFA16A]' : 'bg-white text-[#525252] border-[#E5E0D8] hover:border-[#BFA16A]'
+                          }`}
+                        >
+                          <span className="truncate">{c.name}</span>
+                          <span>{isSelected ? '✓' : '+'}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={() => handleRemoveComponent(currentSection.id)}
-                className="text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-200 transition"
-              >
-                Delete Section
-              </button>
-            </div>
+            )}
 
-            <div>
-              <label className="block text-xs font-semibold text-[#525252] mb-1">Section Title</label>
-              <input
-                type="text"
-                value={currentSection.title || ''}
-                onChange={(e) => updateSection(currentSection.id, { title: e.target.value })}
-                placeholder="Enter Title"
-                className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717] focus:outline-none focus:border-[#BFA16A]"
-              />
-            </div>
-
-            <div>
-              <RichTextSummernote
-                label="Article / Editorial Content"
-                value={currentSection.detailHtml || ''}
-                onChange={(html) => updateSection(currentSection.id, { detailHtml: html })}
-                placeholder="Write article story, add images and comparison tables..."
-                minHeight="320px"
-              />
-            </div>
-          </div>
-        )}
-
-        {/* ------------------------------------------------------------ */}
-        {/* CASE 6: EXPLORE MORE COMMUNITIES                             */}
-        {/* ------------------------------------------------------------ */}
-        {currentSection && currentSection.type === 'explore-more' && (
-          <div className="space-y-6">
-            <div className="border-b border-[#E5E0D8] pb-4 flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-bold text-[#171717]">{currentSection.name}</h3>
-                <p className="text-xs text-[#737373] mt-0.5">
-                  Featured master communities directory cards.
-                </p>
+            {/* Special Picker: Developers */}
+            {(currentSection.type === 'developer-logos' ||
+              currentSection.type === 'developers-grid' ||
+              currentSection.type === 'developers-intro') && (
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold text-[#525252]">Featured Developers</label>
+                <div className="p-4 bg-[#FAF9F6] rounded-xl border border-[#E5E0D8] space-y-3">
+                  <div className="flex flex-wrap gap-2">
+                    {(currentSection.selectedDevelopers || []).map((dName) => (
+                      <span
+                        key={dName}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#171717] text-white rounded-lg text-xs font-medium shadow-2xs"
+                      >
+                        {dName}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            updateSection(currentSection.id, {
+                              selectedDevelopers: (currentSection.selectedDevelopers || []).filter((x) => x !== dName),
+                            })
+                          }
+                          className="hover:text-rose-400 font-bold ml-1"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                    {(currentSection.selectedDevelopers || []).length === 0 && (
+                      <span className="text-xs text-[#888888] italic">Top UAE developers will be showcased automatically.</span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2.5 pt-2 border-t border-[#E5E0D8]/60 max-h-48 overflow-y-auto">
+                    {developerCards.map((d) => {
+                      const isSelected = (currentSection.selectedDevelopers || []).includes(d.name);
+                      return (
+                        <button
+                          key={d.id || d.name}
+                          type="button"
+                          onClick={() => {
+                            const cur = currentSection.selectedDevelopers || [];
+                            updateSection(currentSection.id, {
+                              selectedDevelopers: isSelected ? cur.filter((x) => x !== d.name) : [...cur, d.name],
+                            });
+                          }}
+                          className={`p-2 rounded-xl border text-center transition flex flex-col items-center justify-center gap-1 ${
+                            isSelected ? 'bg-[#FAF9F6] border-[#BFA16A] shadow-xs' : 'bg-white border-[#E5E0D8] hover:border-[#BFA16A]'
+                          }`}
+                        >
+                          <img
+                            src={d.logo || '/developers/emaar.png'}
+                            alt={d.name}
+                            className="h-7 w-auto object-contain"
+                            onError={(e) => (e.currentTarget.src = '/developers/emaar.png')}
+                          />
+                          <span className="text-[10px] font-bold text-[#171717] truncate w-full">{d.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={() => handleRemoveComponent(currentSection.id)}
-                className="text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-200 transition"
-              >
-                Delete Section
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-[#525252] mb-1">Title</label>
-                <input
-                  type="text"
-                  value={currentSection.title || ''}
-                  onChange={(e) => updateSection(currentSection.id, { title: e.target.value })}
-                  placeholder="Explore More Communities"
-                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717]"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-[#525252] mb-1">Description</label>
-                <input
-                  type="text"
-                  value={currentSection.description || ''}
-                  onChange={(e) => updateSection(currentSection.id, { description: e.target.value })}
-                  placeholder="Discover vibrant neighborhoods across Dubai"
-                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717]"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-xs font-semibold text-[#525252]">Featured Communities</label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                {communitiesList.map((c) => {
-                  const isSelected = (currentSection.selectedCommunities || []).includes(c.name);
-                  return (
-                    <button
-                      key={c.id || c.name}
-                      type="button"
-                      onClick={() => {
-                        const cur = currentSection.selectedCommunities || [];
-                        updateSection(currentSection.id, {
-                          selectedCommunities: isSelected ? cur.filter((x) => x !== c.name) : [...cur, c.name],
-                        });
-                      }}
-                      className={`p-2 rounded-lg border text-xs text-left transition flex items-center justify-between ${
-                        isSelected
-                          ? 'bg-[#BFA16A] text-white border-[#BFA16A]'
-                          : 'bg-white text-[#525252] border-[#E5E0D8] hover:border-[#BFA16A]'
-                      }`}
-                    >
-                      <span className="truncate">{c.name}</span>
-                      <span>{isSelected ? '✓' : '+'}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ------------------------------------------------------------ */}
-        {/* CASE 7: DEVELOPER LOGOS                                      */}
-        {/* ------------------------------------------------------------ */}
-        {currentSection && currentSection.type === 'developer-logos' && (
-          <div className="space-y-6">
-            <div className="border-b border-[#E5E0D8] pb-4 flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-bold text-[#171717]">{currentSection.name}</h3>
-                <p className="text-xs text-[#737373] mt-0.5">
-                  Trusted master developers directory logos grid.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleRemoveComponent(currentSection.id)}
-                className="text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-200 transition"
-              >
-                Delete Section
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-[#525252] mb-1">Title</label>
-                <input
-                  type="text"
-                  value={currentSection.title || ''}
-                  onChange={(e) => updateSection(currentSection.id, { title: e.target.value })}
-                  placeholder="Premier Master Developers"
-                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717]"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-[#525252] mb-1">Description</label>
-                <input
-                  type="text"
-                  value={currentSection.description || ''}
-                  onChange={(e) => updateSection(currentSection.id, { description: e.target.value })}
-                  placeholder="Partnered with the UAE's leading developers"
-                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717]"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-xs font-semibold text-[#525252]">Featured Developers</label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                {developerCards.map((d) => {
-                  const isSelected = (currentSection.selectedDevelopers || []).includes(d.name);
-                  return (
-                    <button
-                      key={d.id || d.name}
-                      type="button"
-                      onClick={() => {
-                        const cur = currentSection.selectedDevelopers || [];
-                        updateSection(currentSection.id, {
-                          selectedDevelopers: isSelected ? cur.filter((x) => x !== d.name) : [...cur, d.name],
-                        });
-                      }}
-                      className={`p-2.5 rounded-xl border text-center transition flex flex-col items-center justify-center gap-1 ${
-                        isSelected
-                          ? 'bg-[#FAF9F6] border-[#BFA16A] shadow-xs'
-                          : 'bg-white border-[#E5E0D8] hover:border-[#BFA16A]'
-                      }`}
-                    >
-                      <img
-                        src={d.logo || '/developers/emaar.png'}
-                        alt={d.name}
-                        className="h-8 w-auto object-contain"
-                        onError={(e) => (e.currentTarget.src = '/developers/emaar.png')}
-                      />
-                      <span className="text-[10px] font-bold text-[#171717] truncate w-full">{d.name}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ------------------------------------------------------------ */}
-        {/* CASE 8: FOOTER FORM                                         */}
-        {/* ------------------------------------------------------------ */}
-        {currentSection && currentSection.type === 'footer-form' && (
-          <div className="space-y-6">
-            <div className="border-b border-[#E5E0D8] pb-4 flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-bold text-[#171717]">{currentSection.name}</h3>
-                <p className="text-xs text-[#737373] mt-0.5">
-                  High-converting contact / interest registration form.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleRemoveComponent(currentSection.id)}
-                className="text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-200 transition"
-              >
-                Delete Section
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-[#525252] mb-1">Headline</label>
-                <input
-                  type="text"
-                  value={currentSection.title || ''}
-                  onChange={(e) => updateSection(currentSection.id, { title: e.target.value })}
-                  placeholder="Register Your Interest"
-                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717]"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-[#525252] mb-1">Subheading</label>
-                <input
-                  type="text"
-                  value={currentSection.description || ''}
-                  onChange={(e) => updateSection(currentSection.id, { description: e.target.value })}
-                  placeholder="Our advisory team will reach out with unit pricing and floor plans."
-                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717]"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-[#525252] mb-1">Submit Button Text</label>
-                <input
-                  type="text"
-                  value={currentSection.buttonText || 'Submit Enquiry'}
-                  onChange={(e) => updateSection(currentSection.id, { buttonText: e.target.value })}
-                  placeholder="Submit Enquiry"
-                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717]"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-[#525252] mb-1">Button Color</label>
-                <input
-                  type="color"
-                  value={currentSection.buttonColor || '#BFA16A'}
-                  onChange={(e) => updateSection(currentSection.id, { buttonColor: e.target.value })}
-                  className="w-full h-10 rounded-xl cursor-pointer border border-[#E5E0D8] p-1 bg-white"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ------------------------------------------------------------ */}
-        {/* CASE 9: BUYER GUIDE & FAQS                                   */}
-        {/* ------------------------------------------------------------ */}
-        {currentSection && currentSection.type === 'faqs' && (
-          <div className="space-y-6">
-            <div className="border-b border-[#E5E0D8] pb-4 flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-bold text-[#171717]">{currentSection.name}</h3>
-                <p className="text-xs text-[#737373] mt-0.5">
-                  Frequently asked questions and buyer guide accordion.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleRemoveComponent(currentSection.id)}
-                className="text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-200 transition"
-              >
-                Delete Section
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-[#525252] mb-1">Heading</label>
-                <input
-                  type="text"
-                  value={currentSection.title || ''}
-                  onChange={(e) => updateSection(currentSection.id, { title: e.target.value })}
-                  placeholder="Frequently Asked Questions"
-                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717]"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-[#525252] mb-1">Tagline</label>
-                <input
-                  type="text"
-                  value={currentSection.description || ''}
-                  onChange={(e) => updateSection(currentSection.id, { description: e.target.value })}
-                  placeholder="UAE off-plan property · Buyer guide"
-                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717]"
-                />
-              </div>
-            </div>
+            )}
           </div>
         )}
       </main>

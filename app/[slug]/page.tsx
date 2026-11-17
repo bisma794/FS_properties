@@ -1,14 +1,70 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import BlogHeroSection from '@/components/BlogHeroSection';
-import BlogDetailsContentSection from '@/components/BlogDetailsContentSection';
-import BuyerGuideFaqSection from '@/components/BuyerGuideFaqSection';
-import { getBlogDetailData } from '@/lib/blogs';
-import { getPageBySlug } from '@/lib/api';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+
+// Core Layout
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+
+// Data Helpers
+import { getBlogDetailData } from '@/lib/blogs';
+import { getPageBySlug, getSyncedProperties, getSyncedDevelopers } from '@/lib/api';
+
+// Hero Components
+import HeroSection from '@/components/HeroSection';
+import BuyHeroSection from '@/components/BuyHeroSection';
+import AboutUsHero from '@/components/AboutUsHero';
+import TheValleyHero from '@/components/TheValleyHero';
+import BlogHeroSection from '@/components/BlogHeroSection';
+import AIAssessmentHero from '@/components/AIAssessmentHero';
+import CommunityHeroSection from '@/components/CommunityHeroSection';
+import DeveloperHeroSection from '@/components/DeveloperHeroSection';
+
+// Properties & Off-Plan Components
+import BuyPropertyListingsSection from '@/components/BuyPropertyListingsSection';
+import BuySearchFilterSection from '@/components/BuySearchFilterSection';
+import RecommendedOpportunities from '@/components/RecommendedOpportunities';
+import SimilarProjectsSection from '@/components/SimilarProjectsSection';
+import BuyDetailMortgageCalculator from '@/components/BuyDetailMortgageCalculator';
+import ProjectGridSection from '@/components/ProjectGridSection';
+
+// Communities Components
+import ExploreCommunity from '@/components/ExploreCommunity';
+import CommunityGridSection from '@/components/CommunityGridSection';
+import CommunityOverviewSection from '@/components/CommunityOverviewSection';
+import CommunityComparisonSection from '@/components/CommunityComparisonSection';
+import CommunityAmenitiesLocationSection from '@/components/CommunityAmenitiesLocationSection';
+
+// Developers Components
+import DevelopersDirectoryGrid from '@/components/DevelopersDirectoryGrid';
+import DevelopersIntroSection from '@/components/DevelopersIntroSection';
+import DeveloperProjectsSection from '@/components/DeveloperProjectsSection';
+import DeveloperAskBriefBanner from '@/components/DeveloperAskBriefBanner';
+
+// The Valley & Score Components
+import ValleyOverviewScoreSection from '@/components/ValleyOverviewScoreSection';
+import WhyFSRecommendsValleySection from '@/components/WhyFSRecommendsValleySection';
+import ValleyHighlightsSection from '@/components/ValleyHighlightsSection';
+
+// Blog & Editorial Components
+import BlogFeaturedJournalSection from '@/components/BlogFeaturedJournalSection';
+import BlogArticlesGridSection from '@/components/BlogArticlesGridSection';
+import BlogWhereToLiveSection from '@/components/BlogWhereToLiveSection';
+import BlogUaeOffplanBannerSection from '@/components/BlogUaeOffplanBannerSection';
+import BlogDetailsContentSection from '@/components/BlogDetailsContentSection';
+
+// About Us & Advisory Components
+import AboutUsSection from '@/components/AboutUsSection';
+import FeatureBar from '@/components/FeatureBar';
+import LatestReviewsSection from '@/components/LatestReviewsSection';
+import OverallMatchScoreSection from '@/components/OverallMatchScoreSection';
+
+// General, Guides & Forms Components
+import OffPlanGuideSection from '@/components/OffPlanGuideSection';
+import BuyerGuideFaqSection from '@/components/BuyerGuideFaqSection';
+import BookStrategySessionBanner from '@/components/BookStrategySessionBanner';
+import ProjectEnquiryForm from '@/components/ProjectEnquiryForm';
 
 export const revalidate = 0; // Dynamic route
 
@@ -108,7 +164,7 @@ export default async function DynamicCatchAllPage({ params }: { params: Promise<
 
   const isDynamicBuilderPage = Boolean(
     page.content?.isDynamic ||
-    (page.content?.dynamicSections && page.content.dynamicSections.length > 0)
+    (page.content?.dynamicSections && Array.isArray(page.content.dynamicSections))
   );
 
   const dynamicSections = Array.isArray(page.content?.dynamicSections)
@@ -116,22 +172,124 @@ export default async function DynamicCatchAllPage({ params }: { params: Promise<
     : [];
 
   // =========================================================================
-  // IF CREATED VIA DYNAMIC PAGE BUILDER: Render dynamic sections in order
+  // IF CREATED VIA DYNAMIC PAGE BUILDER: Render stacked dynamic sections
   // =========================================================================
-  if (isDynamicBuilderPage && dynamicSections.length > 0) {
+  if (isDynamicBuilderPage) {
+    const initialProperties = await getSyncedProperties();
+    const initialDevelopers = await getSyncedDevelopers();
+
     return (
       <div className="min-h-screen bg-[#FAF9F6] text-[#171717] flex flex-col font-sans">
         <Navbar />
 
         {dynamicSections.map((sec: any) => {
-          // A. HERO SECTIONS
+          // -------------------------------------------------------------
+          // 1. HERO SECTIONS
+          // -------------------------------------------------------------
+          if (sec.type === 'hero-homepage') {
+            return (
+              <HeroSection
+                key={sec.id}
+                initialData={{
+                  title: sec.title || 'A DIFFERENT WAY TO BUY REAL ESTATE IN DUBAI',
+                  subheading: sec.description || 'Data-driven, independent real estate advisory built for long-term investors.',
+                  backgroundImage: sec.bgImage || '/buy_hero.png',
+                }}
+              />
+            );
+          }
+
+          if (sec.type === 'hero-1' || sec.type === 'hero-buy') {
+            return (
+              <BuyHeroSection
+                key={sec.id}
+                detailHtml={sec.detailHtml}
+                imageSrc={sec.bgImage || '/buy-hero.png'}
+              />
+            );
+          }
+
+          if (sec.type === 'hero-2' || sec.type === 'hero-about') {
+            return (
+              <AboutUsHero
+                key={sec.id}
+                title={sec.title || 'REDEFINING REAL ESTATE ADVISORY IN DUBAI'}
+                subheading={sec.description || 'We do not sell properties. We build strategies.'}
+                ctaText={sec.buttonText || 'Contact Advisory Team'}
+                ctaLink={sec.buttonLink || '/about-us'}
+                backgroundImage={sec.bgImage || '/about_us_hero.jpg'}
+              />
+            );
+          }
+
+          if (sec.type === 'hero-4' || sec.type === 'hero-valley') {
+            return (
+              <TheValleyHero
+                key={sec.id}
+                title={sec.title || 'THE VALLEY'}
+                subtitle={sec.description || 'By Emaar'}
+                backgroundImage={sec.bgImage || '/valley_hero.png'}
+              />
+            );
+          }
+
+          if (sec.type === 'hero-blog') {
+            return (
+              <BlogHeroSection
+                key={sec.id}
+                headingLine1={sec.title || 'REAL ESTATE'}
+                headingLine2=""
+                description={sec.description || 'Expert insights, market analysis and the latest updates.'}
+                imageSrc={sec.bgImage || '/blog-hero.png'}
+              />
+            );
+          }
+
+          if (sec.type === 'hero-advisory') {
+            return (
+              <AIAssessmentHero
+                key={sec.id}
+                headingWord1={sec.title ? sec.title.split(' ')[0] : 'AI ADVISORY'}
+                headingWord2={sec.title ? sec.title.split(' ').slice(1).join(' ') : 'ENGINE'}
+                subheading={sec.description}
+                detailHtml={sec.detailHtml}
+                backgroundImage={sec.bgImage || '/ai_engine_hero.jpg'}
+              />
+            );
+          }
+
+          if (sec.type === 'hero-community') {
+            return (
+              <CommunityHeroSection
+                key={sec.id}
+                headingLine1={sec.title || 'FIND YOUR'}
+                headingLine2="PLACE IN DUBAI"
+                description={sec.description}
+                imageSrc={sec.bgImage || '/community.png'}
+              />
+            );
+          }
+
+          if (sec.type === 'hero-developer') {
+            return (
+              <DeveloperHeroSection
+                key={sec.id}
+                headingWord1={sec.title ? sec.title.split(' ')[0] : 'ALL'}
+                headingWord2={sec.title ? sec.title.split(' ').slice(1).join(' ') : 'DEVELOPERS'}
+                description={sec.description}
+                imageSrc={sec.bgImage || '/developer-hero.png'}
+              />
+            );
+          }
+
+          // Fallback Generic Hero (for hero-3 or custom hero types)
           if (sec.type?.startsWith('hero-')) {
             return (
               <section
                 key={sec.id}
                 className="relative py-24 sm:py-32 bg-cover bg-center flex items-center justify-center text-center text-white overflow-hidden"
                 style={{
-                  backgroundImage: `linear-gradient(rgba(17, 17, 17, 0.65), rgba(17, 17, 17, 0.75)), url(${sec.bgImage || '/buy_hero.png'})`,
+                  backgroundImage: `linear-gradient(rgba(17, 17, 17, 0.65), rgba(17, 17, 17, 0.75)), url(${sec.bgImage || '/1793598348_buy-hero.png'})`,
                 }}
               >
                 <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-5">
@@ -152,20 +310,313 @@ export default async function DynamicCatchAllPage({ params }: { params: Promise<
                       dangerouslySetInnerHTML={{ __html: sec.detailHtml }}
                     />
                   )}
-                  <div className="pt-4 flex justify-center gap-4">
-                    <Link
-                      href="/buy"
-                      className="px-8 py-3.5 bg-[#BFA16A] hover:bg-[#aa8e59] text-white font-semibold text-xs tracking-wider uppercase rounded-xl shadow-md transition"
-                    >
-                      {sec.buttonText || 'Explore Opportunities'}
-                    </Link>
+                  {sec.buttonText && (
+                    <div className="pt-4 flex justify-center gap-4">
+                      <Link
+                        href={sec.buttonLink || '/buy'}
+                        className="px-8 py-3.5 bg-[#BFA16A] hover:bg-[#aa8e59] text-white font-semibold text-xs tracking-wider uppercase rounded-xl shadow-md transition"
+                        style={{ backgroundColor: sec.buttonColor || undefined }}
+                      >
+                        {sec.buttonText}
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </section>
+            );
+          }
+
+          // -------------------------------------------------------------
+          // 2. PROPERTIES & OFF-PLAN SECTIONS
+          // -------------------------------------------------------------
+          if (sec.type === 'property-listings') {
+            return (
+              <div key={sec.id} className="py-12 bg-[#FAF9F6] border-b border-[#E5E0D8]">
+                <BuyPropertyListingsSection aboutHtml={sec.detailHtml} initialProperties={initialProperties} />
+              </div>
+            );
+          }
+
+          if (sec.type === 'property-search') {
+            return (
+              <div key={sec.id} className="py-4 bg-[#FAF9F6] border-b border-[#E5E0D8]">
+                <BuySearchFilterSection />
+              </div>
+            );
+          }
+
+          if (sec.type === 'trending-projects') {
+            return (
+              <div key={sec.id} className="py-16 bg-[#FAF9F6] border-b border-[#E5E0D8]">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="mb-8">
+                    <span className="text-xs font-bold uppercase tracking-widest text-[#BFA16A] block mb-1">
+                      Off-Plan Spotlight
+                    </span>
+                    <h2 className="text-3xl font-serif font-bold text-[#171717]">
+                      {sec.title || 'Trending Projects'}
+                    </h2>
+                    {sec.description && <p className="text-sm text-[#737373] mt-1">{sec.description}</p>}
+                  </div>
+                  <ProjectGridSection />
+                </div>
+              </div>
+            );
+          }
+
+          if (sec.type === 'recommended-opportunities') {
+            return <RecommendedOpportunities key={sec.id} />;
+          }
+
+          if (sec.type === 'similar-projects') {
+            return <SimilarProjectsSection key={sec.id} />;
+          }
+
+          if (sec.type === 'mortgage-calc') {
+            return (
+              <div key={sec.id} className="py-16 bg-white border-b border-[#E5E0D8]">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                  <BuyDetailMortgageCalculator />
+                </div>
+              </div>
+            );
+          }
+
+          // -------------------------------------------------------------
+          // 3. COMMUNITIES SECTIONS
+          // -------------------------------------------------------------
+          if (sec.type === 'explore-community') {
+            return <ExploreCommunity key={sec.id} />;
+          }
+
+          if (sec.type === 'communities-grid' || sec.type === 'explore-more') {
+            return (
+              <div key={sec.id} className="py-16 bg-[#FAF9F6] border-b border-[#E5E0D8]">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="mb-8">
+                    <span className="text-xs font-bold uppercase tracking-widest text-[#BFA16A] block mb-1">
+                      Master Communities
+                    </span>
+                    <h2 className="text-3xl font-serif font-bold text-[#171717]">
+                      {sec.title || 'Explore Communities'}
+                    </h2>
+                    {sec.description && <p className="text-sm text-[#737373] mt-1">{sec.description}</p>}
+                  </div>
+                  <CommunityGridSection />
+                </div>
+              </div>
+            );
+          }
+
+          if (sec.type === 'community-overview') {
+            return (
+              <div key={sec.id} className="py-12 bg-white border-b border-[#E5E0D8]">
+                <CommunityOverviewSection title={sec.title} contentText={sec.description || sec.detailHtml} />
+              </div>
+            );
+          }
+
+          if (sec.type === 'community-comparison') {
+            return (
+              <div key={sec.id} className="py-16 bg-[#FAF9F6] border-b border-[#E5E0D8]">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                  <CommunityComparisonSection />
+                </div>
+              </div>
+            );
+          }
+
+          if (sec.type === 'community-amenities-map') {
+            return (
+              <div key={sec.id} className="py-16 bg-white border-b border-[#E5E0D8]">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                  <CommunityAmenitiesLocationSection />
+                </div>
+              </div>
+            );
+          }
+
+          // -------------------------------------------------------------
+          // 4. DEVELOPERS SECTIONS
+          // -------------------------------------------------------------
+          if (sec.type === 'developer-logos') {
+            const devs = Array.isArray(sec.selectedDevelopers) && sec.selectedDevelopers.length > 0
+              ? sec.selectedDevelopers
+              : ['Emaar Properties', 'Damac', 'Nakheel', 'Meraas', 'Sobha Realty', 'Danube'];
+
+            return (
+              <section key={sec.id} className="py-16 bg-white border-b border-[#E5E0D8]">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full text-center space-y-8">
+                  <div>
+                    <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#171717]">
+                      {sec.title || 'Premier Master Developers'}
+                    </h2>
+                    {sec.description && (
+                      <p className="text-xs sm:text-sm text-[#737373] max-w-xl mx-auto mt-2">
+                        {sec.description}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 opacity-80 hover:opacity-100 transition-opacity">
+                    {devs.map((dName: string, dIdx: number) => (
+                      <div key={dIdx} className="p-4 rounded-xl border border-[#E5E0D8] bg-[#FAF9F6] min-w-[140px] text-center font-bold text-sm text-[#333333]">
+                        {dName}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </section>
             );
           }
 
-          // B. AMENITY SECTION 1
+          if (sec.type === 'developers-grid') {
+            return (
+              <div key={sec.id} className="py-16 bg-[#FAF9F6] border-b border-[#E5E0D8]">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                  <DevelopersDirectoryGrid initialDevelopers={initialDevelopers} />
+                </div>
+              </div>
+            );
+          }
+
+          if (sec.type === 'developers-intro') {
+            return (
+              <div key={sec.id} className="py-12 bg-white border-b border-[#E5E0D8]">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                  <DevelopersIntroSection />
+                </div>
+              </div>
+            );
+          }
+
+          if (sec.type === 'developer-projects') {
+            return (
+              <div key={sec.id} className="py-16 bg-[#FAF9F6] border-b border-[#E5E0D8]">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                  <DeveloperProjectsSection />
+                </div>
+              </div>
+            );
+          }
+
+          if (sec.type === 'developer-ask-banner') {
+            return (
+              <div key={sec.id} className="py-12 bg-white border-b border-[#E5E0D8]">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                  <DeveloperAskBriefBanner />
+                </div>
+              </div>
+            );
+          }
+
+          // -------------------------------------------------------------
+          // 5. THE VALLEY & MASTERPLAN SECTIONS
+          // -------------------------------------------------------------
+          if (sec.type === 'valley-score') {
+            return (
+              <div key={sec.id} className="py-12 bg-white border-b border-[#E5E0D8]">
+                <ValleyOverviewScoreSection scoreCircleImage={sec.bgImage || '/92&.png'} />
+              </div>
+            );
+          }
+
+          if (sec.type === 'valley-why') {
+            return (
+              <div key={sec.id} className="py-12 bg-[#FAF9F6] border-b border-[#E5E0D8]">
+                <WhyFSRecommendsValleySection
+                  title={sec.title || 'Why FS Recommends'}
+                  description={sec.description || sec.detailHtml}
+                />
+              </div>
+            );
+          }
+
+          if (sec.type === 'valley-highlights') {
+            return (
+              <div key={sec.id} className="py-12 bg-white border-b border-[#E5E0D8]">
+                <ValleyHighlightsSection
+                  primaryBtnText={sec.buttonText}
+                  primaryBtnLink={sec.buttonLink}
+                />
+              </div>
+            );
+          }
+
+          // -------------------------------------------------------------
+          // 6. BLOG & EDITORIAL SECTIONS
+          // -------------------------------------------------------------
+          if (sec.type === 'blog-featured') {
+            return (
+              <div key={sec.id} className="py-12 bg-white border-b border-[#E5E0D8]">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                  <BlogFeaturedJournalSection />
+                </div>
+              </div>
+            );
+          }
+
+          if (sec.type === 'blog-grid') {
+            return (
+              <div key={sec.id} className="py-16 bg-[#FAF9F6] border-b border-[#E5E0D8]">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                  <BlogArticlesGridSection />
+                </div>
+              </div>
+            );
+          }
+
+          if (sec.type === 'blog-where-to-live') {
+            return (
+              <div key={sec.id} className="py-12 bg-white border-b border-[#E5E0D8]">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                  <BlogWhereToLiveSection />
+                </div>
+              </div>
+            );
+          }
+
+          if (sec.type === 'blog-uae-offplan-banner') {
+            return (
+              <div key={sec.id} className="py-12 bg-[#FAF9F6] border-b border-[#E5E0D8]">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                  <BlogUaeOffplanBannerSection />
+                </div>
+              </div>
+            );
+          }
+
+          // -------------------------------------------------------------
+          // 7. ABOUT US & ADVISORY SECTIONS
+          // -------------------------------------------------------------
+          if (sec.type === 'about-story') {
+            return (
+              <div key={sec.id} className="py-16 bg-white border-b border-[#E5E0D8]">
+                <AboutUsSection />
+              </div>
+            );
+          }
+
+          if (sec.type === 'feature-bar') {
+            return <FeatureBar key={sec.id} />;
+          }
+
+          if (sec.type === 'match-score') {
+            return (
+              <div key={sec.id} className="py-16 bg-[#FAF9F6] border-b border-[#E5E0D8]">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                  <OverallMatchScoreSection />
+                </div>
+              </div>
+            );
+          }
+
+          if (sec.type === 'client-reviews') {
+            return <LatestReviewsSection key={sec.id} />;
+          }
+
+          // -------------------------------------------------------------
+          // 8. GENERAL, FORMS & FAQS SECTIONS
+          // -------------------------------------------------------------
           if (sec.type === 'amenity-1') {
             const amenities = Array.isArray(sec.selectedAmenities) && sec.selectedAmenities.length > 0
               ? sec.selectedAmenities
@@ -190,7 +641,7 @@ export default async function DynamicCatchAllPage({ params }: { params: Promise<
                     </div>
                     {sec.buttonText && (
                       <Link
-                        href="/buy"
+                        href={sec.buttonLink || '/buy'}
                         className="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider text-white shadow-sm transition hover:opacity-90 shrink-0 self-start md:self-auto"
                         style={{ backgroundColor: sec.buttonColor || '#BFA16A' }}
                       >
@@ -219,66 +670,6 @@ export default async function DynamicCatchAllPage({ params }: { params: Promise<
             );
           }
 
-          // C. TRENDING PROJECTS
-          if (sec.type === 'trending-projects') {
-            const projects = Array.isArray(sec.selectedProjects) && sec.selectedProjects.length > 0
-              ? sec.selectedProjects
-              : ['Palm Jebel Ali Villas', 'Emaar Creek Crescent', 'Damac Islands', 'Hillside Park Dubai Hills'];
-
-            return (
-              <section key={sec.id} className="py-20 bg-[#FAF9F6] border-b border-[#E5E0D8]">
-                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-10">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-widest text-[#BFA16A] block mb-2">
-                      Off-Plan Spotlight
-                    </span>
-                    <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#171717]">
-                      {sec.title || 'Trending Projects'}
-                    </h2>
-                    {sec.description && (
-                      <p className="text-sm sm:text-base text-[#666666] max-w-2xl mt-2 leading-relaxed">
-                        {sec.description}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {projects.map((pName: string, pIdx: number) => (
-                      <div
-                        key={pIdx}
-                        className="bg-white border border-[#E5E0D8] hover:border-[#BFA16A] rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all group flex flex-col justify-between"
-                      >
-                        <div className="relative h-48 w-full bg-[#FAF9F6] overflow-hidden">
-                          <img
-                            src="/1793600655_al-marjan.png"
-                            alt={pName}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                          <span className="absolute top-3 left-3 bg-[#111111]/80 backdrop-blur-xs text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
-                            Off-Plan
-                          </span>
-                        </div>
-                        <div className="p-5 space-y-2">
-                          <h4 className="text-base font-bold text-[#171717] group-hover:text-[#BFA16A] transition-colors">
-                            {pName}
-                          </h4>
-                          <p className="text-xs text-[#737373]">Prime Dubai District • High Capital Yield</p>
-                          <div className="pt-3 border-t border-[#E5E0D8] flex items-center justify-between">
-                            <span className="text-xs font-bold text-[#BFA16A]">Starting from AED 2.4M</span>
-                            <Link href="/project-main-page" className="text-xs font-semibold text-[#171717] hover:underline">
-                              Details →
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </section>
-            );
-          }
-
-          // D. CONTENT SECTION 1 (Summernote HTML)
           if (sec.type === 'content-1') {
             return (
               <section key={sec.id} className="py-20 bg-white border-b border-[#E5E0D8]">
@@ -303,87 +694,34 @@ export default async function DynamicCatchAllPage({ params }: { params: Promise<
             );
           }
 
-          // E. EXPLORE MORE COMMUNITIES
-          if (sec.type === 'explore-more') {
-            const communities = Array.isArray(sec.selectedCommunities) && sec.selectedCommunities.length > 0
-              ? sec.selectedCommunities
-              : ['Dubai Hills Estate', 'Palm Jumeirah', 'Dubai Creek Harbour', 'Downtown Dubai'];
-
+          if (sec.type === 'offplan-guide') {
             return (
-              <section key={sec.id} className="py-20 bg-[#FAF9F6] border-b border-[#E5E0D8]">
-                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-10">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-widest text-[#BFA16A] block mb-2">
-                      Master Communities
-                    </span>
-                    <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#171717]">
-                      {sec.title || 'Explore More Communities'}
-                    </h2>
-                    {sec.description && (
-                      <p className="text-sm sm:text-base text-[#666666] max-w-2xl mt-2 leading-relaxed">
-                        {sec.description}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {communities.map((cName: string, cIdx: number) => (
-                      <Link
-                        key={cIdx}
-                        href="/communities"
-                        className="p-6 bg-white rounded-2xl border border-[#E5E0D8] hover:border-[#BFA16A] transition-all shadow-xs group space-y-3"
-                      >
-                        <div className="w-10 h-10 rounded-xl bg-[#FAF9F6] border border-[#E5E0D8] flex items-center justify-center text-lg text-[#BFA16A]">
-                          🏛️
-                        </div>
-                        <h4 className="text-base font-bold text-[#171717] group-hover:text-[#BFA16A] transition-colors">
-                          {cName}
-                        </h4>
-                        <p className="text-xs text-[#737373]">Iconic master neighborhood with world-class infrastructure.</p>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </section>
+              <div key={sec.id} className="max-w-[1440px] mx-auto px-3 sm:px-5 lg:px-8 w-full py-16">
+                <OffPlanGuideSection contentHtml={sec.detailHtml} pageSlug={page.slug} />
+              </div>
             );
           }
 
-          // F. DEVELOPER LOGOS
-          if (sec.type === 'developer-logos') {
-            const devs = Array.isArray(sec.selectedDevelopers) && sec.selectedDevelopers.length > 0
-              ? sec.selectedDevelopers
-              : ['Emaar Properties', 'Damac', 'Nakheel', 'Meraas', 'Sobha Realty', 'Danube'];
-
+          if (sec.type === 'faqs') {
             return (
-              <section key={sec.id} className="py-16 bg-white border-b border-[#E5E0D8]">
-                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full text-center space-y-8">
-                  <div>
-                    <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#171717]">
-                      {sec.title || 'Premier Master Developers'}
-                    </h2>
-                    {sec.description && (
-                      <p className="text-xs sm:text-sm text-[#737373] max-w-xl mx-auto mt-2">
-                        {sec.description}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 opacity-80 hover:opacity-100 transition-opacity">
-                    {devs.map((dName: string, dIdx: number) => (
-                      <div key={dIdx} className="p-4 rounded-xl border border-[#E5E0D8] bg-[#FAF9F6] min-w-[140px] text-center font-bold text-sm text-[#333333]">
-                        {dName}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </section>
+              <div key={sec.id} className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full py-16">
+                <BuyerGuideFaqSection pageSlug={page.slug} />
+              </div>
             );
           }
 
-          // G. FOOTER FORM
+          if (sec.type === 'strategy-session') {
+            return (
+              <div key={sec.id} className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full py-12">
+                <BookStrategySessionBanner />
+              </div>
+            );
+          }
+
           if (sec.type === 'footer-form') {
             return (
               <section key={sec.id} className="py-20 bg-[#FAF9F6] border-b border-[#E5E0D8]">
-                <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8 w-full bg-white border border-[#E5E0D8] rounded-3xl p-8 sm:p-12 shadow-sm space-y-8">
+                <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-8">
                   <div className="text-center space-y-2">
                     <span className="text-xs font-bold uppercase tracking-widest text-[#BFA16A]">
                       Direct Advisory
@@ -397,53 +735,27 @@ export default async function DynamicCatchAllPage({ params }: { params: Promise<
                       </p>
                     )}
                   </div>
-                  <form className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <input
-                        type="text"
-                        placeholder="Full Name"
-                        className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#BFA16A]"
-                      />
-                      <input
-                        type="email"
-                        placeholder="Email Address"
-                        className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#BFA16A]"
-                      />
-                    </div>
-                    <input
-                      type="tel"
-                      placeholder="Phone / WhatsApp Number"
-                      className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#BFA16A]"
-                    />
-                    <textarea
-                      rows={3}
-                      placeholder="Your investment goals, preferred location or unit size..."
-                      className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl p-4 text-sm focus:outline-none focus:border-[#BFA16A]"
-                    />
-                    <button
-                      type="button"
-                      className="w-full py-4 rounded-xl text-xs font-bold uppercase tracking-wider text-white shadow-md transition hover:opacity-90 cursor-pointer"
-                      style={{ backgroundColor: sec.buttonColor || '#BFA16A' }}
-                    >
-                      {sec.buttonText || 'Submit Enquiry'}
-                    </button>
-                  </form>
+                  <ProjectEnquiryForm />
                 </div>
               </section>
             );
           }
 
-          // H. BUYER GUIDE & FAQS
-          if (sec.type === 'faqs') {
-            return (
-              <div key={sec.id} className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full py-16">
-                <BuyerGuideFaqSection pageSlug={slug} />
-              </div>
-            );
-          }
-
           return null;
         })}
+
+        {/* Clean Message if No Sections Added */}
+        {dynamicSections.length === 0 && (
+          <div className="py-32 text-center max-w-xl mx-auto px-4 space-y-4">
+            <div className="w-16 h-16 rounded-2xl bg-[#EFE5D3] text-[#BFA16A] text-2xl flex items-center justify-center mx-auto shadow-xs">
+              ✨
+            </div>
+            <h1 className="text-3xl font-serif font-bold text-[#171717]">{page.title}</h1>
+            <p className="text-sm text-[#737373] leading-relaxed">
+              {page.meta_description || 'This page was created with the Dynamic Page Builder. Add sections in the CMS to populate content.'}
+            </p>
+          </div>
+        )}
 
         <Footer />
       </div>

@@ -1,0 +1,166 @@
+import React from 'react';
+import type { Metadata } from 'next';
+import BlogHeroSection from '@/components/BlogHeroSection';
+import BlogDetailsContentSection from '@/components/BlogDetailsContentSection';
+import BuyerGuideFaqSection from '@/components/BuyerGuideFaqSection';
+import { getBlogDetailData } from '@/lib/blogs';
+import { getPageBySlug } from '@/lib/api';
+import Navbar from '@/components/Navbar';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+
+export const revalidate = 0; // Dynamic route
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+
+  // 1. Try finding as blog post first
+  const { page: blogPage, blog } = await getBlogDetailData(slug);
+  if (blogPage || (blog && (blog.slug === slug || blog.slug === `blog-${slug}`))) {
+    return {
+      title: blogPage?.meta_title || `${blog.title} | Blog Details | FS Real Estate Advisory`,
+      description:
+        blogPage?.meta_description ||
+        blog.introParagraph ||
+        "Expert insights, market analysis, and the latest updates on Dubai's thriving real estate market.",
+    };
+  }
+
+  // 2. Fallback to standard dynamic page
+  const page = await getPageBySlug(slug);
+  if (!page) return { title: 'Page Not Found' };
+
+  return {
+    title: page.meta_title || page.title,
+    description: page.meta_description || '',
+  };
+}
+
+export default async function DynamicCatchAllPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+
+  // 1. Check if this slug is a Blog Post
+  const { page: blogPage, blog } = await getBlogDetailData(slug);
+  const isBlog =
+    Boolean(blogPage?.content?.blogMeta) ||
+    Boolean(blogPage?.content?.customSections?.['blog-content']) ||
+    (blog && (blog.slug.toLowerCase() === slug.toLowerCase() || blog.slug.toLowerCase() === `blog-${slug.toLowerCase()}`));
+
+  if (isBlog && blog) {
+    const customSec = blogPage?.content?.customSections || {};
+    const heroSec = customSec['blog-hero'] || customSec['blog-details-hero'] || blogPage?.content?.hero || {};
+
+    const blogContent = customSec['blog-content'] || {};
+    const blogImages = customSec['blog-images'] || {};
+    const blogKeyFigures = customSec['blog-keyfigures'] || {};
+    const blogHtml = blogContent.detailHtml || customSec['blog-html']?.detailHtml || customSec['blog-guide']?.detailHtml;
+
+    const blogData = {
+      title: blogContent.title || blogPage?.title || blog.title,
+      category: blogContent.category || blog.category,
+      date: blogContent.date || blog.date,
+      introParagraph: blogContent.introParagraph || blog.introParagraph,
+      secondParagraph: blogContent.secondParagraph || blog.secondParagraph,
+      bodyParagraphs: blogContent.bodyParagraphs || blog.bodyParagraphs,
+      imageSrc: blogImages.primaryImage || blog.imageSrc,
+      secondImageSrc: blogImages.secondaryImage || blog.secondImageSrc,
+      keyFigures: {
+        ...blog.keyFigures,
+        ...(blogKeyFigures.metrics || blogKeyFigures || {}),
+      },
+      detailHtml: blogHtml,
+    };
+
+    return (
+      <main className="min-h-screen bg-[#FAF9F6]">
+        {/* Blog Hero Section */}
+        <BlogHeroSection
+          breadcrumbHome={heroSec.breadcrumbHome || 'Home'}
+          breadcrumbCurrent={heroSec.breadcrumbCurrent || 'Blogs'}
+          headingLine1={heroSec.titleLine1 || 'REAL ESTATE'}
+          headingLine2={heroSec.titleLine2 || 'NEWS & INSIGHTS'}
+          description={
+            heroSec.subheading ||
+            "Expert insights, market analysis, and the latest updates on Dubai's thriving real estate market"
+          }
+          searchPlaceholder={heroSec.searchPlaceholder || 'Looking for Something Specific?'}
+          imageSrc={heroSec.bgImage || '/blog-hero.png'}
+        />
+
+        {/* Blog Main Content & Sidebar */}
+        <BlogDetailsContentSection blogData={blogData} />
+
+        {/* Global FAQs Section */}
+        <div className="max-w-[1440px] mx-auto px-3 sm:px-5 lg:px-8 w-full pb-8 sm:pb-12">
+          <BuyerGuideFaqSection pageSlug={blogPage?.slug || slug || 'blog-details'} />
+        </div>
+      </main>
+    );
+  }
+
+  // 2. Standard Dynamic Page
+  const page = await getPageBySlug(slug);
+
+  if (!page || page.status !== 'published') {
+    notFound();
+  }
+
+  const hero = page.content?.hero || {};
+  const features = page.content?.features || [];
+
+  return (
+    <div className="min-h-screen bg-[#FAF9F6] text-[#171717] flex flex-col font-sans">
+      <Navbar />
+
+      {/* Dynamic Hero Section */}
+      <section className="relative py-24 bg-gradient-to-b from-[#FAF9F6] via-[#F4F1EA] to-[#FAF9F6] border-b border-[#E5E0D8]">
+        <div className="max-w-[1440px] mx-auto px-3 sm:px-5 lg:px-8 text-center space-y-6">
+          <div className="inline-block px-4 py-1.5 rounded-full bg-[#BFA16A]/10 border border-[#BFA16A]/30 text-[#BFA16A] text-xs uppercase tracking-widest font-semibold">
+            {page.title}
+          </div>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#171717] leading-tight">
+            {hero.heading || page.title}
+          </h1>
+          <p className="text-lg sm:text-xl text-[#525252] max-w-3xl mx-auto leading-relaxed">
+            {hero.subheading || 'Explore premium real estate opportunities curated for you.'}
+          </p>
+
+          <div className="pt-4 flex justify-center gap-4">
+            <Link
+              href="/"
+              className="px-8 py-3.5 bg-[#BFA16A] hover:bg-[#aa8e59] text-white font-semibold text-sm tracking-wider uppercase rounded-lg shadow-md transition"
+            >
+              {hero.ctaText || 'Contact Advisor'}
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Dynamic Features / Sections */}
+      {features.length > 0 && (
+        <section className="py-20 max-w-[1440px] mx-auto px-3 sm:px-5 lg:px-8 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {features.map((feat: { title: string; desc: string }, idx: number) => (
+              <div
+                key={idx}
+                className="bg-white p-8 rounded-2xl border border-[#E5E0D8] shadow-sm hover:shadow-md transition"
+              >
+                <div className="w-12 h-12 rounded-xl bg-[#BFA16A]/10 text-[#BFA16A] flex items-center justify-center font-bold text-lg mb-4">
+                  0{idx + 1}
+                </div>
+                <h3 className="text-xl font-bold text-[#171717] mb-2">{feat.title}</h3>
+                <p className="text-sm text-[#525252] leading-relaxed">{feat.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Dynamic Data Sync Banner */}
+      <footer className="mt-auto py-8 border-t border-[#E5E0D8] bg-white text-center text-xs text-[#737373]">
+        Dynamic page powered by <span className="font-semibold text-[#BFA16A]">Laravel Backend API</span> & Managed via{' '}
+        <span className="font-semibold text-[#171717]">FS CMS Dashboard</span>.
+      </footer>
+    </div>
+  );
+}

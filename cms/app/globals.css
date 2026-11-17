@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #FAF9F6;
+    color: #171717;
+    font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  /* Make sure every interactive link, button, role=button, and action item shows cursor-pointer */
+  a,
+  button,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"],
+  summary,
+  select,
+  .cursor-pointer {
+    cursor: pointer !important;
+  }
+}
+
+/* Fallback global rule ensuring cursor pointer across all interactive elements */
+a,
+a *,
+button,
+button *,
+[role="button"],
+[role="button"] *,
+[onclick] {
+  cursor: pointer;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF9F6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4CEC3;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #BFA16A;
+}

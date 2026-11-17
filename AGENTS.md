@@ -7,3 +7,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+# Project Agent Scope & Rules
+
+- **Workspace Boundaries:** Strictly operate within `e:\fs_properties`. Do not access or modify files in `fs_realestate` or other project directories.
+- **Component Implementation:** Only build UI components when explicitly requested with design specs/code provided by the user. Keep components modular, reusable, and single-purpose (one component per file).
+- **Architecture:** Next.js App Router with TypeScript and Tailwind CSS.

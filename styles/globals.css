@@ -1,0 +1,45 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-cinzel: 'Cinzel', serif;
+  --font-poppins: 'Poppins', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  --font-playfair: 'Playfair Display', serif;
+  --font-plus-jakarta: 'Plus Jakarta Sans', sans-serif;
+  --font-donegal: 'Donegal One', serif;
+  --font-lora: 'Lora', serif;
+  --color-gold: #BFA16A;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --font-cinzel: 'Cinzel', serif;
+  --font-poppins: 'Poppins', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  --font-playfair: 'Playfair Display', serif;
+  --font-plus-jakarta: 'Plus Jakarta Sans', sans-serif;
+  --font-donegal: 'Donegal One', serif;
+  --font-lora: 'Lora', serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-poppins), sans-serif;
+}
+
+/* Ensure all links, buttons, and clickable elements show pointer cursor */
+a,
+a *,
+button,
+button *,
+[role="button"],
+[role="button"] *,
+[onclick],
+input[type="submit"],
+input[type="button"],
+summary,
+select {
+  cursor: pointer !important;
+}

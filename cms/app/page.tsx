@@ -1611,6 +1611,13 @@ export default function CMSDashboard() {
   const [communities, setCommunities] = useState<CommunityItem[]>(DEFAULT_COMMUNITY_CARDS);
   const [developerCards, setDeveloperCards] = useState<DeveloperCardItem[]>(DEFAULT_DEVELOPER_CARDS);
   const [blogsList, setBlogsList] = useState<BlogCMSItem[]>(DEFAULT_BLOGS_CMS);
+  const [liveHostname, setLiveHostname] = useState('localhost');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hostname) {
+      setLiveHostname(window.location.hostname);
+    }
+  }, []);
 
   // FULL PAGE EDITOR STATE
   const [editingPage, setEditingPage] = useState<PageItem | null>(null);
@@ -5526,7 +5533,7 @@ export default function CMSDashboard() {
                   const isDevSlug = developerCards.some((d) => d.slug === editingPage.slug);
                   const isBlog = editorReturnTab === 'blogs' || isBlogPage(editingPage) || editingPage.slug === 'blog-details';
                   const isProp = editorReturnTab === 'properties' || isPropertyPage(editingPage) || editingPage.slug === 'buy-detail';
-                  const liveHost = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost';
+                  const liveHost = liveHostname;
                   const targetLiveUrl =
                     editingPage.slug === 'recommendation-result' || pageSlug === 'recommendation-result'
                       ? `http://${liveHost}:3000/${pageSlug || 'recommendation-result'}`
@@ -5546,8 +5553,7 @@ export default function CMSDashboard() {
                     <div className="flex items-center gap-3 flex-wrap">
                       <div className="text-xs text-[#525252]">
                         <span className="text-[#888888] font-medium mr-1.5">Page URL:</span>
-                        <a
-                          href={targetLiveUrl}
+                        <a suppressHydrationWarning href={targetLiveUrl}
                           target="_blank"
                           rel="noreferrer"
                           className="font-medium text-[#5B6BF0] hover:underline"
@@ -5555,8 +5561,7 @@ export default function CMSDashboard() {
                           {targetLiveUrl}
                         </a>
                       </div>
-                      <a
-                        href={targetLiveUrl}
+                      <a suppressHydrationWarning href={targetLiveUrl}
                         target="_blank"
                         rel="noreferrer"
                         className="px-3 py-1.5 text-xs font-semibold text-[#171717] bg-[#FAF9F6] border border-[#E5E0D8] hover:border-[#BFA16A] hover:text-[#BFA16A] rounded-xl transition flex items-center gap-1.5 shadow-2xs"
@@ -12589,8 +12594,7 @@ export default function CMSDashboard() {
               </div>
 
               <div className="flex items-center gap-4">
-                <a
-                  href={`http://${typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost'}:3000`}
+                <a suppressHydrationWarning href={`http://${liveHostname}:3000`}
                   target="_blank"
                   rel="noreferrer"
                   className="px-4 py-2.5 text-xs font-semibold text-[#171717] bg-white border border-[#E5E0D8] hover:border-[#BFA16A] hover:text-[#BFA16A] rounded-xl transition shadow-xs flex items-center gap-2"
@@ -12735,8 +12739,7 @@ export default function CMSDashboard() {
                               </span>
                             </td>
                             <td className="px-6 py-4 text-right space-x-2">
-                              <a
-                                href={`http://${typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost'}:3000/${p.slug === 'home' ? '' : p.slug}`}
+                              <a suppressHydrationWarning href={`http://${liveHostname}:3000/${p.slug === 'home' ? '' : p.slug}`}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="px-3 py-1.5 text-xs font-semibold text-[#525252] bg-white hover:text-[#BFA16A] hover:border-[#BFA16A] rounded-lg transition border border-[#E5E0D8]"
@@ -12850,8 +12853,7 @@ export default function CMSDashboard() {
                               {'Recently'}
                             </td>
                             <td className="px-6 py-4 text-right space-x-2">
-                              <a
-                                href={`http://${typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost'}:3000/${p.slug}`}
+                              <a suppressHydrationWarning href={`http://${liveHostname}:3000/${p.slug}`}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="px-3 py-1.5 text-xs font-semibold text-[#525252] bg-white hover:text-[#BFA16A] hover:border-[#BFA16A] rounded-lg transition border border-[#E5E0D8]"
@@ -13006,8 +13008,7 @@ export default function CMSDashboard() {
 
                               {/* Actions */}
                               <div className="mt-4 pt-3 border-t border-[#E5E0D8] flex items-center gap-2">
-                                <a
-                                  href={`http://${typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost'}:3000/buy-detail?slug=${pSlug}`}
+                                <a suppressHydrationWarning href={`http://${liveHostname}:3000/buy-detail?slug=${pSlug}`}
                                   target="_blank"
                                   rel="noreferrer"
                                   className="py-1.5 px-2.5 text-xs font-semibold text-[#525252] bg-white hover:text-[#BFA16A] hover:border-[#BFA16A] rounded-xl transition border border-[#E5E0D8] flex items-center justify-center"
@@ -13114,8 +13115,7 @@ export default function CMSDashboard() {
                             </span>
                           </td>
                           <td className="px-6 py-4 text-right space-x-2">
-                            <a
-                              href={`http://${typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost'}:3000/project-detail?slug=${o.slug || o.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}`}
+                            <a suppressHydrationWarning href={`http://${liveHostname}:3000/project-detail?slug=${o.slug || o.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}`}
                               target="_blank"
                               rel="noreferrer"
                               className="px-2.5 py-1 text-xs font-semibold text-[#525252] bg-white hover:text-[#BFA16A] hover:border-[#BFA16A] rounded-lg transition border border-[#E5E0D8] inline-flex items-center gap-1 shadow-2xs"
@@ -13199,7 +13199,7 @@ export default function CMSDashboard() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                       {communities.map((c) => {
                         const slug = c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-                        const liveHost = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost';
+                        const liveHost = liveHostname;
                         const targetUrl = c.href && c.href !== '#'
                           ? (c.href.startsWith('http') ? c.href : `http://${liveHost}:3000${c.href.startsWith('/') ? '' : '/'}${c.href}`)
                           : `http://${liveHost}:3000/community-detail`;
@@ -13456,8 +13456,7 @@ export default function CMSDashboard() {
                               >
                                 Edit Detail Page
                               </button>
-                              <a
-                                href={`http://${typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost'}:3000/developers/${slug}`}
+                              <a suppressHydrationWarning href={`http://${liveHostname}:3000/developers/${slug}`}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="p-1.5 text-xs font-semibold text-[#525252] hover:text-[#BFA16A] bg-[#FAF9F6] hover:bg-white rounded-xl transition border border-[#E5E0D8]"
@@ -13577,8 +13576,7 @@ export default function CMSDashboard() {
                             </span>
                           </td>
                           <td className="px-6 py-4 text-right space-x-2">
-                            <a
-                              href={`http://${typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost'}:3000/blog-details?slug=${b.slug}`}
+                            <a suppressHydrationWarning href={`http://${liveHostname}:3000/blog-details?slug=${b.slug}`}
                               target="_blank"
                               rel="noreferrer"
                               className="px-2.5 py-1 text-xs font-semibold text-[#525252] bg-white hover:text-[#BFA16A] hover:border-[#BFA16A] rounded-lg transition border border-[#E5E0D8] inline-flex items-center gap-1 shadow-2xs"

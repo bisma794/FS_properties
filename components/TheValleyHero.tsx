@@ -10,7 +10,7 @@ interface TheValleyHeroProps {
 
 export default function TheValleyHero({
   title = 'THE VALLEY',
-  subtitle = 'By Emaar',
+  subtitle,
   backgroundImage = '/valley_hero.png',
 }: TheValleyHeroProps) {
   const words = (title || 'RECOMMENDATION RESULT').trim().split(/\s+/);

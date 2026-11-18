@@ -16,7 +16,7 @@ export default function BuyHeroSection({
   breadcrumb = 'Buy / Dubai creek harbour',
   headingLine1 = 'BUY IN DUBAI',
   headingLine2 = 'WITH CLARITY',
-  description = 'A measured search process for buyers who want context, comparison and practical guidance.',
+  description,
   detailHtml,
   imageSrc = '/buy-hero.png',
 }: BuyHeroSectionProps) {
@@ -85,15 +85,17 @@ export default function BuyHeroSection({
               </h1>
 
               {/* Description Text (Poppins Regular) */}
-              <p
-                className="text-xs sm:text-sm lg:text-[14.5px] text-[#737373] leading-relaxed max-w-md sm:max-w-lg mt-5 sm:mt-6"
-                style={{
-                  fontFamily: 'var(--font-poppins), Poppins, sans-serif',
-                  fontWeight: 400,
-                }}
-              >
-                {description}
-              </p>
+              {description ? (
+                <p
+                  className="text-xs sm:text-sm lg:text-[14.5px] text-[#737373] leading-relaxed max-w-md sm:max-w-lg mt-5 sm:mt-6"
+                  style={{
+                    fontFamily: 'var(--font-poppins), Poppins, sans-serif',
+                    fontWeight: 400,
+                  }}
+                >
+                  {description}
+                </p>
+              ) : null}
             </>
           )}
         </div>

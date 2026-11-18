@@ -15,7 +15,7 @@ export default function DevelopersIntroSection({
   countLabel = 'Developers',
   headingWord1 = 'ALL',
   headingWord2 = 'DEVELOPERS',
-  content = 'Dubai Creek Harbour combines a relaxed waterfront lifestyle with a contemporary residential skyline, creating a setting that feels both modern and connected. Its walkable promenades, open waterfront views, landscaped spaces, and proximity to Downtown Dubai make the community appealing to both end users and investors. As the area continues to develop, the experience of living or investing can vary significantly from one building to another. Factors such as building position, view corridor, orientation, surrounding amenities, accessibility, and expected handover timing should therefore be carefully considered. Understanding the wider development plans and upcoming infrastructure is equally important, as these can influence both day-to-day convenience and long-term value. Comparing projects within the community helps identify not just the most attractive home, but the location and investment opportunity that best match your priorities.',
+  content,
 }: DevelopersIntroSectionProps) {
   const [activeSort, setActiveSort] = useState<'most' | 'az'>('most');
   const [liveIntro, setLiveIntro] = useState<{
@@ -135,15 +135,17 @@ export default function DevelopersIntroSection({
         <div className="w-full border-b border-[#E5E0D8]/90 pt-1" />
 
         {/* Content Paragraph: Poppins Light */}
-        <p
-          className="text-xs sm:text-[13.5px] lg:text-[14px] text-[#737373] leading-relaxed max-w-6xl font-light pt-1"
-          style={{
-            fontFamily: 'var(--font-poppins), Poppins, sans-serif',
-            fontWeight: 300,
-          }}
-        >
-          {finalContent}
-        </p>
+        {finalContent ? (
+          <p
+            className="text-xs sm:text-[13.5px] lg:text-[14px] text-[#737373] leading-relaxed max-w-6xl font-light pt-1"
+            style={{
+              fontFamily: 'var(--font-poppins), Poppins, sans-serif',
+              fontWeight: 300,
+            }}
+          >
+            {finalContent}
+          </p>
+        ) : null}
 
       </div>
     </section>

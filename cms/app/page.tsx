@@ -1806,7 +1806,7 @@ export default function CMSDashboard() {
     }));
   };
   const getSectionTitle = (secId: string, defaultTitle: string = '') => {
-    return customSectionsData[secId]?.title || defaultTitle;
+    return customSectionsData[secId]?.title !== undefined ? customSectionsData[secId].title! : defaultTitle;
   };
   const setSectionTitle = (secId: string, val: string) => {
     setCustomSectionsData((prev) => ({
@@ -1818,7 +1818,7 @@ export default function CMSDashboard() {
     }));
   };
   const getSectionTagline = (secId: string, defaultTagline: string = '') => {
-    return customSectionsData[secId]?.tagline || defaultTagline;
+    return customSectionsData[secId]?.tagline !== undefined ? customSectionsData[secId].tagline! : defaultTagline;
   };
   const setSectionTagline = (secId: string, val: string) => {
     setCustomSectionsData((prev) => ({
@@ -1830,7 +1830,9 @@ export default function CMSDashboard() {
     }));
   };
   const getSectionContentText = (secId: string, defaultContent: string = '') => {
-    return customSectionsData[secId]?.contentText || defaultContent;
+    if (customSectionsData[secId]?.contentText !== undefined) return customSectionsData[secId].contentText!;
+    if (customSectionsData[secId]?.description !== undefined) return customSectionsData[secId].description!;
+    return defaultContent;
   };
   const setSectionContentText = (secId: string, val: string) => {
     setCustomSectionsData((prev) => ({
@@ -2728,22 +2730,22 @@ export default function CMSDashboard() {
       setHeroBgImage(hero.backgroundImage || hero.coverImage || hero.bgImage || '/ai_engine_hero.jpg');
       setHeroDetail(hero.detailHtml || `<h2>${h1} <span style="color:#BFA16A">${h2}</span></h2><p>${hero.subheading || ''}</p>`);
     } else {
-      h1 = h1 || 'DISCOVER THE';
-      h2 = h2 || 'RIGHT PROPERTY';
-      h3 = h3 || 'OPPORTUNITY.';
+      h1 = h1 || (page.slug === 'opportunities' || page.slug === 'the-valley' ? 'OPPORTUNITIES' : 'DISCOVER THE');
+      h2 = h2 || (page.slug === 'opportunities' || page.slug === 'the-valley' ? '' : 'RIGHT PROPERTY');
+      h3 = h3 || (page.slug === 'opportunities' || page.slug === 'the-valley' ? '' : 'OPPORTUNITY.');
 
     setHeroHeading(hHeading || [h1, h2, h3].filter(Boolean).join(' '));
-    setHeroTagline(hero.tagline || hero.badge || hero.subheading || 'Curated opportunities. Intelligent insights. Aligned with your goals.');
+    setHeroTagline(hero.tagline ?? hero.badge ?? '');
     setHeroTitle1(h1);
     setHeroTitle2(h2);
     setHeroTitle3(h3);
-    setHeroSubheading(hero.subheading || hero.tagline || 'Curated opportunities. Intelligent insights. Aligned with your goals.');
+    setHeroSubheading(hero.subheading ?? hero.tagline ?? '');
     setHeroPrimaryCtaText(hero.primaryCtaText || hero.ctaText || 'Start AI Assessment');
     setHeroPrimaryCtaLink(hero.primaryCtaLink || hero.ctaLink || '/ai-assessment');
     setHeroSecondaryCtaText(hero.secondaryCtaText || 'Browse Opportunities');
-    setHeroSecondaryCtaLink(hero.secondaryCtaLink || '/the-valley');
-    setHeroBgImage(hero.backgroundImage || hero.coverImage || hero.bgImage || '/buy_hero.png');
-    setHeroDetail(hero.detailHtml || `<h2>${h1} <span style="color:#BFA16A">${h2}</span> ${h3}</h2><p>${hero.subheading || hero.tagline || 'Curated opportunities. Intelligent insights. Aligned with your goals.'}</p>`);
+    setHeroSecondaryCtaLink(hero.secondaryCtaLink || '/opportunities');
+    setHeroBgImage(hero.backgroundImage || hero.coverImage || hero.bgImage || (page.slug === 'opportunities' || page.slug === 'the-valley' ? '/valley_hero.png' : '/buy_hero.png'));
+    setHeroDetail(hero.detailHtml || `<h2>${h1} <span style="color:#BFA16A">${h2}</span> ${h3}</h2><p>${hero.subheading || hero.tagline || ''}</p>`);
     }
 
     // Section 2: Feature Bar
@@ -3975,10 +3977,20 @@ export default function CMSDashboard() {
         },
       };
 
+      // Track if the slug was updated
+      const oldSlug = editingPage.slug;
+      const isSlugChanged = oldSlug && oldSlug !== payload.slug;
+      if (isSlugChanged) {
+        (payload as any).previousSlug = oldSlug;
+      }
+
       // Immediately cache in localStorage for real-time frontend hydration across tabs
       try {
         if (typeof window !== 'undefined') {
           localStorage.setItem(`fs_page_${payload.slug}`, JSON.stringify(payload));
+          if (isSlugChanged) {
+            localStorage.removeItem(`fs_page_${oldSlug}`);
+          }
           if (payload.slug === 'home' || payload.slug === 'homepage') {
             localStorage.setItem('fs_page_home', JSON.stringify(payload));
             localStorage.setItem('fs_hero_home', JSON.stringify(payload.content.hero));
@@ -3995,6 +4007,7 @@ export default function CMSDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           pages: { [payload.slug]: payload },
+          ...(isSlugChanged ? { deletedPages: [oldSlug] } : {}),
           ...(payload.slug === 'developers' && Array.isArray(finalizedCustomSections['dev-grid']?.items)
             ? { developerCards: finalizedCustomSections['dev-grid'].items }
             : {}),
@@ -9172,6 +9185,14 @@ export default function CMSDashboard() {
                                     className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717] focus:outline-none focus:border-[#BFA16A]"
                                   />
                                 </div>
+
+                                {/* Section Background / Cover Image Picker for valley-hero & custom sections */}
+                                <CoverImagePicker
+                                  label={`${secLabel} Background / Cover Image`}
+                                  imageUrl={getSectionBg(activeSectionTab) || (activeSectionTab === 'valley-hero' ? '/valley_hero.png' : '')}
+                                  onChange={(url) => setSectionBg(activeSectionTab, url)}
+                                  onFileUpload={handleFileUpload}
+                                />
                               </div>
                             )}
 

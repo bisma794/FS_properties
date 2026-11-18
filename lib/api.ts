@@ -12,6 +12,38 @@ const LOCAL_SYNC_URL = typeof window !== 'undefined'
   : 'http://127.0.0.1:3000/api/cms-sync';
 
 async function getLocalSyncedPage(slug: string): Promise<PageData | null> {
+  const normalizedSlug = slug.toLowerCase().trim();
+
+  const findMatchingPage = (pagesObj: Record<string, any>): PageData | null => {
+    if (!pagesObj) return null;
+    if (pagesObj[slug]) return pagesObj[slug];
+    if (pagesObj[normalizedSlug]) return pagesObj[normalizedSlug];
+
+    const values = Object.values(pagesObj);
+    // Find by exact current slug
+    const matchBySlug = values.find(
+      (p: any) => p && typeof p === 'object' && String(p.slug || '').toLowerCase().trim() === normalizedSlug
+    );
+    if (matchBySlug) return matchBySlug as PageData;
+
+    // Find by previousSlug (when user renamed the slug in CMS)
+    const matchByPrev = values.find(
+      (p: any) => p && typeof p === 'object' && String(p.previousSlug || '').toLowerCase().trim() === normalizedSlug
+    );
+    if (matchByPrev) return matchByPrev as PageData;
+
+    // Aliases for core pages that may have been renamed in CMS
+    if (normalizedSlug === 'opportunities' || normalizedSlug === 'the-valley' || normalizedSlug === 'recommendation-result') {
+      const matchAlias = values.find((p: any) => {
+        const s = String(p?.slug || '').toLowerCase().trim();
+        return s === 'opportunities' || s === 'the-valley' || s === 'recommendation-result';
+      });
+      if (matchAlias) return matchAlias as PageData;
+    }
+
+    return null;
+  };
+
   // 1. Direct file read on server side (fastest & 100% reliable)
   if (typeof window === 'undefined') {
     try {
@@ -20,8 +52,9 @@ async function getLocalSyncedPage(slug: string): Promise<PageData | null> {
       const storePath = pathSync.join(process.cwd(), '.cms-sync.json');
       const raw = await fsSync.readFile(storePath, 'utf-8');
       const json = JSON.parse(raw);
-      if (json?.pages && json.pages[slug]) {
-        return json.pages[slug];
+      if (json?.pages) {
+        const match = findMatchingPage(json.pages);
+        if (match) return match;
       }
     } catch {
       // fallback to http
@@ -33,8 +66,9 @@ async function getLocalSyncedPage(slug: string): Promise<PageData | null> {
     const res = await fetch(LOCAL_SYNC_URL, { cache: 'no-store' });
     if (!res.ok) return null;
     const json = await res.json();
-    if (json?.success && json.data?.pages && json.data.pages[slug]) {
-      return json.data.pages[slug];
+    if (json?.success && json.data?.pages) {
+      const match = findMatchingPage(json.data.pages);
+      if (match) return match;
     }
   } catch {
     // ignore if local sync route is unavailable

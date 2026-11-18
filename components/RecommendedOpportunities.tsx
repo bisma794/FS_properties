@@ -52,7 +52,7 @@ export default function RecommendedOpportunities() {
   const [titleLine1, setTitleLine1] = useState('Opportunities We');
   const [titleLine2, setTitleLine2] = useState('Currently Recommend');
   const [tagline, setTagline] = useState('FEATURED INVESTMENTS');
-  const [description, setDescription] = useState('Hand-picked, high-yield developments across prime UAE communities.');
+  const [description, setDescription] = useState('');
   const [viewAllLink, setViewAllLink] = useState('/project-main-page');
   const [cards, setCards] = useState<OpportunityCard[]>(defaultOpportunities);
 
@@ -71,7 +71,9 @@ export default function RecommendedOpportunities() {
       }
     }
     if (opp.tagline || opp.badge) setTagline(opp.tagline || opp.badge);
-    if (opp.description || opp.contentText) setDescription(opp.description || opp.contentText);
+    if (opp.description !== undefined || opp.contentText !== undefined) {
+      setDescription(opp.description ?? opp.contentText ?? '');
+    }
     if (opp.viewAllLink) setViewAllLink(opp.viewAllLink);
     if (Array.isArray(opp.cards) && opp.cards.length > 0) {
       setCards(opp.cards);

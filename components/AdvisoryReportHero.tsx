@@ -12,7 +12,7 @@ interface AdvisoryReportHeroProps {
 export default function AdvisoryReportHero({
   title = 'YOUR ADVISORY REPORT',
   tagline,
-  description = 'Based on your goals and preferences',
+  description,
   backgroundImage = '/advisory_hero.png',
 }: AdvisoryReportHeroProps) {
   // Split title if it contains multiple words to give stylish two-tone Cinzel styling

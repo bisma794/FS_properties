@@ -15,7 +15,7 @@ export default function CommunityHeroSection({
   breadcrumb = 'Communities / Dubai creek harbour',
   headingLine1 = 'FIND YOUR',
   headingLine2 = 'PLACE IN DUBAI',
-  description = 'From waterfront energy to green family neighbourhoods, every community offers a different way to live.',
+  description,
   imageSrc = '/community.png',
 }: CommunityHeroSectionProps) {
   return (
@@ -73,15 +73,17 @@ export default function CommunityHeroSection({
           </h1>
 
           {/* Description Text (Poppins Regular) */}
-          <p
-            className="text-xs sm:text-sm lg:text-[14.5px] text-[#737373] leading-relaxed max-w-md sm:max-w-lg mt-5 sm:mt-6"
-            style={{
-              fontFamily: 'var(--font-poppins), Poppins, sans-serif',
-              fontWeight: 400,
-            }}
-          >
-            {description}
-          </p>
+          {description ? (
+            <p
+              className="text-xs sm:text-sm lg:text-[14.5px] text-[#737373] leading-relaxed max-w-md sm:max-w-lg mt-5 sm:mt-6"
+              style={{
+                fontFamily: 'var(--font-poppins), Poppins, sans-serif',
+                fontWeight: 400,
+              }}
+            >
+              {description}
+            </p>
+          ) : null}
         </div>
       </div>
     </section>

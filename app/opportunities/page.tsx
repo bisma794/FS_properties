@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation';
 import TheValleyHero from '@/components/TheValleyHero';
 import ValleyOverviewScoreSection from '@/components/ValleyOverviewScoreSection';
 import WhyFSRecommendsValleySection from '@/components/WhyFSRecommendsValleySection';
@@ -22,12 +23,25 @@ export default async function OpportunitiesPage() {
     (await getPageBySlug('opportunities')) ||
     (await getPageBySlug('the-valley')) ||
     (await getPageBySlug('recommendation-result'));
+
+  // If the CMS updated the slug to something else, redirect dynamically
+  if (page?.slug && page.slug !== 'opportunities') {
+    redirect(`/${page.slug}`);
+  }
+
   const customSections = page?.content?.customSections || {};
   const heroSec = customSections['valley-hero'] || {};
   const globalHero = page?.content?.hero || {};
 
-  const heroTitle = heroSec.title || heroSec.heading || globalHero.heading || globalHero.title || 'THE VALLEY';
-  const heroSubtitle = heroSec.contentText || heroSec.description || heroSec.subheading || heroSec.tagline || globalHero.subheading || globalHero.tagline || 'By Emaar';
+  const heroTitle = heroSec.title || heroSec.heading || globalHero.heading || globalHero.title || 'OPPORTUNITIES';
+  const heroSubtitle =
+    heroSec.contentText !== undefined
+      ? heroSec.contentText
+      : heroSec.description !== undefined
+      ? heroSec.description
+      : heroSec.subheading !== undefined
+      ? heroSec.subheading
+      : heroSec.tagline || '';
   const heroBg = heroSec.bgImage || heroSec.backgroundImage || heroSec.coverImage || globalHero.backgroundImage || globalHero.bgImage || '/valley_hero.png';
 
   const overviewSec = customSections['valley-overview'] || {};
@@ -38,7 +52,7 @@ export default async function OpportunitiesPage() {
     <main className="min-h-screen bg-[#FAF9F6]">
       <TheValleyHero
         title={heroTitle}
-        subtitle={heroSubtitle}
+        subtitle={heroSubtitle || undefined}
         backgroundImage={heroBg}
       />
       <ValleyOverviewScoreSection
@@ -46,7 +60,7 @@ export default async function OpportunitiesPage() {
       />
       <WhyFSRecommendsValleySection
         title={whySec.title || whySec.heading || 'Why FS Recommends'}
-        description={whySec.contentText || whySec.description}
+        description={whySec.contentText !== undefined ? whySec.contentText : whySec.description}
       />
       <ValleyHighlightsSection
         highlights={Array.isArray(highlightsSec.items) && highlightsSec.items.length > 0 ? highlightsSec.items : undefined}

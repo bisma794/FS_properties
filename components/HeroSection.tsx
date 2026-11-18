@@ -169,11 +169,16 @@ export default function HeroSection({ initialData }: HeroSectionProps = {}) {
   line2 = line2 !== undefined ? line2 : 'RIGHT PROPERTY';
   line3 = line3 !== undefined ? line3 : 'OPPORTUNITY.';
 
-  const subheading = heroData.subheading || heroData.tagline || 'Curated opportunities. Intelligent insights. Aligned with your goals.';
+  const subheading =
+    heroData.subheading !== undefined && heroData.subheading !== null
+      ? heroData.subheading
+      : heroData.tagline !== undefined && heroData.tagline !== null
+      ? heroData.tagline
+      : '';
   const primaryText = heroData.primaryCtaText || 'Start AI Assessment';
   const primaryLink = heroData.primaryCtaLink || '/ai-assessment';
   const secondaryText = heroData.secondaryCtaText || 'Browse Opportunities';
-  const secondaryLink = heroData.secondaryCtaLink || '/the-valley';
+  const secondaryLink = heroData.secondaryCtaLink || '/opportunities';
   const bgImage = heroData.backgroundImage || heroData.coverImage || heroData.bgImage || '/buy_hero.png';
 
   return (
@@ -211,12 +216,14 @@ export default function HeroSection({ initialData }: HeroSectionProps = {}) {
           <div className="w-full my-6 sm:my-8 border-t border-[#E5E0D8]" />
 
           {/* Subtitle / Content */}
-          <p
-            className="font-poppins font-light text-[#858585] text-sm sm:text-base lg:text-lg tracking-normal leading-relaxed"
-            style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
-          >
-            {subheading}
-          </p>
+          {subheading ? (
+            <p
+              className="font-poppins font-light text-[#858585] text-sm sm:text-base lg:text-lg tracking-normal leading-relaxed"
+              style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
+            >
+              {subheading}
+            </p>
+          ) : null}
 
           {/* Action Buttons */}
           <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">

@@ -14,7 +14,7 @@ interface AboutUsHeroProps {
 
 export default function AboutUsHero({
   title = 'ABOUT\nFS ADVISORY',
-  subheading = "We don't sell properties. We build strategies.",
+  subheading,
   ctaText = 'Get Strategic Advice',
   ctaLink = '/ai-assessment',
   backgroundImage = '/about_us_hero.jpg',
@@ -46,12 +46,14 @@ export default function AboutUsHero({
             {title}
           </h1>
 
-          <p
-            className="text-[#555555] text-lg sm:text-xl font-light mt-5 tracking-wide max-w-lg leading-relaxed"
-            style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
-          >
-            {subheading}
-          </p>
+          {subheading ? (
+            <p
+              className="text-[#555555] text-lg sm:text-xl font-light mt-5 tracking-wide max-w-lg leading-relaxed"
+              style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
+            >
+              {subheading}
+            </p>
+          ) : null}
 
           <div className="mt-8 flex items-center gap-4">
             <Link

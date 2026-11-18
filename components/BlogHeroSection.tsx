@@ -20,7 +20,7 @@ export default function BlogHeroSection({
   breadcrumbCurrent = 'Blogs',
   headingLine1 = 'REAL ESTATE',
   headingLine2 = 'NEWS & INSIGHTS',
-  description = "Expert insights, market analysis, and the latest updates on Dubai's thriving real estate market",
+  description,
   searchPlaceholder = 'Looking for Something Specific?',
   imageSrc = '/blog-hero.png',
   onSearch,
@@ -81,7 +81,7 @@ export default function BlogHeroSection({
   const finalBreadcrumbCurrent = liveHero.breadcrumbCurrent || breadcrumbCurrent;
   const finalHeadingLine1 = liveHero.headingLine1 || headingLine1;
   const finalHeadingLine2 = liveHero.headingLine2 || headingLine2;
-  const finalDescription = liveHero.description || description;
+  const finalDescription = liveHero.description !== undefined ? liveHero.description : description;
   const finalSearchPlaceholder = liveHero.searchPlaceholder || searchPlaceholder;
   const finalImageSrc = liveHero.imageSrc || imageSrc;
 
@@ -166,14 +166,16 @@ export default function BlogHeroSection({
           </h1>
 
           {/* Subtitle / Description in Poppins */}
-          <p
-            className="text-xs sm:text-sm lg:text-[14.5px] text-[#6E6E6E] leading-relaxed max-w-md sm:max-w-lg mt-4 sm:mt-5 font-normal"
-            style={{
-              fontFamily: 'var(--font-poppins), Poppins, sans-serif',
-            }}
-          >
-            {finalDescription}
-          </p>
+          {finalDescription ? (
+            <p
+              className="text-xs sm:text-sm lg:text-[14.5px] text-[#6E6E6E] leading-relaxed max-w-md sm:max-w-lg mt-4 sm:mt-5 font-normal"
+              style={{
+                fontFamily: 'var(--font-poppins), Poppins, sans-serif',
+              }}
+            >
+              {finalDescription}
+            </p>
+          ) : null}
 
           {/* Search Box with Search Icon and Rounded Border */}
           <form

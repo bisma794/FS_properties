@@ -10,7 +10,7 @@ interface CompareCommunitiesHeroProps {
 
 export default function CompareCommunitiesHero({
   title = 'COMPARE\nCOMMUNITIES',
-  subtitle = 'Select communities to compare side by side.',
+  subtitle,
   bgImage = '/compare-comm-hero.png',
 }: CompareCommunitiesHeroProps) {
   const titleLines = (title || 'COMPARE\nCOMMUNITIES').split('\n');
@@ -50,12 +50,14 @@ export default function CompareCommunitiesHero({
           </h1>
 
           {/* Subtitle / Content in Inter Light */}
-          <p
-            className="text-[#555555] text-lg sm:text-xl font-light mt-5 tracking-wide max-w-lg"
-            style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
-          >
-            {subtitle}
-          </p>
+          {subtitle ? (
+            <p
+              className="text-[#555555] text-lg sm:text-xl font-light mt-5 tracking-wide max-w-lg"
+              style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
+            >
+              {subtitle}
+            </p>
+          ) : null}
         </div>
       </div>
 

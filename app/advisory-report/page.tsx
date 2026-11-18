@@ -25,7 +25,13 @@ export default async function AdvisoryReportPage() {
       <AdvisoryReportHero
         title={reportHero.title || reportHero.heading || 'YOUR ADVISORY REPORT'}
         tagline={reportHero.tagline}
-        description={reportHero.description || reportHero.contentText || reportHero.subheading || 'Based on your goals and preferences'}
+        description={
+          reportHero.description !== undefined
+            ? reportHero.description
+            : reportHero.contentText !== undefined
+            ? reportHero.contentText
+            : reportHero.subheading
+        }
         backgroundImage={reportHero.backgroundImage || reportHero.bgImage || '/advisory_hero.png'}
       />
       <OverallMatchScoreSection

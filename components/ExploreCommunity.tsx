@@ -47,14 +47,16 @@ const defaultCommunities: CommunityItem[] = [
 export default function ExploreCommunity() {
   const [heading, setHeading] = useState('Explore by Community');
   const [tagline, setTagline] = useState('FEATURED DISTRICTS');
-  const [description, setDescription] = useState('Discover master-planned developments and luxury waterfront neighborhoods.');
+  const [description, setDescription] = useState('');
   const [items, setItems] = useState<CommunityItem[]>(defaultCommunities);
 
   const applyCommData = (comm: any) => {
     if (!comm) return;
     if (comm.heading) setHeading(comm.heading);
     if (comm.tagline || comm.badge) setTagline(comm.tagline || comm.badge);
-    if (comm.description || comm.contentText) setDescription(comm.description || comm.contentText);
+    if (comm.description !== undefined || comm.contentText !== undefined) {
+      setDescription(comm.description ?? comm.contentText ?? '');
+    }
     if (Array.isArray(comm.items) && comm.items.length > 0) {
       setItems(comm.items);
     }

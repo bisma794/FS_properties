@@ -16,7 +16,7 @@ export default function DeveloperHeroSection({
   breadcrumb = 'Developer / Dubai creek harbour',
   headingWord1 = 'ALL',
   headingWord2 = 'DEVELOPERS',
-  description = 'A modern waterfront district with open skyline views, connected promenades and a growing collection of homes.',
+  description,
   imageSrc = '/developer-hero.png',
   pageSlug,
 }: DeveloperHeroSectionProps) {
@@ -115,15 +115,17 @@ export default function DeveloperHeroSection({
           </h1>
 
           {/* Description Text (Poppins Regular) */}
-          <p
-            className="text-xs sm:text-sm lg:text-[14.5px] text-[#737373] leading-relaxed max-w-md sm:max-w-lg mt-5 sm:mt-6"
-            style={{
-              fontFamily: 'var(--font-poppins), Poppins, sans-serif',
-              fontWeight: 400,
-            }}
-          >
-            {finalDesc}
-          </p>
+          {finalDesc ? (
+            <p
+              className="text-xs sm:text-sm lg:text-[14.5px] text-[#737373] leading-relaxed max-w-md sm:max-w-lg mt-5 sm:mt-6"
+              style={{
+                fontFamily: 'var(--font-poppins), Poppins, sans-serif',
+                fontWeight: 400,
+              }}
+            >
+              {finalDesc}
+            </p>
+          ) : null}
         </div>
       </div>
     </section>

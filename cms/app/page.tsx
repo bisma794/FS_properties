@@ -8135,9 +8135,9 @@ export default function CMSDashboard() {
                                               </label>
                                               <input
                                                 type="text"
-                                                value={secData.primaryBtnLink ?? '/property-detail'}
+                                                value={secData.primaryBtnLink ?? '/buy'}
                                                 onChange={(e) => updateSec('primaryBtnLink', e.target.value)}
-                                                placeholder="/property-detail"
+                                                placeholder="/buy"
                                                 className="w-full bg-white border border-[#E5E0D8] rounded-xl px-3 py-2 text-xs text-[#171717] focus:outline-none focus:border-[#BFA16A]"
                                               />
                                             </div>

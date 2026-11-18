@@ -21,7 +21,7 @@ interface ValleyHighlightsProps {
 export default function ValleyHighlightsSection({
   highlights: customHighlights,
   primaryBtnText = 'View Available Properties',
-  primaryBtnLink = '/property-detail',
+  primaryBtnLink = '/buy',
   secondaryBtnText = 'Compare Community',
   secondaryBtnLink = '/compare-communities',
 }: ValleyHighlightsProps) {
@@ -108,7 +108,7 @@ export default function ValleyHighlightsSection({
           {/* Primary View Available Properties Button */}
           {primaryBtnText && (
             <Link
-              href={primaryBtnLink || '/property-detail'}
+              href={primaryBtnLink || '/buy'}
               className="w-full py-4 sm:py-4.5 px-6 sm:px-8 bg-[#BA9864] hover:bg-[#a98653] text-white rounded-[6px] font-medium text-[15px] sm:text-[16px] transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99] min-h-[54px] sm:min-h-[58px]"
               style={{
                 fontFamily: 'var(--font-poppins), Poppins, sans-serif',

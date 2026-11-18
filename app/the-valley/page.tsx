@@ -65,7 +65,7 @@ export default async function TheValleyPage() {
       <ValleyHighlightsSection
         highlights={Array.isArray(highlightsSec.items) && highlightsSec.items.length > 0 ? highlightsSec.items : undefined}
         primaryBtnText={highlightsSec.primaryBtnText}
-        primaryBtnLink={highlightsSec.primaryBtnLink}
+        primaryBtnLink={highlightsSec.primaryBtnLink || '/buy'}
         secondaryBtnText={highlightsSec.secondaryBtnText}
         secondaryBtnLink={highlightsSec.secondaryBtnLink}
       />

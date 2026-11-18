@@ -164,14 +164,6 @@ const DEFAULT_PAGES: PageItem[] = [
     status: 'published',
   },
   {
-    id: 14,
-    title: 'Property Detail',
-    slug: 'property-detail',
-    meta_title: 'Farm Gardens 2 Luxury Villa | Property Details | FS Advisory',
-    meta_description: 'Experience refined architectural luxury in Farm Gardens 2 with FS Real Estate Advisory.',
-    status: 'published',
-  },
-  {
     id: 15,
     title: 'Real Estate Blogs',
     slug: 'blog',

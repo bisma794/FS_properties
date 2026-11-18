@@ -1883,7 +1883,6 @@ export default function CMSDashboard() {
         return [
           { id: 'hero', label: 'AI Advisory Hero', desc: 'Hero heading and interactive assessment slider' },
           { id: 'assessment', label: 'Goal Selection Step', desc: '6 Primary goal cards, helper text and questionnaire flow' },
-          { id: 'faqs', label: 'Buyer Guide & FAQs', desc: 'Frequently asked questions and assessment guide' },
         ];
       case 'about-us':
         return [
@@ -2711,6 +2710,23 @@ export default function CMSDashboard() {
       setHeroSecondaryCtaLink(hero.secondaryCtaLink || '');
       setHeroBgImage(hero.backgroundImage || hero.coverImage || hero.bgImage || '/about_us_hero.jpg');
       setHeroDetail(hero.detailHtml || `<h2>${h1} <span style="color:#BFA16A">${h2}</span></h2><p>${hero.subheading || "We don't sell properties. We build strategies."}</p>`);
+    } else if (page.slug === 'ai-assessment') {
+      h1 = hero.titleLine1 || 'AI ADVISORY';
+      h2 = hero.titleLine2 || 'ENGINE';
+      h3 = hero.titleLine3 || '';
+
+      setHeroHeading(hHeading || [h1, h2, h3].filter(Boolean).join(' '));
+      setHeroTagline(hero.tagline || hero.badge || '');
+      setHeroTitle1(h1);
+      setHeroTitle2(h2);
+      setHeroTitle3(h3);
+      setHeroSubheading(hero.subheading || hero.tagline || '');
+      setHeroPrimaryCtaText(hero.primaryCtaText || hero.ctaText || 'Start AI Assessment');
+      setHeroPrimaryCtaLink(hero.primaryCtaLink || hero.ctaLink || '/ai-assessment');
+      setHeroSecondaryCtaText(hero.secondaryCtaText || '');
+      setHeroSecondaryCtaLink(hero.secondaryCtaLink || '');
+      setHeroBgImage(hero.backgroundImage || hero.coverImage || hero.bgImage || '/ai_engine_hero.jpg');
+      setHeroDetail(hero.detailHtml || `<h2>${h1} <span style="color:#BFA16A">${h2}</span></h2><p>${hero.subheading || ''}</p>`);
     } else {
       h1 = h1 || 'DISCOVER THE';
       h2 = h2 || 'RIGHT PROPERTY';

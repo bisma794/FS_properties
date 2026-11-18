@@ -20,12 +20,17 @@ export default async function AIAssessmentPage() {
   const hero = page?.content?.hero || {};
   const assessment = page?.content?.assessment || {};
 
+  const heroWords = (hero.heading || hero.mainHeading || '').trim().split(/\s+/).filter(Boolean);
+  const headingWord1 = hero.titleLine1 || (heroWords.length > 0 ? heroWords[0] : 'AI ADVISORY');
+  const headingWord2 = hero.titleLine2 || (heroWords.length > 1 ? heroWords.slice(1).join(' ') : 'ENGINE');
+  const headingWord3 = hero.titleLine3 || undefined;
+
   return (
     <main className="min-h-screen bg-[#FAF9F6]">
       <AIAssessmentHero
-        headingWord1={hero.titleLine1 || hero.headingWord1 || 'AI ADVISORY'}
-        headingWord2={hero.titleLine2 || hero.headingWord2 || 'ENGINE'}
-        headingWord3={hero.titleLine3}
+        headingWord1={headingWord1}
+        headingWord2={headingWord2}
+        headingWord3={headingWord3}
         subheading={hero.subheading || hero.tagline}
         detailHtml={hero.detailHtml}
         backgroundImage={hero.backgroundImage || hero.coverImage || '/ai_engine_hero.jpg'}

@@ -3,24 +3,52 @@
 import React from 'react';
 import Image from 'next/image';
 
-export default function AboutUsSection() {
-  const pillars = [
-    {
-      number: '01',
-      title: 'Data-Driven Insights',
-      description: 'We evaluate communities based on rental yields, future infrastructure growth, and long-term capital appreciation so your capital is deployed with total clarity.',
-    },
-    {
-      number: '02',
-      title: 'Tailored Strategy',
-      description: 'Whether you seek passive income generation or a luxury sanctuary for your family, our advisory framework matches options directly to your goals.',
-    },
-    {
-      number: '03',
-      title: 'Unbiased Representation',
-      description: 'We represent your interests, not developer targets. Our recommendation score (FS Score) provides an objective benchmark for every property.',
-    },
-  ];
+export interface PillarItem {
+  number: string;
+  title: string;
+  description: string;
+}
+
+export interface AboutUsSectionProps {
+  philosophyTagline?: string;
+  philosophyHeading?: string;
+  paragraph1?: string;
+  paragraph2?: string;
+  image?: string;
+  pillarsTagline?: string;
+  pillarsTitle?: string;
+  pillars?: PillarItem[];
+}
+
+const DEFAULT_PILLARS: PillarItem[] = [
+  {
+    number: '01',
+    title: 'Data-Driven Insights',
+    description: 'We evaluate communities based on rental yields, future infrastructure growth, and long-term capital appreciation so your capital is deployed with total clarity.',
+  },
+  {
+    number: '02',
+    title: 'Tailored Strategy',
+    description: 'Whether you seek passive income generation or a luxury sanctuary for your family, our advisory framework matches options directly to your goals.',
+  },
+  {
+    number: '03',
+    title: 'Unbiased Representation',
+    description: 'We represent your interests, not developer targets. Our recommendation score (FS Score) provides an objective benchmark for every property.',
+  },
+];
+
+export default function AboutUsSection({
+  philosophyTagline = 'OUR PHILOSOPHY',
+  philosophyHeading = 'Guiding Investors & Families to High-Performing Real Estate Assets',
+  paragraph1 = 'FS Real Estate Advisory was founded on a simple principle: real estate decisions should never be transactional sales pitches. In a market as dynamic as Dubai, success requires precision, master-plan forecasting, and disciplined advisory.',
+  paragraph2 = 'From master-planned villa communities like The Valley and Emaar South to high-yielding urban hubs like Dubai Hills, we empower clients with structural insights before they make a move.',
+  image = '/dubai hills.png',
+  pillarsTagline = 'WHY WORK WITH US',
+  pillarsTitle = 'The FS Advisory Difference',
+  pillars = DEFAULT_PILLARS,
+}: AboutUsSectionProps) {
+  const activePillars = Array.isArray(pillars) && pillars.length > 0 ? pillars : DEFAULT_PILLARS;
 
   return (
     <section className="w-full bg-[#FAF9F6] py-16 sm:py-20 lg:py-24 border-t border-[#E5E0D8]">
@@ -33,36 +61,40 @@ export default function AboutUsSection() {
               className="text-xs font-semibold tracking-widest uppercase text-[#C5A267]"
               style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
             >
-              OUR PHILOSOPHY
+              {philosophyTagline || 'OUR PHILOSOPHY'}
             </span>
 
             <h2
-              className="text-3xl sm:text-4xl lg:text-[44px] font-semibold text-[#111111] leading-tight"
+              className="text-3xl sm:text-4xl lg:text-[44px] font-semibold text-[#111111] leading-tight whitespace-pre-line"
               style={{ fontFamily: 'var(--font-playfair), Playfair Display, serif' }}
             >
-              Guiding Investors & Families to High-Performing Real Estate Assets
+              {philosophyHeading || 'Guiding Investors & Families to High-Performing Real Estate Assets'}
             </h2>
 
-            <p
-              className="text-base sm:text-lg text-[#858585] font-light leading-relaxed"
-              style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
-            >
-              FS Real Estate Advisory was founded on a simple principle: real estate decisions should never be transactional sales pitches. In a market as dynamic as Dubai, success requires precision, master-plan forecasting, and disciplined advisory.
-            </p>
+            {paragraph1 && (
+              <p
+                className="text-base sm:text-lg text-[#858585] font-light leading-relaxed whitespace-pre-line"
+                style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
+              >
+                {paragraph1}
+              </p>
+            )}
 
-            <p
-              className="text-base sm:text-lg text-[#858585] font-light leading-relaxed"
-              style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
-            >
-              From master-planned villa communities like The Valley and Emaar South to high-yielding urban hubs like Dubai Hills, we empower clients with structural insights before they make a move.
-            </p>
+            {paragraph2 && (
+              <p
+                className="text-base sm:text-lg text-[#858585] font-light leading-relaxed whitespace-pre-line"
+                style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
+              >
+                {paragraph2}
+              </p>
+            )}
           </div>
 
           <div className="lg:col-span-6">
             <div className="relative w-full h-[400px] sm:h-[480px] rounded-2xl overflow-hidden shadow-lg border border-neutral-200">
               <Image
-                src="/dubai hills.png"
-                alt="FS Real Estate Strategic Advisory"
+                src={image || '/dubai hills.png'}
+                alt={philosophyHeading || 'FS Real Estate Strategic Advisory'}
                 fill
                 className="object-cover"
               />
@@ -78,21 +110,21 @@ export default function AboutUsSection() {
               className="text-xs font-semibold tracking-widest uppercase text-[#C5A267]"
               style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
             >
-              WHY WORK WITH US
+              {pillarsTagline || 'WHY WORK WITH US'}
             </span>
 
             <h2
-              className="text-3xl sm:text-4xl font-semibold text-[#111111] mt-3"
+              className="text-3xl sm:text-4xl font-semibold text-[#111111] mt-3 whitespace-pre-line"
               style={{ fontFamily: 'var(--font-playfair), Playfair Display, serif' }}
             >
-              The FS Advisory Difference
+              {pillarsTitle || 'The FS Advisory Difference'}
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {pillars.map((pillar) => (
+            {activePillars.map((pillar, pIdx) => (
               <div
-                key={pillar.number}
+                key={pillar.number || pIdx}
                 className="group p-8 rounded-2xl bg-white border border-neutral-200/80 shadow-sm hover:bg-[#C5A267] hover:border-[#C5A267] hover:text-white transition-all duration-300 flex flex-col justify-between cursor-pointer"
               >
                 <div>
@@ -100,7 +132,7 @@ export default function AboutUsSection() {
                     className="text-3xl font-bold text-[#C5A267] group-hover:text-white/80 transition-colors"
                     style={{ fontFamily: 'var(--font-playfair), Playfair Display, serif' }}
                   >
-                    {pillar.number}
+                    {pillar.number || `0${pIdx + 1}`}
                   </span>
 
                   <h3
@@ -111,7 +143,7 @@ export default function AboutUsSection() {
                   </h3>
 
                   <p
-                    className="text-sm font-light text-[#858585] group-hover:text-white/90 leading-relaxed transition-colors"
+                    className="text-sm font-light text-[#858585] group-hover:text-white/90 leading-relaxed transition-colors whitespace-pre-line"
                     style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
                   >
                     {pillar.description}

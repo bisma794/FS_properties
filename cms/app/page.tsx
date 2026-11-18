@@ -2694,9 +2694,27 @@ export default function CMSDashboard() {
       }
     }
 
-    h1 = h1 || 'DISCOVER THE';
-    h2 = h2 || 'RIGHT PROPERTY';
-    h3 = h3 || 'OPPORTUNITY.';
+    if (page.slug === 'about-us') {
+      h1 = hero.titleLine1 || 'REDEFINING REAL ESTATE';
+      h2 = hero.titleLine2 || 'ADVISORY IN DUBAI';
+      h3 = hero.titleLine3 || '';
+
+      setHeroHeading(hHeading || [h1, h2, h3].filter(Boolean).join(' '));
+      setHeroTagline(hero.tagline || hero.badge || "We don't sell properties. We build strategies.");
+      setHeroTitle1(h1);
+      setHeroTitle2(h2);
+      setHeroTitle3(h3);
+      setHeroSubheading(hero.subheading || hero.tagline || "We don't sell properties. We build strategies.");
+      setHeroPrimaryCtaText(hero.primaryCtaText || hero.ctaText || 'Contact Our Advisory Team');
+      setHeroPrimaryCtaLink(hero.primaryCtaLink || hero.ctaLink || '/ai-assessment');
+      setHeroSecondaryCtaText(hero.secondaryCtaText || '');
+      setHeroSecondaryCtaLink(hero.secondaryCtaLink || '');
+      setHeroBgImage(hero.backgroundImage || hero.coverImage || hero.bgImage || '/about_us_hero.jpg');
+      setHeroDetail(hero.detailHtml || `<h2>${h1} <span style="color:#BFA16A">${h2}</span></h2><p>${hero.subheading || "We don't sell properties. We build strategies."}</p>`);
+    } else {
+      h1 = h1 || 'DISCOVER THE';
+      h2 = h2 || 'RIGHT PROPERTY';
+      h3 = h3 || 'OPPORTUNITY.';
 
     setHeroHeading(hHeading || [h1, h2, h3].filter(Boolean).join(' '));
     setHeroTagline(hero.tagline || hero.badge || hero.subheading || 'Curated opportunities. Intelligent insights. Aligned with your goals.');
@@ -2710,6 +2728,7 @@ export default function CMSDashboard() {
     setHeroSecondaryCtaLink(hero.secondaryCtaLink || '/the-valley');
     setHeroBgImage(hero.backgroundImage || hero.coverImage || hero.bgImage || '/buy_hero.png');
     setHeroDetail(hero.detailHtml || `<h2>${h1} <span style="color:#BFA16A">${h2}</span> ${h3}</h2><p>${hero.subheading || hero.tagline || 'Curated opportunities. Intelligent insights. Aligned with your goals.'}</p>`);
+    }
 
     // Section 2: Feature Bar
     const fb = page.content?.featureBar || [];
@@ -2805,6 +2824,38 @@ export default function CMSDashboard() {
       page.content?.customSections && typeof page.content.customSections === 'object'
         ? { ...page.content.customSections }
         : {};
+
+    if (page.slug === 'about-us') {
+      const existingAbout = customSecs['about-section'] || (page.content as any)?.aboutSection;
+      customSecs['about-section'] = {
+        tagline: existingAbout?.tagline || 'OUR PHILOSOPHY',
+        heading: existingAbout?.heading || 'Guiding Investors & Families to High-Performing Real Estate Assets',
+        paragraph1: existingAbout?.paragraph1 || 'FS Real Estate Advisory was founded on a simple principle: real estate decisions should never be transactional sales pitches. In a market as dynamic as Dubai, success requires precision, master-plan forecasting, and disciplined advisory.',
+        paragraph2: existingAbout?.paragraph2 || 'From master-planned villa communities like The Valley and Emaar South to high-yielding urban hubs like Dubai Hills, we empower clients with structural insights before they make a move.',
+        image: existingAbout?.image || '/dubai hills.png',
+        pillarsTagline: existingAbout?.pillarsTagline || 'WHY WORK WITH US',
+        pillarsTitle: existingAbout?.pillarsTitle || 'The FS Advisory Difference',
+        pillars: Array.isArray(existingAbout?.pillars) && existingAbout.pillars.length > 0
+          ? existingAbout.pillars
+          : [
+              {
+                number: '01',
+                title: 'Data-Driven Insights',
+                description: 'We evaluate communities based on rental yields, future infrastructure growth, and long-term capital appreciation so your capital is deployed with total clarity.',
+              },
+              {
+                number: '02',
+                title: 'Tailored Strategy',
+                description: 'Whether you seek passive income generation or a luxury sanctuary for your family, our advisory framework matches options directly to your goals.',
+              },
+              {
+                number: '03',
+                title: 'Unbiased Representation',
+                description: 'We represent your interests, not developer targets. Our recommendation score (FS Score) provides an objective benchmark for every property.',
+              },
+            ],
+      };
+    }
 
     // Auto-initialize guide sections (dev-guide, comm-guide, proj-main-guide, etc.) if empty or placeholder
     const pageSecs = getPageSections(page.slug);
@@ -3896,6 +3947,11 @@ export default function CMSDashboard() {
           },
           customSections: finalizedCustomSections,
           dynamicSections: dynamicSections,
+          ...(pageSlug === 'about-us'
+            ? {
+                aboutSection: finalizedCustomSections['about-section'],
+              }
+            : {}),
           ...(Boolean(editingPage.content?.isDynamic || (editingPage as any).isDynamic) ? { isDynamic: true } : {}),
           ...(pageSlug === 'developers' && Array.isArray(finalizedCustomSections['dev-grid']?.items)
             ? { developerCards: finalizedCustomSections['dev-grid'].items }
@@ -5889,6 +5945,294 @@ export default function CMSDashboard() {
                           </div>
                         )}
                       </div>
+                    </div>
+                  )}
+
+                  {/* TAB: ABOUT US HERO */}
+                  {activeSectionTab === 'about-hero' && (
+                    <div className="space-y-6">
+                      <div className="border-b border-[#E5E0D8] pb-4 flex items-center justify-between">
+                        <div>
+                          <h3 className="text-xl font-bold text-[#171717]">About Us Hero Banner</h3>
+                          <p className="text-xs text-[#737373] mt-0.5">Top visual banner on the /about-us page</p>
+                        </div>
+                        <span className="text-xs font-semibold text-[#BFA16A] bg-[#BFA16A]/10 px-3 py-1 rounded-full border border-[#BFA16A]/30">
+                          Section 1
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-semibold text-[#525252] mb-1">
+                            Hero Title Line 1
+                          </label>
+                          <input
+                            type="text"
+                            value={heroTitle1}
+                            onChange={(e) => {
+                              setHeroTitle1(e.target.value);
+                              setHeroHeading(`${e.target.value} ${heroTitle2}`);
+                            }}
+                            placeholder="e.g. REDEFINING REAL ESTATE"
+                            className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717] font-serif uppercase tracking-wider font-semibold focus:outline-none focus:border-[#BFA16A]"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-[#BFA16A] mb-1">
+                            Hero Title Line 2 (Gold Emphasis)
+                          </label>
+                          <input
+                            type="text"
+                            value={heroTitle2}
+                            onChange={(e) => {
+                              setHeroTitle2(e.target.value);
+                              setHeroHeading(`${heroTitle1} ${e.target.value}`);
+                            }}
+                            placeholder="e.g. ADVISORY IN DUBAI"
+                            className="w-full bg-[#FAF9F6] border border-[#BFA16A]/50 rounded-xl px-4 py-2.5 text-sm text-[#BFA16A] font-serif uppercase tracking-wider font-semibold focus:outline-none focus:border-[#BFA16A]"
+                          />
+                        </div>
+
+                        <div className="md:col-span-2">
+                          <label className="block text-xs font-semibold text-[#525252] mb-1">
+                            Subheading / Strategy Tagline
+                          </label>
+                          <input
+                            type="text"
+                            value={heroSubheading}
+                            onChange={(e) => setHeroSubheading(e.target.value)}
+                            placeholder="e.g. We don't sell properties. We build strategies."
+                            className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717] focus:outline-none focus:border-[#BFA16A]"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-[#525252] mb-1">
+                            CTA Button Text
+                          </label>
+                          <input
+                            type="text"
+                            value={heroPrimaryCtaText}
+                            onChange={(e) => setHeroPrimaryCtaText(e.target.value)}
+                            placeholder="e.g. Contact Our Advisory Team"
+                            className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717] focus:outline-none focus:border-[#BFA16A]"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-[#525252] mb-1">
+                            CTA Destination Link
+                          </label>
+                          <input
+                            type="text"
+                            value={heroPrimaryCtaLink}
+                            onChange={(e) => setHeroPrimaryCtaLink(e.target.value)}
+                            placeholder="e.g. /ai-assessment"
+                            className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717] focus:outline-none focus:border-[#BFA16A]"
+                          />
+                        </div>
+
+                        <div className="md:col-span-2">
+                          <CoverImagePicker
+                            label="Hero Background Image"
+                            imageUrl={heroBgImage || '/about_us_hero.jpg'}
+                            onChange={(url) => setHeroBgImage(url)}
+                            onFileUpload={handleFileUpload}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB: ABOUT US SECTION (Strategy, Philosophy & 3 Pillars) */}
+                  {activeSectionTab === 'about-section' && (
+                    <div className="space-y-6">
+                      <div className="border-b border-[#E5E0D8] pb-4 flex items-center justify-between">
+                        <div>
+                          <h3 className="text-xl font-bold text-[#171717]">Advisory Strategy, Philosophy & 3 Pillars</h3>
+                          <p className="text-xs text-[#737373] mt-0.5">Core brand philosophy and 3 key strength pillars displayed on /about-us</p>
+                        </div>
+                        <span className="text-xs font-semibold text-[#BFA16A] bg-[#BFA16A]/10 px-3 py-1 rounded-full border border-[#BFA16A]/30">
+                          Section 2
+                        </span>
+                      </div>
+
+                      {(() => {
+                        const secData = customSectionsData['about-section'] || {};
+                        const updateAboutSec = (key: string, val: any) => {
+                          setCustomSectionsData((prev) => ({
+                            ...prev,
+                            'about-section': {
+                              ...(prev['about-section'] || {}),
+                              [key]: val,
+                            },
+                          }));
+                        };
+
+                        const pillars: any[] = Array.isArray(secData.pillars) && secData.pillars.length > 0
+                          ? secData.pillars
+                          : [
+                              {
+                                number: '01',
+                                title: 'Data-Driven Insights',
+                                description: 'We evaluate communities based on rental yields, future infrastructure growth, and long-term capital appreciation so your capital is deployed with total clarity.',
+                              },
+                              {
+                                number: '02',
+                                title: 'Tailored Strategy',
+                                description: 'Whether you seek passive income generation or a luxury sanctuary for your family, our advisory framework matches options directly to your goals.',
+                              },
+                              {
+                                number: '03',
+                                title: 'Unbiased Representation',
+                                description: 'We represent your interests, not developer targets. Our recommendation score (FS Score) provides an objective benchmark for every property.',
+                              },
+                            ];
+
+                        const updatePillar = (idx: number, field: string, val: string) => {
+                          const next = [...pillars];
+                          next[idx] = { ...next[idx], [field]: val };
+                          updateAboutSec('pillars', next);
+                        };
+
+                        return (
+                          <div className="space-y-6">
+                            {/* Part A: Philosophy & Mission */}
+                            <div className="bg-[#FAF9F6] border border-[#E5E0D8] rounded-2xl p-6 space-y-4">
+                              <h4 className="text-sm font-bold text-[#171717] uppercase tracking-wider">
+                                Part 1: Brand Philosophy &amp; Mission
+                              </h4>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <label className="block text-xs font-semibold text-[#525252] mb-1">
+                                    Tagline / Badge
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={secData.tagline ?? 'OUR PHILOSOPHY'}
+                                    onChange={(e) => updateAboutSec('tagline', e.target.value)}
+                                    className="w-full bg-white border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs font-semibold text-[#171717]"
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="block text-xs font-semibold text-[#525252] mb-1">
+                                    Section Main Heading
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={secData.heading ?? 'Guiding Investors & Families to High-Performing Real Estate Assets'}
+                                    onChange={(e) => updateAboutSec('heading', e.target.value)}
+                                    className="w-full bg-white border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs font-semibold text-[#171717]"
+                                  />
+                                </div>
+
+                                <div className="md:col-span-2">
+                                  <label className="block text-xs font-semibold text-[#525252] mb-1">
+                                    Paragraph 1 (Founding Principle)
+                                  </label>
+                                  <textarea
+                                    rows={3}
+                                    value={secData.paragraph1 ?? 'FS Real Estate Advisory was founded on a simple principle: real estate decisions should never be transactional sales pitches. In a market as dynamic as Dubai, success requires precision, master-plan forecasting, and disciplined advisory.'}
+                                    onChange={(e) => updateAboutSec('paragraph1', e.target.value)}
+                                    className="w-full bg-white border border-[#E5E0D8] rounded-xl p-3 text-xs text-[#171717]"
+                                  />
+                                </div>
+
+                                <div className="md:col-span-2">
+                                  <label className="block text-xs font-semibold text-[#525252] mb-1">
+                                    Paragraph 2 (Market Vision)
+                                  </label>
+                                  <textarea
+                                    rows={3}
+                                    value={secData.paragraph2 ?? 'From master-planned villa communities like The Valley and Emaar South to high-yielding urban hubs like Dubai Hills, we empower clients with structural insights before they make a move.'}
+                                    onChange={(e) => updateAboutSec('paragraph2', e.target.value)}
+                                    className="w-full bg-white border border-[#E5E0D8] rounded-xl p-3 text-xs text-[#171717]"
+                                  />
+                                </div>
+
+                                <div className="md:col-span-2">
+                                  <CoverImagePicker
+                                    label="Philosophy & Mission Feature Image"
+                                    imageUrl={secData.image || '/dubai hills.png'}
+                                    onChange={(url) => updateAboutSec('image', url)}
+                                    onFileUpload={handleFileUpload}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Part B: 3 Pillars */}
+                            <div className="bg-[#FAF9F6] border border-[#E5E0D8] rounded-2xl p-6 space-y-4">
+                              <h4 className="text-sm font-bold text-[#171717] uppercase tracking-wider">
+                                Part 2: 3 Strength Pillars (Why Work With Us)
+                              </h4>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <label className="block text-xs font-semibold text-[#525252] mb-1">
+                                    Pillars Badge / Tagline
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={secData.pillarsTagline ?? 'WHY WORK WITH US'}
+                                    onChange={(e) => updateAboutSec('pillarsTagline', e.target.value)}
+                                    className="w-full bg-white border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs font-semibold text-[#171717]"
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="block text-xs font-semibold text-[#525252] mb-1">
+                                    Pillars Section Title
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={secData.pillarsTitle ?? 'The FS Advisory Difference'}
+                                    onChange={(e) => updateAboutSec('pillarsTitle', e.target.value)}
+                                    className="w-full bg-white border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs font-semibold text-[#171717]"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                                {pillars.map((pil, idx) => (
+                                  <div key={idx} className="bg-white border border-[#E5E0D8] rounded-xl p-4 space-y-3">
+                                    <div className="flex items-center justify-between border-b border-[#E5E0D8] pb-2">
+                                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#BFA16A]">
+                                        Pillar #{idx + 1}
+                                      </span>
+                                      <input
+                                        type="text"
+                                        value={pil.number || `0${idx + 1}`}
+                                        onChange={(e) => updatePillar(idx, 'number', e.target.value)}
+                                        className="w-12 text-center text-xs font-bold text-[#BFA16A] bg-[#FAF9F6] border border-[#E5E0D8] rounded px-1 py-0.5"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-[11px] font-semibold text-[#525252] mb-1">Title</label>
+                                      <input
+                                        type="text"
+                                        value={pil.title || ''}
+                                        onChange={(e) => updatePillar(idx, 'title', e.target.value)}
+                                        className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-lg px-3 py-1.5 text-xs font-semibold text-[#171717]"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-[11px] font-semibold text-[#525252] mb-1">Description</label>
+                                      <textarea
+                                        rows={3}
+                                        value={pil.description || ''}
+                                        onChange={(e) => updatePillar(idx, 'description', e.target.value)}
+                                        className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-lg p-2 text-xs text-[#525252]"
+                                      />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
                   )}
 
@@ -8770,7 +9114,7 @@ export default function CMSDashboard() {
                                   );
                                 })()}
                               </div>
-                            ) : activeSectionTab.startsWith('buy-detail-') || activeSectionTab === 'dev-grid' || activeSectionTab === 'blog-hero' || activeSectionTab === 'blog-where-to-live' ? null : (
+                            ) : activeSectionTab.startsWith('buy-detail-') || activeSectionTab === 'dev-grid' || activeSectionTab === 'blog-hero' || activeSectionTab === 'blog-where-to-live' || activeSectionTab === 'about-hero' || activeSectionTab === 'about-section' ? null : (
                               <div className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   <div>

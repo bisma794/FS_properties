@@ -16,6 +16,7 @@ export async function generateMetadata() {
 export default async function CompareCommunitiesPage() {
   const page = await getPageBySlug('compare-communities');
   const heroData = page?.content?.customSections?.['compare-hero'] || page?.content?.hero || {};
+  const tableData = page?.content?.customSections?.['compare-table'] || {};
 
   return (
     <main className="min-h-screen bg-[#FAF9F6]">
@@ -24,7 +25,11 @@ export default async function CompareCommunitiesPage() {
         subtitle={heroData.subheading || heroData.contentText || 'Select communities to compare side by side.'}
         bgImage={heroData.bgImage || heroData.backgroundImage || '/compare-comm-hero.png'}
       />
-      <CommunityComparisonSection />
+      <CommunityComparisonSection
+        bannerText={tableData.contentText || tableData.description}
+        buttonText={tableData.buttonText || tableData.ctaText}
+        buttonLink={tableData.buttonLink || tableData.ctaLink || '/advisory-report'}
+      />
       <BuyerGuideFaqSection pageSlug="compare-communities" />
     </main>
   );

@@ -2,8 +2,19 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
-export default function CommunityComparisonSection() {
+interface CommunityComparisonSectionProps {
+  bannerText?: string;
+  buttonText?: string;
+  buttonLink?: string;
+}
+
+export default function CommunityComparisonSection({
+  bannerText = 'The Valley Is Better For Families And Long-Term Growth, While Dubai Hills Offers Higher Rental Yields.',
+  buttonText = 'View Full Comparison Report',
+  buttonLink = '/advisory-report',
+}: CommunityComparisonSectionProps) {
   const [activeTab, setActiveTab] = useState('Overview');
 
   const tabs = [
@@ -163,17 +174,17 @@ export default function CommunityComparisonSection() {
               className="text-xs sm:text-sm font-medium text-center sm:text-left leading-relaxed max-w-xl"
               style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
             >
-              The Valley Is Better For Families And Long-Term Growth, While Dubai Hills Offers Higher Rental Yields.
+              {bannerText}
             </p>
 
-            <button
-              type="button"
+            <Link
+              href={buttonLink}
               className="w-full sm:w-auto px-5 py-2.5 bg-white text-neutral-900 rounded-lg text-xs sm:text-sm font-medium hover:bg-neutral-100 transition-colors whitespace-nowrap shadow-sm flex items-center justify-center gap-1.5"
               style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
             >
-              <span>View Full Comparison Report</span>
+              <span>{buttonText}</span>
               <span>&rarr;</span>
-            </button>
+            </Link>
           </div>
 
         </div>

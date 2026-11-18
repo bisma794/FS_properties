@@ -7952,7 +7952,619 @@ export default function CMSDashboard() {
                                   );
                                 })()}
                               </div>
-                            ) : activeSectionTab === 'valley-highlights' ? (
+                                                        ) : activeSectionTab === 'report-comm' ? (
+                              /* RECOMMENDED COMMUNITIES EDITOR FOR ADVISORY REPORT */
+                              <div className="space-y-6">
+                                {(() => {
+                                  const secData = customSectionsData['report-comm'] || {};
+                                  const updateSec = (field: string, val: any) => {
+                                    setCustomSectionsData((prev) => ({
+                                      ...prev,
+                                      'report-comm': {
+                                        ...(prev['report-comm'] || {}),
+                                        [field]: val,
+                                      },
+                                    }));
+                                  };
+
+                                  const PRESET_COMMUNITIES = [
+                                    {
+                                      id: 'the-valley',
+                                      name: 'The Valley',
+                                      subtitle: 'by Emaar',
+                                      matchScore: '96%',
+                                      whyFits: 'Excellent for families with children, great schools nearby, master-planned community with strong future growth potential.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/the-valley',
+                                      image: '/thevalley-img.png',
+                                    },
+                                    {
+                                      id: 'dubai-hills-estate',
+                                      name: 'Dubai Hills Estate',
+                                      subtitle: 'by Emaar',
+                                      matchScore: '92%',
+                                      whyFits: 'Established community with premium infrastructure, expansive central park, and high rental demand.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/compare-communities',
+                                      image: '/dubaihillestate.png',
+                                    },
+                                    {
+                                      id: 'grand-polo-club-resort',
+                                      name: 'Grand Polo Club & Resort',
+                                      subtitle: 'by Emaar',
+                                      matchScore: '89%',
+                                      whyFits: 'Luxury lifestyle with strong capital appreciation potential, polo club amenities, and limited boutique supply.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/grandpolo.png',
+                                    },
+                                    {
+                                      id: 'dubai-creek-harbour',
+                                      name: 'Dubai Creek Harbour',
+                                      subtitle: 'by Emaar',
+                                      matchScore: '94%',
+                                      whyFits: 'Calm waterfront living with skyline views, marina boardwalks, and direct access to Ras Al Khor sanctuary.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities/dubai-creek-harbour',
+                                      image: '/creekicon.png',
+                                    },
+                                    {
+                                      id: 'palm-jumeirah',
+                                      name: 'Palm Jumeirah',
+                                      subtitle: 'by Nakheel',
+                                      matchScore: '95%',
+                                      whyFits: 'World-renowned iconic island offering private beachfronts, luxury resorts, and unmatched global status.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/Rectangle 34624593.png',
+                                    },
+                                    {
+                                      id: 'business-bay',
+                                      name: 'Business Bay',
+                                      subtitle: 'by DAMAC / Omniyat',
+                                      matchScore: '90%',
+                                      whyFits: 'High-yield residential towers right on the Dubai Water Canal minutes from Downtown Dubai.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/developers/damac-district.png',
+                                    },
+                                    {
+                                      id: 'downtown-dubai',
+                                      name: 'Downtown Dubai',
+                                      subtitle: 'by Emaar',
+                                      matchScore: '95%',
+                                      whyFits: 'Prestigious global epicenter with Burj Khalifa, Dubai Mall, and top-tier tenant occupancy.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/Rectangle 34624595.png',
+                                    },
+                                    {
+                                      id: 'arabian-ranches-iii',
+                                      name: 'Arabian Ranches III',
+                                      subtitle: 'by Emaar',
+                                      matchScore: '91%',
+                                      whyFits: 'Dedicated family townhouses with central parks, splash pads, sports courts, and reputable schools.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/Rectangle 34624595.png',
+                                    },
+                                    {
+                                      id: 'damac-lagoons',
+                                      name: 'DAMAC Lagoons',
+                                      subtitle: 'by DAMAC',
+                                      matchScore: '88%',
+                                      whyFits: 'Mediterranean-inspired resort clusters with swimmable crystal lagoons and white sand beaches.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/developers/damac-island-lagoon.png',
+                                    },
+                                    {
+                                      id: 'tilal-al-ghaf',
+                                      name: 'Tilal Al Ghaf',
+                                      subtitle: 'by Majid Al Futtaim',
+                                      matchScore: '93%',
+                                      whyFits: 'Resort-style living centered around Lagoon Al Ghaf with sandy beaches and Royal Grammar School.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/Rectangle 34624593.png',
+                                    },
+                                    {
+                                      id: 'dubai-marina',
+                                      name: 'Dubai Marina',
+                                      subtitle: 'by Emaar / Select Group',
+                                      matchScore: '91%',
+                                      whyFits: 'Vibrant cosmopolitan waterfront with luxury yachts, pedestrian promenades, and exceptional short-term rental yields.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/marina-view.png',
+                                    },
+                                    {
+                                      id: 'emaar-south',
+                                      name: 'Emaar South',
+                                      subtitle: 'by Emaar',
+                                      matchScore: '87%',
+                                      whyFits: 'Golf-course master community with rapid infrastructure growth next to Al Maktoum International Airport.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/Rectangle 34624595.png',
+                                    },
+                                    {
+                                      id: 'the-oasis',
+                                      name: 'The Oasis',
+                                      subtitle: 'by Emaar',
+                                      matchScore: '96%',
+                                      whyFits: 'Ultra-exclusive luxury mansions amidst swimmable water canals, pristine lakes, and private clubhouses.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/Rectangle 34624593.png',
+                                    },
+                                    {
+                                      id: 'mbr-city',
+                                      name: 'Mohammed Bin Rashid City (MBR City)',
+                                      subtitle: 'by Sobha / Meydan',
+                                      matchScore: '94%',
+                                      whyFits: 'Premier crystal lagoons, lush green belts, and close proximity to Downtown and prestigious schools.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/developers/emaar-creek-crescent.png',
+                                    },
+                                    {
+                                      id: 'palm-jebel-ali',
+                                      name: 'Palm Jebel Ali',
+                                      subtitle: 'by Nakheel',
+                                      matchScore: '97%',
+                                      whyFits: 'Ultra-luxury fronds with private beaches, double the size of Palm Jumeirah, and major capital growth upside.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/dubai_hills.png',
+                                    },
+                                    {
+                                      id: 'city-walk',
+                                      name: 'City Walk',
+                                      subtitle: 'by Meraas',
+                                      matchScore: '92%',
+                                      whyFits: 'Urban chic living with European-style pedestrian boulevards, Central Park greenery, and Coca-Cola Arena.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/project-detail-hero.png',
+                                    },
+                                    {
+                                      id: 'dubai-islands',
+                                      name: 'Dubai Islands',
+                                      subtitle: 'by Nakheel',
+                                      matchScore: '90%',
+                                      whyFits: 'Over 20 km of virgin Blue Flag beaches, luxury resorts, championship golf, and holiday home yields.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/developers/damac-island-2.png',
+                                    },
+                                    {
+                                      id: 'dubai-south',
+                                      name: 'Dubai South',
+                                      subtitle: 'by Dubai South',
+                                      matchScore: '89%',
+                                      whyFits: 'The epicenter of Dubai’s aviation and logistics future around Expo City and the new mega airport.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/developers/damac-island-lagoon.png',
+                                    },
+                                    {
+                                      id: 'emaar-beachfront',
+                                      name: 'Emaar Beachfront',
+                                      subtitle: 'by Emaar',
+                                      matchScore: '95%',
+                                      whyFits: 'Miami-style waterfront high-rises with 1.5 km private white sand beach and Dubai Marina skyline views.',
+                                      buttonText: 'View Community',
+                                      buttonLink: '/communities',
+                                      image: '/Rectangle 34624593.png',
+                                    },
+                                  ];
+
+                                  const customCommOptions = (communities || [])
+                                    .filter(
+                                      (c) =>
+                                        !PRESET_COMMUNITIES.some(
+                                          (p) =>
+                                            p.id === c.slug ||
+                                            p.name.toLowerCase() === (c.name || '').toLowerCase()
+                                        )
+                                    )
+                                    .map((c) => ({
+                                      id: c.slug || String(c.id),
+                                      name: c.name,
+                                      subtitle: c.tag ? `by ${c.tag}` : 'by Emaar',
+                                      matchScore: '90%',
+                                      whyFits:
+                                        c.description ||
+                                        'Promising community with prime living and strong investment growth.',
+                                      buttonText: 'View Community',
+                                      buttonLink: c.href || `/communities/${c.slug}`,
+                                      image: c.image || '/thevalley-img.png',
+                                    }));
+
+                                  const allAvailableCommunities = [
+                                    ...PRESET_COMMUNITIES,
+                                    ...customCommOptions,
+                                  ];
+
+                                  const cards: any[] =
+                                    Array.isArray(secData.cards) && secData.cards.length > 0
+                                      ? secData.cards
+                                      : [
+                                          {
+                                            id: 'card-1',
+                                            communityId: 'the-valley',
+                                            name: 'The Valley',
+                                            subtitle: 'by Emaar',
+                                            matchScore: '96%',
+                                            whyFitsHeading: 'Why it fits you',
+                                            whyFits:
+                                              'Excellent for families with children, great schools nearby, master-planned community with strong future growth potential.',
+                                            buttonText: 'View Community',
+                                            buttonLink: '/the-valley',
+                                            image: '/thevalley-img.png',
+                                          },
+                                          {
+                                            id: 'card-2',
+                                            communityId: 'dubai-hills-estate',
+                                            name: 'Dubai Hills Estate',
+                                            subtitle: 'by Emaar',
+                                            matchScore: '92%',
+                                            whyFitsHeading: 'Why it fits you',
+                                            whyFits:
+                                              'Established community with premium infrastructure and high rental demand.',
+                                            buttonText: 'View Community',
+                                            buttonLink: '/compare-communities',
+                                            image: '/dubaihillestate.png',
+                                          },
+                                          {
+                                            id: 'card-3',
+                                            communityId: 'grand-polo-club-resort',
+                                            name: 'Grand Polo Club & Resort',
+                                            subtitle: 'by Emaar',
+                                            matchScore: '89%',
+                                            whyFitsHeading: 'Why it fits you',
+                                            whyFits:
+                                              'Luxury lifestyle with strong capital appreciation potential and limited supply.',
+                                            buttonText: 'View Community',
+                                            buttonLink: '/communities',
+                                            image: '/grandpolo.png',
+                                          },
+                                        ];
+
+                                  const updateCard = (index: number, updatedCard: any) => {
+                                    const nextCards = [...cards];
+                                    nextCards[index] = updatedCard;
+                                    updateSec('cards', nextCards);
+                                  };
+
+                                  const addCard = () => {
+                                    const nextCards = [
+                                      ...cards,
+                                      {
+                                        id: `card-${Date.now()}`,
+                                        communityId: 'dubai-creek-harbour',
+                                        name: 'Dubai Creek Harbour',
+                                        subtitle: 'by Emaar',
+                                        matchScore: '94%',
+                                        whyFitsHeading: 'Why it fits you',
+                                        whyFits:
+                                          'Calm waterfront living with skyline views, marina boardwalks, and direct access to Ras Al Khor sanctuary.',
+                                        buttonText: 'View Community',
+                                        buttonLink: '/communities/dubai-creek-harbour',
+                                        image: '/creekicon.png',
+                                      },
+                                    ];
+                                    updateSec('cards', nextCards);
+                                  };
+
+                                  const removeCard = (index: number) => {
+                                    const nextCards = cards.filter((_, i) => i !== index);
+                                    updateSec('cards', nextCards);
+                                  };
+
+                                  const moveCard = (index: number, direction: 'up' | 'down') => {
+                                    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+                                    if (targetIndex < 0 || targetIndex >= cards.length) return;
+                                    const nextCards = [...cards];
+                                    const temp = nextCards[index];
+                                    nextCards[index] = nextCards[targetIndex];
+                                    nextCards[targetIndex] = temp;
+                                    updateSec('cards', nextCards);
+                                  };
+
+                                  return (
+                                    <>
+                                      {/* Top: Section Heading & Tagline */}
+                                      <div className="p-5 bg-white border border-[#E5E0D8] rounded-2xl space-y-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                          <div>
+                                            <label className="block text-xs font-semibold text-[#525252] mb-1">
+                                              Section Heading
+                                            </label>
+                                            <input
+                                              type="text"
+                                              value={secData.title ?? 'Top Recommended Communities'}
+                                              onChange={(e) => updateSec('title', e.target.value)}
+                                              placeholder="Top Recommended Communities"
+                                              className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717] font-semibold focus:outline-none focus:border-[#BFA16A]"
+                                            />
+                                          </div>
+
+                                          <div>
+                                            <label className="block text-xs font-semibold text-[#525252] mb-1">
+                                              Tagline / Badge / Link Text
+                                            </label>
+                                            <input
+                                              type="text"
+                                              value={secData.tagline ?? 'How we score communities'}
+                                              onChange={(e) => updateSec('tagline', e.target.value)}
+                                              placeholder="How we score communities"
+                                              className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-sm text-[#171717] focus:outline-none focus:border-[#BFA16A]"
+                                            />
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      {/* Cards List Header */}
+                                      <div className="flex items-center justify-between pt-2">
+                                        <div>
+                                          <h4 className="text-sm font-bold text-[#171717]">
+                                            Recommended Community Cards ({cards.length})
+                                          </h4>
+                                          <p className="text-xs text-[#737373]">
+                                            Each card represents a recommended community on the advisory report page. Select a community from the dropdown to auto-fill all its fields.
+                                          </p>
+                                        </div>
+                                        <button
+                                          type="button"
+                                          onClick={addCard}
+                                          className="px-4 py-2 bg-[#BFA16A] text-white rounded-xl text-xs font-bold hover:bg-[#a68c5b] transition-colors shadow-sm flex items-center gap-1.5"
+                                        >
+                                          <span>+</span> Add Recommended Community
+                                        </button>
+                                      </div>
+
+                                      {/* Render Each Card */}
+                                      <div className="space-y-6">
+                                        {cards.map((card, idx) => (
+                                          <div
+                                            key={card.id || idx}
+                                            className="p-6 bg-white border border-[#E5E0D8] rounded-2xl shadow-sm relative space-y-5"
+                                          >
+                                            {/* Card Header Bar */}
+                                            <div className="flex items-center justify-between pb-4 border-b border-[#E5E0D8]">
+                                              <div className="flex items-center gap-3">
+                                                {/* Badge Number (Matching Frontend Image 2) */}
+                                                <div className="w-10 h-10 rounded-[10px] bg-[#858585] text-white font-bold text-lg flex items-center justify-center shadow-sm">
+                                                  {idx + 1}
+                                                </div>
+                                                <div>
+                                                  <h5 className="text-base font-bold text-[#171717]">
+                                                    {card.name || `Community Card #${idx + 1}`}
+                                                  </h5>
+                                                  <span className="text-xs text-[#888888]">
+                                                    {card.subtitle || 'by Developer'} • Match:{' '}
+                                                    <strong className="text-[#171717]">
+                                                      {card.matchScore || '0%'}
+                                                    </strong>
+                                                  </span>
+                                                </div>
+                                              </div>
+
+                                              <div className="flex items-center gap-1.5">
+                                                <button
+                                                  type="button"
+                                                  disabled={idx === 0}
+                                                  onClick={() => moveCard(idx, 'up')}
+                                                  className="p-1.5 text-xs text-[#737373] hover:text-[#171717] disabled:opacity-30 rounded-lg hover:bg-[#FAF9F6]"
+                                                  title="Move Up"
+                                                >
+                                                  ↑
+                                                </button>
+                                                <button
+                                                  type="button"
+                                                  disabled={idx === cards.length - 1}
+                                                  onClick={() => moveCard(idx, 'down')}
+                                                  className="p-1.5 text-xs text-[#737373] hover:text-[#171717] disabled:opacity-30 rounded-lg hover:bg-[#FAF9F6]"
+                                                  title="Move Down"
+                                                >
+                                                  ↓
+                                                </button>
+                                                <button
+                                                  type="button"
+                                                  onClick={() => removeCard(idx)}
+                                                  className="px-2.5 py-1 text-xs text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium ml-1"
+                                                >
+                                                  Remove
+                                                </button>
+                                              </div>
+                                            </div>
+
+                                            {/* Dropdown to Auto-Fill Community Data */}
+                                            <div className="bg-[#FAF9F6] p-4 rounded-xl border border-[#E5E0D8]">
+                                              <label className="block text-xs font-bold text-[#BFA16A] mb-1.5">
+                                                Select Community from Website / Database (Auto-Fills Card)
+                                              </label>
+                                              <select
+                                                value={card.communityId || ''}
+                                                onChange={(e) => {
+                                                  const val = e.target.value;
+                                                  const found = allAvailableCommunities.find(
+                                                    (c) => c.id === val || c.name === val
+                                                  );
+                                                  if (found) {
+                                                    updateCard(idx, {
+                                                      ...card,
+                                                      communityId: found.id,
+                                                      name: found.name,
+                                                      subtitle: found.subtitle || 'by Emaar',
+                                                      matchScore: found.matchScore || '95%',
+                                                      whyFits: found.whyFits || '',
+                                                      buttonText: found.buttonText || 'View Community',
+                                                      buttonLink: found.buttonLink || `/communities/${found.id}`,
+                                                      image: found.image || card.image || '/thevalley-img.png',
+                                                    });
+                                                  } else {
+                                                    updateCard(idx, { ...card, communityId: val });
+                                                  }
+                                                }}
+                                                className="w-full bg-white border border-[#BFA16A] rounded-xl px-3.5 py-2.5 text-xs font-semibold text-[#171717] focus:outline-none focus:ring-1 focus:ring-[#BFA16A]"
+                                              >
+                                                <option value="">
+                                                  -- Choose Community from Database / Website --
+                                                </option>
+                                                {allAvailableCommunities.map((comm) => (
+                                                  <option key={comm.id} value={comm.id}>
+                                                    {comm.name} — ({comm.subtitle})
+                                                  </option>
+                                                ))}
+                                              </select>
+                                            </div>
+
+                                            {/* Field Inputs for Card (Matching Frontend Image 2) */}
+                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                              <div>
+                                                <label className="block text-[11px] font-semibold text-[#525252] mb-1">
+                                                  Community Name (Title)
+                                                </label>
+                                                <input
+                                                  type="text"
+                                                  value={card.name || ''}
+                                                  onChange={(e) =>
+                                                    updateCard(idx, { ...card, name: e.target.value })
+                                                  }
+                                                  placeholder="e.g. The Valley"
+                                                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-3.5 py-2 text-xs font-bold text-[#171717] focus:outline-none focus:border-[#BFA16A]"
+                                                />
+                                              </div>
+
+                                              <div>
+                                                <label className="block text-[11px] font-semibold text-[#525252] mb-1">
+                                                  Developer / Subtitle
+                                                </label>
+                                                <input
+                                                  type="text"
+                                                  value={card.subtitle || ''}
+                                                  onChange={(e) =>
+                                                    updateCard(idx, { ...card, subtitle: e.target.value })
+                                                  }
+                                                  placeholder="e.g. by Emaar"
+                                                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-3.5 py-2 text-xs text-[#171717] focus:outline-none focus:border-[#BFA16A]"
+                                                />
+                                              </div>
+
+                                              <div>
+                                                <label className="block text-[11px] font-semibold text-[#BFA16A] mb-1">
+                                                  Overall Match Score (e.g. 96%)
+                                                </label>
+                                                <input
+                                                  type="text"
+                                                  value={card.matchScore || ''}
+                                                  onChange={(e) =>
+                                                    updateCard(idx, { ...card, matchScore: e.target.value })
+                                                  }
+                                                  placeholder="96%"
+                                                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-3.5 py-2 text-xs font-bold text-[#171717] focus:outline-none focus:border-[#BFA16A]"
+                                                />
+                                              </div>
+                                            </div>
+
+                                            {/* Why It Fits You Section */}
+                                            <div className="space-y-2">
+                                              <div className="flex items-center justify-between">
+                                                <label className="block text-[11px] font-semibold text-[#525252]">
+                                                  "Why it fits you" Heading &amp; Explanation
+                                                </label>
+                                                <input
+                                                  type="text"
+                                                  value={card.whyFitsHeading ?? 'Why it fits you'}
+                                                  onChange={(e) =>
+                                                    updateCard(idx, {
+                                                      ...card,
+                                                      whyFitsHeading: e.target.value,
+                                                    })
+                                                  }
+                                                  placeholder="Why it fits you"
+                                                  className="bg-[#FAF9F6] border border-[#E5E0D8] rounded-lg px-2 py-0.5 text-[11px] font-semibold text-[#171717] w-40 focus:outline-none focus:border-[#BFA16A]"
+                                                />
+                                              </div>
+                                              <textarea
+                                                rows={3}
+                                                value={card.whyFits || ''}
+                                                onChange={(e) =>
+                                                  updateCard(idx, { ...card, whyFits: e.target.value })
+                                                }
+                                                placeholder="Explain why this community matches the client portfolio..."
+                                                className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs text-[#171717] focus:outline-none focus:border-[#BFA16A]"
+                                              />
+                                            </div>
+
+                                            {/* Button Text & Link */}
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                              <div>
+                                                <label className="block text-[11px] font-semibold text-[#525252] mb-1">
+                                                  Button Text
+                                                </label>
+                                                <input
+                                                  type="text"
+                                                  value={card.buttonText ?? 'View Community'}
+                                                  onChange={(e) =>
+                                                    updateCard(idx, {
+                                                      ...card,
+                                                      buttonText: e.target.value,
+                                                    })
+                                                  }
+                                                  placeholder="View Community"
+                                                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-3.5 py-2 text-xs text-[#171717] focus:outline-none focus:border-[#BFA16A]"
+                                                />
+                                              </div>
+
+                                              <div>
+                                                <label className="block text-[11px] font-semibold text-[#525252] mb-1">
+                                                  Button Link / URL
+                                                </label>
+                                                <input
+                                                  type="text"
+                                                  value={card.buttonLink ?? '/the-valley'}
+                                                  onChange={(e) =>
+                                                    updateCard(idx, {
+                                                      ...card,
+                                                      buttonLink: e.target.value,
+                                                    })
+                                                  }
+                                                  placeholder="/the-valley"
+                                                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl px-3.5 py-2 text-xs text-[#171717] focus:outline-none focus:border-[#BFA16A]"
+                                                />
+                                              </div>
+                                            </div>
+
+                                            {/* Image Picker */}
+                                            <CoverImagePicker
+                                              label="Community Card Image (Right-Side Photo)"
+                                              imageUrl={card.image || '/thevalley-img.png'}
+                                              onChange={(url) => updateCard(idx, { ...card, image: url })}
+                                              onFileUpload={handleFileUpload}
+                                            />
+                                          </div>
+                                        ))}
+                                      </div>
+
+                                      {/* Bottom Add Button */}
+                                      <div className="pt-2 flex justify-center">
+                                        <button
+                                          type="button"
+                                          onClick={addCard}
+                                          className="px-6 py-3 bg-[#FAF9F6] border-2 border-dashed border-[#BFA16A] text-[#BFA16A] rounded-xl text-xs font-bold hover:bg-[#FAF6EE] transition-colors flex items-center gap-2"
+                                        >
+                                          <span>+</span> Add Another Recommended Community Card
+                                        </button>
+                                      </div>
+                                    </>
+                                  );
+                                })()}
+                              </div>
+) : activeSectionTab === 'valley-highlights' ? (
                               /* VALLEY HIGHLIGHTS & ACTION BUTTONS EDITOR */
                               <div className="space-y-6">
                                 {(() => {
@@ -9143,7 +9755,7 @@ export default function CMSDashboard() {
                                   );
                                 })()}
                               </div>
-                            ) : activeSectionTab.startsWith('buy-detail-') || activeSectionTab === 'dev-grid' || activeSectionTab === 'blog-hero' || activeSectionTab === 'blog-where-to-live' || activeSectionTab === 'about-hero' || activeSectionTab === 'about-section' ? null : (
+                            ) : activeSectionTab.startsWith('buy-detail-') || activeSectionTab === 'dev-grid' || activeSectionTab === 'blog-hero' || activeSectionTab === 'blog-where-to-live' || activeSectionTab === 'about-hero' || activeSectionTab === 'about-section' || activeSectionTab === 'report-comm' ? null : (
                               <div className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   <div>

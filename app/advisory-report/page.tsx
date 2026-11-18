@@ -19,6 +19,7 @@ export default async function AdvisoryReportPage() {
   const customSections = page?.content?.customSections || {};
   const reportHero = customSections['report-hero'] || page?.content?.hero || {};
   const reportScore = customSections['report-score'] || {};
+  const reportComm = customSections['report-comm'] || {};
 
   return (
     <main className="min-h-screen bg-[#FAF9F6]">
@@ -49,7 +50,12 @@ export default async function AdvisoryReportPage() {
         iconUrl={reportScore.iconUrl || reportScore.bgImage || '/Layer_1 (3).png'}
         iconSize={reportScore.iconSize || 340}
       />
-      <RecommendedCommunitiesSection />
+      <RecommendedCommunitiesSection
+        heading={reportComm.title || 'Top Recommended Communities'}
+        tagline={reportComm.tagline || 'How we score communities'}
+        taglineLink={reportComm.taglineLink || '#score-info'}
+        cards={reportComm.cards}
+      />
       <BookStrategySessionBanner />
     </main>
   );

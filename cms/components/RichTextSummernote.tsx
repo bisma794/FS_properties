@@ -334,7 +334,10 @@ export default function RichTextSummernote({
             }}
             className="p-1.5 hover:bg-[#EFE5D3] rounded text-[#171717] text-xs h-7 w-7 flex items-center justify-center transition"
           >
-            🔗
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            </svg>
           </button>
 
           {/* Image Upload */}
@@ -346,7 +349,12 @@ export default function RichTextSummernote({
             }}
             className="p-1.5 hover:bg-[#EFE5D3] rounded text-[#171717] text-xs h-7 px-2 flex items-center gap-1 transition"
           >
-            🖼️ <span className="text-[10px] hidden sm:inline">Image</span>
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+            <span className="text-[10px] hidden sm:inline">Image</span>
           </button>
 
           {/* Code View */}

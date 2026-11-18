@@ -183,7 +183,7 @@ export default function DynamicPageBuilder({
           }`}
         >
           <span className="flex items-center gap-2">
-            <span className="text-sm">⚙️</span> General
+            General
           </span>
           <span className="text-[10px] text-[#A39982] font-mono">Core</span>
         </button>
@@ -285,7 +285,10 @@ export default function DynamicPageBuilder({
             <div className="p-4 border-b border-[#E5E0D8] bg-white space-y-3">
               {/* Search Bar */}
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-[#888888]">🔍</span>
+                <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#888888]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.35-4.35" />
+                </svg>
                 <input
                   type="text"
                   value={searchQuery}
@@ -497,7 +500,11 @@ export default function DynamicPageBuilder({
                   />
                 ) : (
                   <div className="flex flex-col items-center justify-center text-center p-4">
-                    <span className="text-2xl text-[#888888] mb-1">🖼️</span>
+                    <svg className="w-8 h-8 text-[#A39982] mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                      <circle cx="8.5" cy="8.5" r="1.5" />
+                      <polyline points="21 15 16 10 5 21" />
+                    </svg>
                     <span className="text-xs text-[#737373]">Click to upload file</span>
                   </div>
                 )}

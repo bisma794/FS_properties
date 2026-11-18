@@ -5163,7 +5163,7 @@ export default function CMSDashboard() {
                       : 'text-[#525252] hover:bg-[#FAF9F6] hover:text-[#171717]'
                   }`}
                 >
-                  <span className="flex items-center gap-2.5">📄 Pages</span>
+                  <span className="flex items-center gap-2.5">Pages</span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#FAF9F6] border border-[#E5E0D8]">
                     {pages.filter((p) => coreStaticSlugs.includes(p.slug)).length}
                   </span>
@@ -5181,7 +5181,7 @@ export default function CMSDashboard() {
                       : 'text-[#525252] hover:bg-[#FAF9F6] hover:text-[#171717]'
                   }`}
                 >
-                  <span className="flex items-center gap-2.5">✨ Dynamic Pages</span>
+                  <span className="flex items-center gap-2.5">Dynamic Pages</span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#FAF9F6] border border-[#E5E0D8]">
                     {pages.filter(isDynamicPage).length}
                   </span>
@@ -5207,7 +5207,7 @@ export default function CMSDashboard() {
                       : 'text-[#525252] hover:bg-[#FAF9F6] hover:text-[#171717]'
                   }`}
                 >
-                  <span className="flex items-center gap-2.5">🏠 Property Listings</span>
+                  <span className="flex items-center gap-2.5">Property Listings</span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#FAF9F6] border border-[#E5E0D8]">
                     {properties.length}
                   </span>
@@ -5225,7 +5225,7 @@ export default function CMSDashboard() {
                       : 'text-[#525252] hover:bg-[#FAF9F6] hover:text-[#171717]'
                   }`}
                 >
-                  <span className="flex items-center gap-2.5">🏙️ Off-Plan Projects</span>
+                  <span className="flex items-center gap-2.5">Off-Plan Projects</span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#FAF9F6] border border-[#E5E0D8]">
                     {offplans.length}
                   </span>
@@ -5243,7 +5243,7 @@ export default function CMSDashboard() {
                       : 'text-[#525252] hover:bg-[#FAF9F6] hover:text-[#171717]'
                   }`}
                 >
-                  <span className="flex items-center gap-2.5">🌴 Communities</span>
+                  <span className="flex items-center gap-2.5">Communities</span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#FAF9F6] border border-[#E5E0D8]">
                     {communities.length}
                   </span>
@@ -5261,7 +5261,7 @@ export default function CMSDashboard() {
                       : 'text-[#525252] hover:bg-[#FAF9F6] hover:text-[#171717]'
                   }`}
                 >
-                  <span className="flex items-center gap-2.5">🏗️ Developers</span>
+                  <span className="flex items-center gap-2.5">Developers</span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#FAF9F6] border border-[#E5E0D8]">
                     {developerCards.length}
                   </span>
@@ -5279,7 +5279,7 @@ export default function CMSDashboard() {
                       : 'text-[#525252] hover:bg-[#FAF9F6] hover:text-[#171717]'
                   }`}
                 >
-                  <span className="flex items-center gap-2.5">📰 Blogs</span>
+                  <span className="flex items-center gap-2.5">Blogs</span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#FAF9F6] border border-[#E5E0D8]">
                     {blogsList.length}
                   </span>
@@ -5305,7 +5305,7 @@ export default function CMSDashboard() {
                       : 'text-[#525252] hover:bg-[#FAF9F6] hover:text-[#171717]'
                   }`}
                 >
-                  <span className="flex items-center gap-2.5">💬 Client Reviews</span>
+                  <span className="flex items-center gap-2.5">Client Reviews</span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#FAF9F6] border border-[#E5E0D8]">
                     {reviewsList.length}
                   </span>
@@ -5313,37 +5313,29 @@ export default function CMSDashboard() {
               </nav>
             </div>
 
-            {/* Category 4: Settings & Assets (Matching Screenshot) */}
+            {/* Category 4: Settings & Assets */}
             <div>
               <div className="flex items-center justify-between px-3 mb-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[#737373] flex items-center gap-1.5">
-                  <svg className="w-3.5 h-3.5 text-[#737373]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="3" />
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                  </svg>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#737373]">
                   Settings
                 </p>
                 <span className="text-[10px] text-[#A3A3A3]">▼</span>
               </div>
               <nav className="space-y-1">
-                {/* Amenities Tab Button (Matching Screenshot) */}
+                {/* Amenities Tab Button */}
                 <button
                   onClick={() => {
                     setEditingPage(null);
                     setEditingItem(null);
                     setActiveTab('amenities');
                   }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold tracking-wider transition ${
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase transition ${
                     activeTab === 'amenities' && !editingPage && !editingItem
                       ? 'bg-[#BFA16A]/10 text-[#BFA16A] border border-[#BFA16A]/30 shadow-xs'
                       : 'text-[#525252] hover:bg-[#FAF9F6] hover:text-[#171717]'
                   }`}
                 >
                   <span className="flex items-center gap-2.5">
-                    {/* Sparkle Icon */}
-                    <svg className="w-4 h-4 text-[#BFA16A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" />
-                    </svg>
                     Amenities
                   </span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#FAF9F6] border border-[#E5E0D8]">
@@ -5351,26 +5343,20 @@ export default function CMSDashboard() {
                   </span>
                 </button>
 
-                {/* Icons Tab Button (Matching Screenshot) */}
+                {/* Icons Tab Button */}
                 <button
                   onClick={() => {
                     setEditingPage(null);
                     setEditingItem(null);
                     setActiveTab('icons');
                   }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold tracking-wider transition ${
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase transition ${
                     activeTab === 'icons' && !editingPage && !editingItem
                       ? 'bg-[#BFA16A]/10 text-[#BFA16A] border border-[#BFA16A]/30 shadow-xs'
                       : 'text-[#525252] hover:bg-[#FAF9F6] hover:text-[#171717]'
                   }`}
                 >
                   <span className="flex items-center gap-2.5">
-                    {/* Picture / Icon outline */}
-                    <svg className="w-4 h-4 text-[#BFA16A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                      <circle cx="8.5" cy="8.5" r="1.5" />
-                      <polyline points="21 15 16 10 5 21" />
-                    </svg>
                     Icons
                   </span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#FAF9F6] border border-[#E5E0D8]">
@@ -5463,20 +5449,21 @@ export default function CMSDashboard() {
                   const isDevSlug = developerCards.some((d) => d.slug === editingPage.slug);
                   const isBlog = editorReturnTab === 'blogs' || isBlogPage(editingPage) || editingPage.slug === 'blog-details';
                   const isProp = editorReturnTab === 'properties' || isPropertyPage(editingPage) || editingPage.slug === 'buy-detail';
+                  const liveHost = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost';
                   const targetLiveUrl =
                     editingPage.slug === 'recommendation-result' || pageSlug === 'recommendation-result'
-                      ? `http://:3000/${pageSlug || 'recommendation-result'}`
+                      ? `http://${liveHost}:3000/${pageSlug || 'recommendation-result'}`
                       : isProp
-                      ? `http://:3000/buy-detail${(pageSlug || editingPage.slug) === 'buy-detail' ? '' : `?slug=${pageSlug || editingPage.slug}`}`
+                      ? `http://${liveHost}:3000/buy-detail${(pageSlug || editingPage.slug) === 'buy-detail' ? '' : `?slug=${pageSlug || editingPage.slug}`}`
                       : editorReturnTab === 'offplans' || editingPage.slug === 'project-detail'
-                      ? `http://:3000/project-detail?slug=${pageSlug || editingPage.slug}`
+                      ? `http://${liveHost}:3000/project-detail?slug=${pageSlug || editingPage.slug}`
                       : isBlog
-                      ? `http://:3000/blog-details?slug=${pageSlug || editingPage.slug}`
+                      ? `http://${liveHost}:3000/blog-details?slug=${pageSlug || editingPage.slug}`
                       : isCommSlug
-                      ? `http://:3000/communities/${pageSlug || editingPage.slug}`
+                      ? `http://${liveHost}:3000/communities/${pageSlug || editingPage.slug}`
                       : isDevSlug
-                      ? `http://:3000/developers/${pageSlug || editingPage.slug}`
-                      : `http://:3000/${(pageSlug || editingPage.slug) === 'home' ? '' : (pageSlug || editingPage.slug)}`;
+                      ? `http://${liveHost}:3000/developers/${pageSlug || editingPage.slug}`
+                      : `http://${liveHost}:3000/${(pageSlug || editingPage.slug) === 'home' ? '' : (pageSlug || editingPage.slug)}`;
 
                   return (
                     <div className="flex items-center gap-3 flex-wrap">
@@ -5497,7 +5484,7 @@ export default function CMSDashboard() {
                         rel="noreferrer"
                         className="px-3 py-1.5 text-xs font-semibold text-[#171717] bg-[#FAF9F6] border border-[#E5E0D8] hover:border-[#BFA16A] hover:text-[#BFA16A] rounded-xl transition flex items-center gap-1.5 shadow-2xs"
                       >
-                        <span>↗</span> View on Website
+                        View on Website
                       </a>
                     </div>
                   );
@@ -5682,7 +5669,10 @@ export default function CMSDashboard() {
                             onError={(e) => (e.currentTarget.src = '/buy_hero.png')}
                           />
                           <label className="absolute bottom-3 right-3 bg-white p-2 rounded-xl shadow-md border border-[#E5E0D8] cursor-pointer hover:bg-[#FAF9F6] transition">
-                            <span className="text-sm">✏️</span>
+                            <svg className="w-3.5 h-3.5 text-[#525252]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M12 20h9" />
+                              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            </svg>
                             <input
                               type="file"
                               accept="image/*"
@@ -5796,7 +5786,7 @@ export default function CMSDashboard() {
 
                           <div>
                             <label className="block text-xs font-semibold text-[#BFA16A] mb-1">
-                              Title Line 2 (Highlighted Gold) ✨
+                              Title Line 2 (Highlighted Gold)
                             </label>
                             <input
                               type="text"
@@ -6202,7 +6192,7 @@ export default function CMSDashboard() {
                                   {/* Section: Off-Plan Projects */}
                                   <div>
                                     <span className="text-[10px] font-bold uppercase tracking-wider text-[#BFA16A] px-2 py-0.5 bg-[#BFA16A]/10 rounded block mb-1">
-                                      🏢 Off-Plan Projects
+                                      Off-Plan Projects
                                     </span>
                                     <div className="space-y-0.5">
                                       {offplans
@@ -6256,7 +6246,7 @@ export default function CMSDashboard() {
                                   {/* Section: Master Communities */}
                                   <div className="border-t border-[#E5E0D8] pt-2">
                                     <span className="text-[10px] font-bold uppercase tracking-wider text-[#171717] px-2 py-0.5 bg-[#FAF9F6] rounded block mb-1">
-                                      🌴 Master Communities
+                                      Master Communities
                                     </span>
                                     <div className="space-y-0.5">
                                       {communities
@@ -10042,7 +10032,9 @@ export default function CMSDashboard() {
                                             ))}
                                             {selectedItems.length === 0 && (
                                               <div className="h-full flex flex-col items-center justify-center text-center p-6 text-xs text-[#8A8A8A] space-y-2">
-                                                <span className="text-2xl">📥</span>
+                                                <svg className="w-8 h-8 text-[#BFA16A]/60 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                                  <path d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1m-4-8-4-4m0 0L8 8m4-4v12" />
+                                                </svg>
                                                 <p className="font-semibold text-[#171717]">Drop Projects Here</p>
                                                 <p>Drag any project card from the left container or click its + Add button to place it on this page.</p>
                                               </div>
@@ -10279,7 +10271,9 @@ export default function CMSDashboard() {
                                           ))}
                                           {selectedDevs.length === 0 && (
                                             <div className="h-full flex flex-col items-center justify-center text-center p-6 text-xs text-[#8A8A8A] space-y-2">
-                                              <span className="text-2xl">📥</span>
+                                              <svg className="w-8 h-8 text-[#BFA16A]/60 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                                <path d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1m-4-8-4-4m0 0L8 8m4-4v12" />
+                                              </svg>
                                               <p className="font-semibold text-[#171717]">Drop Developers Here</p>
                                               <p>Drag any developer card from the left pool or click + Add to display it in the Directory Grid.</p>
                                             </div>
@@ -11268,7 +11262,7 @@ export default function CMSDashboard() {
                                                 rel="noopener noreferrer"
                                                 className="text-[11px] text-[#BA955C] hover:underline font-semibold flex items-center gap-1"
                                               >
-                                                Test in Google Maps ↗
+                                                Test in Google Maps
                                               </a>
                                             )}
                                           </div>
@@ -11439,7 +11433,7 @@ export default function CMSDashboard() {
                   disabled={submitting}
                   className="px-6 py-2.5 text-xs font-semibold text-white bg-[#BFA16A] hover:bg-[#aa8e59] rounded-xl transition shadow-md shadow-[#BFA16A]/20 disabled:opacity-50"
                 >
-                  {submitting ? 'Saving Changes...' : '💾 Save & Update Property'}
+                  {submitting ? 'Saving Changes...' : 'Save & Update Property'}
                 </button>
               </div>
             </header>
@@ -11611,12 +11605,12 @@ export default function CMSDashboard() {
 
               <div className="flex items-center gap-4">
                 <a
-                  href="http://:3000"
+                  href={`http://${typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost'}:3000`}
                   target="_blank"
                   rel="noreferrer"
                   className="px-4 py-2.5 text-xs font-semibold text-[#171717] bg-white border border-[#E5E0D8] hover:border-[#BFA16A] hover:text-[#BFA16A] rounded-xl transition shadow-xs flex items-center gap-2"
                 >
-                  <span>↗</span> Live Website
+                  Live Website
                 </a>
 
                 {activeTab === 'reviews' ? (
@@ -11625,7 +11619,6 @@ export default function CMSDashboard() {
                     disabled={submitting}
                     className="px-6 py-2.5 text-xs font-semibold text-white bg-[#BFA16A] hover:bg-[#aa8e59] rounded-xl transition shadow-md shadow-[#BFA16A]/20 flex items-center gap-2"
                   >
-                    <span>💾</span>
                     {submitting ? 'Syncing...' : 'Save & Sync Reviews Across All Pages'}
                   </button>
                 ) : (
@@ -11708,7 +11701,7 @@ export default function CMSDashboard() {
                         onClick={checkBackendAndFetch}
                         className="px-3 py-1.5 text-xs font-semibold text-[#525252] bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl hover:bg-white"
                       >
-                        🔄 Sync
+                        Sync
                       </button>
                     </div>
                   </div>
@@ -11743,11 +11736,11 @@ export default function CMSDashboard() {
                             <td className="px-6 py-4 text-xs font-medium text-[#737373]">
                               {dynamic ? (
                                 <span className="inline-flex items-center gap-1 text-[#BFA16A]">
-                                  <span>✨</span> Dynamic Custom
+                                  Dynamic Custom
                                 </span>
                               ) : (
                                 <span className="inline-flex items-center gap-1 text-[#525252]">
-                                  <span>⚙️</span> Core System
+                                  Core System
                                 </span>
                               )}
                             </td>
@@ -11758,12 +11751,12 @@ export default function CMSDashboard() {
                             </td>
                             <td className="px-6 py-4 text-right space-x-2">
                               <a
-                                href={`http://:3000/${p.slug === 'home' ? '' : p.slug}`}
+                                href={`http://${typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost'}:3000/${p.slug === 'home' ? '' : p.slug}`}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="px-3 py-1.5 text-xs font-semibold text-[#525252] bg-white hover:text-[#BFA16A] hover:border-[#BFA16A] rounded-lg transition border border-[#E5E0D8]"
                               >
-                                ↗ View
+                                View
                               </a>
                               <button
                                 onClick={() => {
@@ -11815,15 +11808,15 @@ export default function CMSDashboard() {
                         onClick={checkBackendAndFetch}
                         className="px-3 py-1.5 text-xs font-semibold text-[#525252] bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl hover:bg-white"
                       >
-                        🔄 Sync
+                        Sync
                       </button>
                     </div>
                   </div>
 
                   {pages.filter(isDynamicPage).length === 0 ? (
                     <div className="p-12 text-center space-y-3">
-                      <div className="w-12 h-12 mx-auto rounded-full bg-[#BFA16A]/10 text-[#BFA16A] flex items-center justify-center text-xl">
-                        ✨
+                      <div className="w-12 h-12 mx-auto rounded-full bg-[#BFA16A]/10 text-[#BFA16A] flex items-center justify-center text-sm font-bold">
+                        DP
                       </div>
                       <h4 className="text-base font-bold text-[#171717]">No Dynamic Pages Created Yet</h4>
                       <button
@@ -11873,12 +11866,12 @@ export default function CMSDashboard() {
                             </td>
                             <td className="px-6 py-4 text-right space-x-2">
                               <a
-                                href={`http://:3000/${p.slug}`}
+                                href={`http://${typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost'}:3000/${p.slug}`}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="px-3 py-1.5 text-xs font-semibold text-[#525252] bg-white hover:text-[#BFA16A] hover:border-[#BFA16A] rounded-lg transition border border-[#E5E0D8]"
                               >
-                                ↗ View
+                                View
                               </a>
                               <button
                                 onClick={() => {
@@ -11933,7 +11926,7 @@ export default function CMSDashboard() {
                         }}
                         className="px-3.5 py-1.5 text-xs font-semibold text-[#171717] bg-[#FAF9F6] border border-[#E5E0D8] hover:border-[#BFA16A] hover:text-[#BFA16A] rounded-xl transition flex items-center gap-1.5 shadow-2xs"
                       >
-                        <span>📝</span> Edit Main Buy Detail Page
+                        Edit Main Buy Detail Page
                       </button>
                       <button
                         type="button"
@@ -11961,13 +11954,13 @@ export default function CMSDashboard() {
                         disabled={submitting}
                         className="px-4 py-2 text-xs font-semibold text-white bg-[#171717] hover:bg-[#2c2c2c] rounded-xl transition shadow-xs flex items-center gap-1.5 disabled:opacity-50"
                       >
-                        <span>💾</span> {submitting ? 'Saving...' : 'Save'}
+                        {submitting ? 'Saving...' : 'Save'}
                       </button>
                       <button
                         onClick={checkBackendAndFetch}
-                        className="px-3 py-1.5 text-xs font-semibold text-[#525252] bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl"
+                        className="px-3 py-1.5 text-xs font-semibold text-[#525252] bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl hover:bg-white"
                       >
-                        🔄 Sync
+                        Sync
                       </button>
                     </div>
                   </div>
@@ -12014,14 +12007,14 @@ export default function CMSDashboard() {
                                 <h4 className="text-sm font-bold text-[#171717] group-hover:text-[#BFA16A] transition-colors line-clamp-1">
                                   {p.title}
                                 </h4>
-                                <p className="text-xs text-[#737373] mt-1 flex items-center gap-1.5">
-                                  <span>📍</span> {p.location}
+                                <p className="text-xs text-[#737373] mt-1">
+                                  {p.location}
                                 </p>
                                 <div className="mt-2 flex items-center gap-2 text-[11px] text-[#525252] font-medium">
-                                  <span className="bg-white border border-[#E5E0D8] px-2 py-0.5 rounded-md">🛏️ {p.bedrooms} Beds</span>
-                                  <span className="bg-white border border-[#E5E0D8] px-2 py-0.5 rounded-md">🚿 {p.bathrooms} Baths</span>
+                                  <span className="bg-white border border-[#E5E0D8] px-2 py-0.5 rounded-md">{p.bedrooms} Beds</span>
+                                  <span className="bg-white border border-[#E5E0D8] px-2 py-0.5 rounded-md">{p.bathrooms} Baths</span>
                                   {p.area_sqft && (
-                                    <span className="bg-white border border-[#E5E0D8] px-2 py-0.5 rounded-md">📐 {p.area_sqft} sqft</span>
+                                    <span className="bg-white border border-[#E5E0D8] px-2 py-0.5 rounded-md">{p.area_sqft} sqft</span>
                                   )}
                                 </div>
                               </div>
@@ -12029,28 +12022,28 @@ export default function CMSDashboard() {
                               {/* Actions */}
                               <div className="mt-4 pt-3 border-t border-[#E5E0D8] flex items-center gap-2">
                                 <a
-                                  href={`http://:3000/buy-detail?slug=${pSlug}`}
+                                  href={`http://${typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost'}:3000/buy-detail?slug=${pSlug}`}
                                   target="_blank"
                                   rel="noreferrer"
                                   className="py-1.5 px-2.5 text-xs font-semibold text-[#525252] bg-white hover:text-[#BFA16A] hover:border-[#BFA16A] rounded-xl transition border border-[#E5E0D8] flex items-center justify-center"
                                   title="View on Website"
                                 >
-                                  ↗
+                                  View
                                 </a>
                                 <button
                                   type="button"
                                   onClick={() => openPropertyEditor(p)}
                                   className="flex-1 py-1.5 px-3 text-xs font-semibold text-white bg-[#BFA16A] hover:bg-[#aa8e59] rounded-xl transition shadow-xs flex items-center justify-center gap-1.5"
                                 >
-                                  <span>✏️</span> Edit Property Sections
+                                  Edit Property Sections
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => handleDeleteItem('properties', p.id, p.title)}
-                                  className="p-1.5 text-xs font-semibold text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl transition border border-rose-200"
+                                  className="px-2.5 py-1.5 text-xs font-semibold text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl transition border border-rose-200"
                                   title="Delete Property"
                                 >
-                                  🗑️
+                                  Delete
                                 </button>
                               </div>
                             </div>
@@ -12086,7 +12079,7 @@ export default function CMSDashboard() {
                         }}
                         className="px-3.5 py-1.5 text-xs font-semibold text-[#171717] bg-[#FAF9F6] border border-[#E5E0D8] hover:border-[#BFA16A] hover:text-[#BFA16A] rounded-xl transition flex items-center gap-1.5 shadow-2xs"
                       >
-                        <span>📝</span> Edit Main Project Detail Page
+                        Edit Main Project Detail Page
                       </button>
                       <button
                         type="button"
@@ -12106,9 +12099,9 @@ export default function CMSDashboard() {
                       </button>
                       <button
                         onClick={checkBackendAndFetch}
-                        className="px-3 py-1.5 text-xs font-semibold text-[#525252] bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl"
+                        className="px-3 py-1.5 text-xs font-semibold text-[#525252] bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl hover:bg-white"
                       >
-                        🔄 Sync
+                        Sync
                       </button>
                     </div>
                   </div>
@@ -12137,13 +12130,13 @@ export default function CMSDashboard() {
                           </td>
                           <td className="px-6 py-4 text-right space-x-2">
                             <a
-                              href={`http://:3000/project-detail?slug=${o.slug || o.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}`}
+                              href={`http://${typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost'}:3000/project-detail?slug=${o.slug || o.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}`}
                               target="_blank"
                               rel="noreferrer"
                               className="px-2.5 py-1 text-xs font-semibold text-[#525252] bg-white hover:text-[#BFA16A] hover:border-[#BFA16A] rounded-lg transition border border-[#E5E0D8] inline-flex items-center gap-1 shadow-2xs"
                               title="View on Website"
                             >
-                              ↗ View
+                              View
                             </a>
                             <button
                               onClick={() => openProjectEditor(o)}
@@ -12186,7 +12179,7 @@ export default function CMSDashboard() {
                         }}
                         className="px-4 py-2 text-xs font-semibold text-[#171717] bg-[#FAF9F6] border border-[#E5E0D8] hover:border-[#BFA16A] hover:text-[#BFA16A] rounded-xl transition shadow-2xs flex items-center gap-1.5"
                       >
-                        <span>📝</span> Edit Communities Page
+                        Edit Communities Page
                       </button>
 
                       <button
@@ -12211,7 +12204,7 @@ export default function CMSDashboard() {
                         onClick={checkBackendAndFetch}
                         className="px-3 py-1.5 text-xs font-semibold text-[#525252] bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl hover:bg-white"
                       >
-                        🔄 Sync
+                        Sync
                       </button>
                     </div>
                   </div>
@@ -12221,9 +12214,10 @@ export default function CMSDashboard() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                       {communities.map((c) => {
                         const slug = c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+                        const liveHost = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost';
                         const targetUrl = c.href && c.href !== '#'
-                          ? (c.href.startsWith('http') ? c.href : `http://:3000${c.href.startsWith('/') ? '' : '/'}${c.href}`)
-                          : `http://:3000/community-detail`;
+                          ? (c.href.startsWith('http') ? c.href : `http://${liveHost}:3000${c.href.startsWith('/') ? '' : '/'}${c.href}`)
+                          : `http://${liveHost}:3000/community-detail`;
 
                         return (
                           <div
@@ -12326,24 +12320,24 @@ export default function CMSDashboard() {
                                   }}
                                   className="flex-1 py-1.5 px-3 text-xs font-semibold text-white bg-[#BFA16A] hover:bg-[#aa8e59] rounded-xl transition shadow-xs flex items-center justify-center gap-1.5"
                                 >
-                                  <span>✏️</span> Edit Community
+                                  Edit Community
                                 </button>
                                 <a
                                   href={targetUrl}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="p-1.5 text-xs font-semibold text-[#525252] bg-white hover:text-[#BFA16A] hover:border-[#BFA16A] rounded-xl transition border border-[#E5E0D8]"
+                                  className="py-1.5 px-2.5 text-xs font-semibold text-[#525252] bg-white hover:text-[#BFA16A] hover:border-[#BFA16A] rounded-xl transition border border-[#E5E0D8]"
                                   title="View Community Page"
                                 >
-                                  ↗
+                                  View
                                 </a>
                                 <button
                                   type="button"
                                   onClick={() => handleDeleteItem('communities', c.id || c.name, c.name)}
-                                  className="p-1.5 text-xs font-semibold text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl transition border border-rose-200"
+                                  className="px-2.5 py-1.5 text-xs font-semibold text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl transition border border-rose-200"
                                   title="Delete Community"
                                 >
-                                  🗑️
+                                  Delete
                                 </button>
                               </div>
                             </div>
@@ -12374,7 +12368,7 @@ export default function CMSDashboard() {
                         }}
                         className="px-4 py-2 text-xs font-semibold text-[#171717] bg-[#FAF9F6] border border-[#E5E0D8] hover:border-[#BFA16A] hover:text-[#BFA16A] rounded-xl transition shadow-2xs flex items-center gap-1.5"
                       >
-                        <span>📝</span> Edit Developers Page
+                        Edit Developers Page
                       </button>
                       <button
                         onClick={() => {
@@ -12397,7 +12391,7 @@ export default function CMSDashboard() {
                         onClick={checkBackendAndFetch}
                         className="px-3 py-1.5 text-xs font-semibold text-[#525252] bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl hover:bg-white"
                       >
-                        🔄 Sync
+                        Sync
                       </button>
                     </div>
                   </div>
@@ -12475,24 +12469,22 @@ export default function CMSDashboard() {
                                 onClick={openDeveloperDetailEditor}
                                 className="flex-1 py-1.5 px-3 text-xs font-semibold text-white bg-[#BFA16A] hover:bg-[#aa8e59] rounded-xl transition shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                               >
-                                <span>✏️</span> Edit Detail Page
+                                Edit Detail Page
                               </button>
                               <a
-                                href={`http://:3000/developers/${slug}`}
+                                href={`http://${typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost'}:3000/developers/${slug}`}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="p-1.5 text-xs font-semibold text-[#525252] hover:text-[#BFA16A] bg-[#FAF9F6] hover:bg-white rounded-xl transition border border-[#E5E0D8]"
                                 title={`Open /developers/${slug}`}
-                              >
-                                ↗
-                              </a>
+                              >View</a>
                               <button
                                 type="button"
                                 onClick={() => handleDeleteItem('developers', d.id || d.name, d.name)}
                                 className="p-1.5 text-xs font-semibold text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl transition border border-rose-200 cursor-pointer"
                                 title="Delete Developer"
                               >
-                                🗑️
+                                Delete
                               </button>
                             </div>
                           </div>
@@ -12556,13 +12548,13 @@ export default function CMSDashboard() {
                         disabled={submitting}
                         className="px-4 py-2 text-xs font-semibold text-white bg-[#171717] hover:bg-[#2c2c2c] rounded-xl transition shadow-xs flex items-center gap-1.5 disabled:opacity-50"
                       >
-                        <span>💾</span> {submitting ? 'Saving...' : 'Save'}
+                        {submitting ? 'Saving...' : 'Save'}
                       </button>
                       <button
                         onClick={checkBackendAndFetch}
                         className="px-3 py-1.5 text-xs font-semibold text-[#525252] bg-[#FAF9F6] border border-[#E5E0D8] rounded-xl hover:bg-white"
                       >
-                        🔄 Sync
+                        Sync
                       </button>
                     </div>
                   </div>
@@ -12601,12 +12593,12 @@ export default function CMSDashboard() {
                           </td>
                           <td className="px-6 py-4 text-right space-x-2">
                             <a
-                              href={`http://:3000/blog-details?slug=${b.slug}`}
+                              href={`http://${typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost'}:3000/blog-details?slug=${b.slug}`}
                               target="_blank"
                               rel="noreferrer"
                               className="px-2.5 py-1 text-xs font-semibold text-[#525252] bg-white hover:text-[#BFA16A] hover:border-[#BFA16A] rounded-lg transition border border-[#E5E0D8] inline-flex items-center gap-1 shadow-2xs"
                             >
-                              ↗ View
+                              View
                             </a>
                             <button
                               onClick={() => openBlogEditor(b)}

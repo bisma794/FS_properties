@@ -146,33 +146,50 @@ export default async function DynamicDeveloperPage({
     <main className="min-h-[calc(100vh-80px)] bg-[#FAF9F6]">
       {/* 1. Developer Hero Section */}
       <DeveloperHeroSection
-        breadcrumb={devHeroSection.tagline || hero.breadcrumb || `Developer / ${developerNameFormatted}`}
-        headingWord1={devHeroSection.title?.split(' ')[0] || hero.titleLine1 || defaultWord1}
+        breadcrumb={
+          devHeroSection.tagline !== undefined
+            ? devHeroSection.tagline
+            : hero.breadcrumb !== undefined
+            ? hero.breadcrumb
+            : `Developer / ${developerNameFormatted}`
+        }
+        headingWord1={
+          devHeroSection.title !== undefined
+            ? devHeroSection.title.split(' ')[0] || ''
+            : hero.titleLine1 !== undefined
+            ? hero.titleLine1
+            : defaultWord1
+        }
         headingWord2={
-          devHeroSection.title?.split(' ').slice(1).join(' ') ||
-          hero.titleLine2 ||
-          defaultWord2
+          devHeroSection.title !== undefined
+            ? devHeroSection.title.split(' ').slice(1).join(' ') || ''
+            : hero.titleLine2 !== undefined
+            ? hero.titleLine2
+            : defaultWord2
         }
         description={
-          devHeroSection.contentText ||
-          hero.subheading ||
-          defaultDesc
+          devHeroSection.contentText !== undefined
+            ? devHeroSection.contentText
+            : hero.subheading !== undefined
+            ? hero.subheading
+            : defaultDesc
         }
         imageSrc={heroImage}
       />
 
       {/* 2. Developer Brief & Measured Overview Section */}
       <DeveloperBriefSection
-        developerName={brief.heading || defaultWord1}
-        tagline={brief.tagline || 'Developer Brief'}
+        developerName={brief.heading !== undefined ? brief.heading : defaultWord1}
+        tagline={brief.tagline !== undefined ? brief.tagline : 'Developer Brief'}
         description={
-          brief.contentText ||
-          `74 off-plan projects on the live register, from 1.1m. every entry reads straight from the vila database: prices, payment plans, handover dates and photography.`
+          brief.contentText !== undefined
+            ? brief.contentText
+            : `74 off-plan projects on the live register, from 1.1m. every entry reads straight from the vila database: prices, payment plans, handover dates and photography.`
         }
         keyNumbersTagline={brief.keyNumbersTagline}
         keyNumbersText={brief.keyNumbersText}
         keyNumbersSource={brief.keyNumbersSource}
-        tableTitle={brief.tableTitle || `${developerNameFormatted}, Measured`}
+        tableTitle={brief.tableTitle !== undefined ? brief.tableTitle : `${developerNameFormatted}, Measured`}
         tableImage={brief.tableImage}
         tableMetrics={brief.tableMetrics}
       />

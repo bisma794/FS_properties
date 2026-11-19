@@ -19,27 +19,32 @@ export default async function AboutUsPage() {
   const hero = page?.content?.hero || {};
   const aboutSec = page?.content?.customSections?.['about-section'] || (page?.content as any)?.aboutSection || {};
 
-  const heroTitle = hero.titleLine1 && hero.titleLine2
-    ? `${hero.titleLine1}\n${hero.titleLine2}`
-    : hero.heading || 'REDEFINING REAL ESTATE\nADVISORY IN DUBAI';
+  const heroTitle =
+    hero.heading !== undefined
+      ? hero.heading
+      : hero.titleLine1 && hero.titleLine2
+      ? `${hero.titleLine1}\n${hero.titleLine2}`
+      : hero.title !== undefined
+      ? hero.title
+      : 'REDEFINING REAL ESTATE\nADVISORY IN DUBAI';
 
   return (
     <main className="min-h-screen bg-[#FAF9F6]">
       <AboutUsHero
         title={heroTitle}
-        subheading={hero.subheading || "We don't sell properties. We build strategies."}
-        ctaText={hero.primaryCtaText || 'Contact Our Advisory Team'}
+        subheading={hero.subheading !== undefined ? hero.subheading : (hero.tagline !== undefined ? hero.tagline : "We don't sell properties. We build strategies.")}
+        ctaText={hero.primaryCtaText !== undefined ? hero.primaryCtaText : 'Contact Our Advisory Team'}
         ctaLink={hero.primaryCtaLink || '/ai-assessment'}
         backgroundImage={hero.backgroundImage || hero.coverImage || '/about_us_hero.jpg'}
       />
       <AboutUsSection
-        philosophyTagline={aboutSec.tagline || aboutSec.philosophyTagline || 'OUR PHILOSOPHY'}
-        philosophyHeading={aboutSec.heading || aboutSec.philosophyHeading || 'Guiding Investors & Families to High-Performing Real Estate Assets'}
-        paragraph1={aboutSec.paragraph1 || aboutSec.description1 || 'FS Real Estate Advisory was founded on a simple principle: real estate decisions should never be transactional sales pitches. In a market as dynamic as Dubai, success requires precision, master-plan forecasting, and disciplined advisory.'}
-        paragraph2={aboutSec.paragraph2 || aboutSec.description2 || 'From master-planned villa communities like The Valley and Emaar South to high-yielding urban hubs like Dubai Hills, we empower clients with structural insights before they make a move.'}
+        philosophyTagline={aboutSec.tagline !== undefined ? aboutSec.tagline : (aboutSec.philosophyTagline !== undefined ? aboutSec.philosophyTagline : 'OUR PHILOSOPHY')}
+        philosophyHeading={aboutSec.heading !== undefined ? aboutSec.heading : (aboutSec.philosophyHeading !== undefined ? aboutSec.philosophyHeading : 'Guiding Investors & Families to High-Performing Real Estate Assets')}
+        paragraph1={aboutSec.paragraph1 !== undefined ? aboutSec.paragraph1 : (aboutSec.description1 !== undefined ? aboutSec.description1 : 'FS Real Estate Advisory was founded on a simple principle: real estate decisions should never be transactional sales pitches. In a market as dynamic as Dubai, success requires precision, master-plan forecasting, and disciplined advisory.')}
+        paragraph2={aboutSec.paragraph2 !== undefined ? aboutSec.paragraph2 : (aboutSec.description2 !== undefined ? aboutSec.description2 : 'From master-planned villa communities like The Valley and Emaar South to high-yielding urban hubs like Dubai Hills, we empower clients with structural insights before they make a move.')}
         image={aboutSec.image || aboutSec.coverImage || '/dubai hills.png'}
-        pillarsTagline={aboutSec.pillarsTagline || 'WHY WORK WITH US'}
-        pillarsTitle={aboutSec.pillarsTitle || 'The FS Advisory Difference'}
+        pillarsTagline={aboutSec.pillarsTagline !== undefined ? aboutSec.pillarsTagline : 'WHY WORK WITH US'}
+        pillarsTitle={aboutSec.pillarsTitle !== undefined ? aboutSec.pillarsTitle : 'The FS Advisory Difference'}
         pillars={aboutSec.pillars}
       />
       <BuyerGuideFaqSection pageSlug="about-us" />

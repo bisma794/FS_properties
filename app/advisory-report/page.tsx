@@ -24,7 +24,7 @@ export default async function AdvisoryReportPage() {
   return (
     <main className="min-h-screen bg-[#FAF9F6]">
       <AdvisoryReportHero
-        title={reportHero.title || reportHero.heading || 'YOUR ADVISORY REPORT'}
+        title={reportHero.title !== undefined ? reportHero.title : (reportHero.heading !== undefined ? reportHero.heading : 'YOUR ADVISORY REPORT')}
         tagline={reportHero.tagline}
         description={
           reportHero.description !== undefined
@@ -36,23 +36,23 @@ export default async function AdvisoryReportPage() {
         backgroundImage={reportHero.backgroundImage || reportHero.bgImage || '/advisory_hero.png'}
       />
       <OverallMatchScoreSection
-        heading={reportScore.heading || reportScore.title || 'Overall Match Score'}
-        matchScore={reportScore.matchScore || '96%'}
-        matchLabel={reportScore.matchLabel || reportScore.contentText || 'Excellent Match'}
-        familyLivingScore={reportScore.familyLivingScore || '96'}
-        familyLivingLabel={reportScore.familyLivingLabel || 'Family Living'}
-        passiveIncScore={reportScore.passiveIncScore || '81'}
-        passiveIncLabel={reportScore.passiveIncLabel || 'Passive Inc'}
-        capitalGrowthScore={reportScore.capitalGrowthScore || '90'}
-        capitalGrowthLabel={reportScore.capitalGrowthLabel || 'Capital Growth'}
-        lifestyleScore={reportScore.lifestyleScore || '93'}
-        lifestyleLabel={reportScore.lifestyleLabel || 'Lifestyle'}
+        heading={reportScore.heading !== undefined ? reportScore.heading : (reportScore.title !== undefined ? reportScore.title : 'Overall Match Score')}
+        matchScore={reportScore.matchScore !== undefined ? reportScore.matchScore : '96%'}
+        matchLabel={reportScore.matchLabel !== undefined ? reportScore.matchLabel : (reportScore.contentText !== undefined ? reportScore.contentText : 'Excellent Match')}
+        familyLivingScore={reportScore.familyLivingScore !== undefined ? reportScore.familyLivingScore : '96'}
+        familyLivingLabel={reportScore.familyLivingLabel !== undefined ? reportScore.familyLivingLabel : 'Family Living'}
+        passiveIncScore={reportScore.passiveIncScore !== undefined ? reportScore.passiveIncScore : '81'}
+        passiveIncLabel={reportScore.passiveIncLabel !== undefined ? reportScore.passiveIncLabel : 'Passive Inc'}
+        capitalGrowthScore={reportScore.capitalGrowthScore !== undefined ? reportScore.capitalGrowthScore : '90'}
+        capitalGrowthLabel={reportScore.capitalGrowthLabel !== undefined ? reportScore.capitalGrowthLabel : 'Capital Growth'}
+        lifestyleScore={reportScore.lifestyleScore !== undefined ? reportScore.lifestyleScore : '93'}
+        lifestyleLabel={reportScore.lifestyleLabel !== undefined ? reportScore.lifestyleLabel : 'Lifestyle'}
         iconUrl={reportScore.iconUrl || reportScore.bgImage || '/Layer_1 (3).png'}
         iconSize={reportScore.iconSize || 340}
       />
       <RecommendedCommunitiesSection
-        heading={reportComm.title || 'Top Recommended Communities'}
-        tagline={reportComm.tagline || 'How we score communities'}
+        heading={reportComm.title !== undefined ? reportComm.title : (reportComm.heading !== undefined ? reportComm.heading : 'Top Recommended Communities')}
+        tagline={reportComm.tagline !== undefined ? reportComm.tagline : 'How we score communities'}
         taglineLink={reportComm.taglineLink || '#score-info'}
         cards={reportComm.cards}
       />

@@ -55,18 +55,36 @@ const defaultReviews: Review[] = [
   },
 ];
 
-export default function LatestReviewsSection() {
+interface LatestReviewsSectionProps {
+  initialData?: any;
+}
+
+export default function LatestReviewsSection({ initialData }: LatestReviewsSectionProps = {}) {
   const [startIndex, setStartIndex] = useState(0);
-  const [heading, setHeading] = useState('What Our Clients Say');
-  const [reviewsList, setReviewsList] = useState<Review[]>(defaultReviews);
+  const [heading, setHeading] = useState(() => initialData?.heading !== undefined ? initialData.heading : 'What Our Clients Say');
+  const [reviewsList, setReviewsList] = useState<Review[]>(() => {
+    if (Array.isArray(initialData?.items) && initialData.items.length > 0) {
+      return initialData.items.map((r: any, idx: number) => ({
+        id: r.id || String(idx),
+        name: r.name || 'Client',
+        role: r.role || 'Verified Client',
+        avatarText: (r.name || 'CL').slice(0, 2).toUpperCase(),
+        avatarBg: ['bg-[#2A3441]', 'bg-[#3A334A]', 'bg-[#2C3B35]', 'bg-[#3D3028]'][idx % 4],
+        content: r.content || '',
+        rating: Number(r.rating) || 5,
+      }));
+    }
+    return defaultReviews;
+  });
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/pages/home')
+    fetch('/api/cms-sync', { cache: 'no-store' })
       .then((res) => res.json())
       .then((json) => {
-        if (json.success && json.data?.content?.reviews) {
-          const rev = json.data.content.reviews;
-          if (rev.heading) setHeading(rev.heading);
+        const home = json?.data?.pages?.home || json?.data?.pages?.homepage;
+        if (home?.content?.reviews) {
+          const rev = home.content.reviews;
+          if (rev.heading !== undefined) setHeading(rev.heading);
           if (Array.isArray(rev.items) && rev.items.length > 0) {
             setReviewsList(
               rev.items.map((r: any, idx: number) => ({
@@ -82,9 +100,7 @@ export default function LatestReviewsSection() {
           }
         }
       })
-      .catch(() => {
-        // Fallback
-      });
+      .catch(() => {});
   }, []);
 
   const handlePrev = () => {

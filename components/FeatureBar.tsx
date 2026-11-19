@@ -37,34 +37,31 @@ const defaultFeatures: FeatureItem[] = [
   },
 ];
 
-export default function FeatureBar() {
-  const [featureList, setFeatureList] = useState<FeatureItem[]>(defaultFeatures);
+interface FeatureBarProps {
+  initialData?: FeatureItem[];
+}
+
+export default function FeatureBar({ initialData }: FeatureBarProps = {}) {
+  const [featureList, setFeatureList] = useState<FeatureItem[]>(() => {
+    if (Array.isArray(initialData) && initialData.length > 0) {
+      return initialData;
+    }
+    return defaultFeatures;
+  });
 
   useEffect(() => {
-    // 1. Read from localStorage for instant preview
-    try {
-      const localPage = typeof window !== 'undefined' ? localStorage.getItem('fs_page_home') : null;
-      if (localPage) {
-        const parsed = JSON.parse(localPage);
-        if (Array.isArray(parsed?.content?.featureBar) && parsed.content.featureBar.length > 0) {
-          setFeatureList(parsed.content.featureBar);
-        }
-      }
-    } catch (_) {}
-
-    // 2. Fetch live data from backend API
-    fetch('http://127.0.0.1:8000/api/pages/home', { cache: 'no-store' })
+    // 1. Fetch live page sync from /api/cms-sync
+    fetch('/api/cms-sync', { cache: 'no-store' })
       .then((res) => res.json())
       .then((json) => {
-        if (json.success && Array.isArray(json.data?.content?.featureBar) && json.data.content.featureBar.length > 0) {
-          setFeatureList(json.data.content.featureBar);
+        const home = json?.data?.pages?.home || json?.data?.pages?.homepage;
+        if (Array.isArray(home?.content?.featureBar) && home.content.featureBar.length > 0) {
+          setFeatureList(home.content.featureBar);
         }
       })
-      .catch((err) => {
-        console.log('Using default feature bar items');
-      });
+      .catch(() => {});
 
-    // 3. Listen for cross-tab storage changes
+    // 2. Listen for cross-tab storage changes
     const handleStorage = (e: StorageEvent) => {
       if (e.key === 'fs_page_home' && e.newValue) {
         try {

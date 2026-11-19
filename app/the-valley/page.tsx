@@ -33,7 +33,16 @@ export default async function TheValleyPage() {
   const heroSec = customSections['valley-hero'] || {};
   const globalHero = page?.content?.hero || {};
 
-  const heroTitle = heroSec.title || heroSec.heading || globalHero.heading || globalHero.title || 'THE VALLEY';
+  const heroTitle =
+    heroSec.title !== undefined
+      ? heroSec.title
+      : heroSec.heading !== undefined
+      ? heroSec.heading
+      : globalHero.heading !== undefined
+      ? globalHero.heading
+      : globalHero.title !== undefined
+      ? globalHero.title
+      : 'THE VALLEY';
   const heroSubtitle =
     heroSec.contentText !== undefined
       ? heroSec.contentText
@@ -41,7 +50,9 @@ export default async function TheValleyPage() {
       ? heroSec.description
       : heroSec.subheading !== undefined
       ? heroSec.subheading
-      : heroSec.tagline || '';
+      : heroSec.tagline !== undefined
+      ? heroSec.tagline
+      : '';
   const heroBg = heroSec.bgImage || heroSec.backgroundImage || heroSec.coverImage || globalHero.backgroundImage || globalHero.bgImage || '/valley_hero.png';
 
   const overviewSec = customSections['valley-overview'] || {};
@@ -52,14 +63,14 @@ export default async function TheValleyPage() {
     <main className="min-h-screen bg-[#FAF9F6]">
       <TheValleyHero
         title={heroTitle}
-        subtitle={heroSubtitle || undefined}
+        subtitle={heroSubtitle !== undefined ? heroSubtitle : undefined}
         backgroundImage={heroBg}
       />
       <ValleyOverviewScoreSection
         scoreCircleImage={overviewSec.bgImage || overviewSec.backgroundImage || '/92&.png'}
       />
       <WhyFSRecommendsValleySection
-        title={whySec.title || whySec.heading || 'Why FS Recommends'}
+        title={whySec.title !== undefined ? whySec.title : (whySec.heading !== undefined ? whySec.heading : 'Why FS Recommends')}
         description={whySec.contentText !== undefined ? whySec.contentText : whySec.description}
       />
       <ValleyHighlightsSection

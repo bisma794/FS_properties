@@ -48,19 +48,28 @@ const defaultOpportunities: OpportunityCard[] = [
   },
 ];
 
-export default function RecommendedOpportunities() {
-  const [titleLine1, setTitleLine1] = useState('Opportunities We');
-  const [titleLine2, setTitleLine2] = useState('Currently Recommend');
-  const [tagline, setTagline] = useState('FEATURED INVESTMENTS');
-  const [description, setDescription] = useState('');
-  const [viewAllLink, setViewAllLink] = useState('/project-main-page');
-  const [cards, setCards] = useState<OpportunityCard[]>(defaultOpportunities);
+interface RecommendedOpportunitiesProps {
+  initialData?: any;
+}
+
+export default function RecommendedOpportunities({ initialData }: RecommendedOpportunitiesProps = {}) {
+  const [titleLine1, setTitleLine1] = useState(() => initialData?.titleLine1 !== undefined ? initialData.titleLine1 : 'Opportunities We');
+  const [titleLine2, setTitleLine2] = useState(() => initialData?.titleLine2 !== undefined ? initialData.titleLine2 : 'Currently Recommend');
+  const [tagline, setTagline] = useState(() => initialData?.tagline !== undefined ? initialData.tagline : 'FEATURED INVESTMENTS');
+  const [description, setDescription] = useState(() => initialData?.description ?? initialData?.contentText ?? '');
+  const [viewAllLink, setViewAllLink] = useState(() => initialData?.viewAllLink || '/project-main-page');
+  const [cards, setCards] = useState<OpportunityCard[]>(() => {
+    if (Array.isArray(initialData?.cards) && initialData.cards.length > 0) {
+      return initialData.cards;
+    }
+    return defaultOpportunities;
+  });
 
   const applyOppData = (opp: any) => {
     if (!opp) return;
-    if (opp.titleLine1) setTitleLine1(opp.titleLine1);
-    if (opp.titleLine2) setTitleLine2(opp.titleLine2);
-    if (opp.title && (!opp.titleLine1 || !opp.titleLine2)) {
+    if (opp.titleLine1 !== undefined) setTitleLine1(opp.titleLine1);
+    if (opp.titleLine2 !== undefined) setTitleLine2(opp.titleLine2);
+    if (opp.title !== undefined && opp.titleLine1 === undefined && opp.titleLine2 === undefined) {
       const words = opp.title.trim().split(/\s+/).filter(Boolean);
       if (words.length <= 2) {
         setTitleLine1(words[0] || '');
@@ -70,39 +79,31 @@ export default function RecommendedOpportunities() {
         setTitleLine2(words.slice(2).join(' '));
       }
     }
-    if (opp.tagline || opp.badge) setTagline(opp.tagline || opp.badge);
+    if (opp.tagline !== undefined || opp.badge !== undefined) {
+      setTagline(opp.tagline ?? opp.badge ?? '');
+    }
     if (opp.description !== undefined || opp.contentText !== undefined) {
       setDescription(opp.description ?? opp.contentText ?? '');
     }
-    if (opp.viewAllLink) setViewAllLink(opp.viewAllLink);
+    if (opp.viewAllLink !== undefined) setViewAllLink(opp.viewAllLink);
     if (Array.isArray(opp.cards) && opp.cards.length > 0) {
       setCards(opp.cards);
     }
   };
 
   useEffect(() => {
-    // 1. Read from localStorage for immediate preview
-    try {
-      const localPage = typeof window !== 'undefined' ? localStorage.getItem('fs_page_home') : null;
-      if (localPage) {
-        const parsed = JSON.parse(localPage);
-        applyOppData(parsed?.content?.opportunities);
-      }
-    } catch (_) {}
-
-    // 2. Fetch live data from backend API
-    fetch('http://127.0.0.1:8000/api/pages/home', { cache: 'no-store' })
+    // 1. Fetch live data from /api/cms-sync
+    fetch('/api/cms-sync', { cache: 'no-store' })
       .then((res) => res.json())
       .then((json) => {
-        if (json.success && json.data?.content?.opportunities) {
-          applyOppData(json.data.content.opportunities);
+        const home = json?.data?.pages?.home || json?.data?.pages?.homepage;
+        if (home?.content?.opportunities) {
+          applyOppData(home.content.opportunities);
         }
       })
-      .catch(() => {
-        // Fallback to default
-      });
+      .catch(() => {});
 
-    // 3. Storage listener for cross-tab sync
+    // 2. Storage listener for cross-tab sync
     const handleStorage = (e: StorageEvent) => {
       if (e.key === 'fs_page_home' && e.newValue) {
         try {

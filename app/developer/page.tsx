@@ -31,28 +31,32 @@ export default async function DeveloperPage() {
     ? syncedDevs
     : (Array.isArray(devGrid.items) && devGrid.items.length > 0 ? devGrid.items : undefined);
 
-  const heroTitleWords = (devHero.title || 'ALL DEVELOPERS').trim().split(/\s+/);
-  const heroWord1 = heroTitleWords[0] || hero.titleLine1 || 'ALL';
-  const heroWord2 = heroTitleWords.slice(1).join(' ') || hero.titleLine2 || 'DEVELOPERS';
+  const rawHeroTitle = devHero.title !== undefined ? devHero.title : (hero.heading !== undefined ? hero.heading : 'ALL DEVELOPERS');
+  const heroTitleWords = (rawHeroTitle || '').trim().split(/\s+/);
+  const heroWord1 = devHero.title !== undefined ? (heroTitleWords[0] || '') : (hero.titleLine1 !== undefined ? hero.titleLine1 : 'ALL');
+  const heroWord2 = devHero.title !== undefined ? heroTitleWords.slice(1).join(' ') : (hero.titleLine2 !== undefined ? hero.titleLine2 : 'DEVELOPERS');
 
-  const introTitleWords = (devIntro.title || 'ALL DEVELOPERS').trim().split(/\s+/);
-  const introWord1 = introTitleWords[0] || 'ALL';
-  const introWord2 = introTitleWords.slice(1).join(' ') || 'DEVELOPERS';
-  const introTaglineParts = (devIntro.tagline || '566 Developers').trim().split(/\s+/);
-  const introCount = introTaglineParts[0] || 566;
-  const introCountLabel = introTaglineParts.slice(1).join(' ') || 'Developers';
+  const rawIntroTitle = devIntro.title !== undefined ? devIntro.title : 'ALL DEVELOPERS';
+  const introTitleWords = (rawIntroTitle || '').trim().split(/\s+/);
+  const introWord1 = rawIntroTitle !== undefined ? (introTitleWords[0] || '') : 'ALL';
+  const introWord2 = rawIntroTitle !== undefined ? introTitleWords.slice(1).join(' ') : 'DEVELOPERS';
+  const introTaglineParts = (devIntro.tagline !== undefined ? devIntro.tagline : '566 Developers').trim().split(/\s+/);
+  const introCount = introTaglineParts[0] || (devIntro.tagline !== undefined ? '' : 566);
+  const introCountLabel = introTaglineParts.slice(1).join(' ') || (devIntro.tagline !== undefined ? '' : 'Developers');
 
   return (
     <main className="min-h-[calc(100vh-80px)] bg-[#FAF9F6]">
       {/* 1. Hero Section */}
       <DeveloperHeroSection
-        breadcrumb={devHero.tagline || hero.tagline || 'Developer / Dubai creek harbour'}
+        breadcrumb={devHero.tagline !== undefined ? devHero.tagline : (hero.tagline !== undefined ? hero.tagline : 'Developer / Dubai creek harbour')}
         headingWord1={heroWord1}
         headingWord2={heroWord2}
         description={
-          devHero.contentText ||
-          hero.subheading ||
-          'A modern waterfront district with open skyline views, connected promenades and a growing collection of homes.'
+          devHero.contentText !== undefined
+            ? devHero.contentText
+            : hero.subheading !== undefined
+            ? hero.subheading
+            : 'A modern waterfront district with open skyline views, connected promenades and a growing collection of homes.'
         }
         imageSrc={devHero.bgImage || hero.backgroundImage || '/developer-hero.png'}
         pageSlug="developers"

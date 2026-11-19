@@ -172,6 +172,81 @@ const propertiesList: PropertyItem[] = [
     paymentPlan: '40/60',
     images: ['/property-card.png', '/gallery-exterior.png', '/property_detail_main.jpg'],
   },
+  {
+    id: 'dubai-hills-apt-1',
+    price: 'AED 2,450,000',
+    type: 'Apartment',
+    beds: 2,
+    baths: 2,
+    builtUp: '1,280 sqft',
+    plot: '1,280 sqft',
+    title: '2BR Park Facing Luxury Apartment | Dubai Hills Estate',
+    location: 'Dubai Hills Estate, Dubai',
+    validationDate: '10th of October',
+    handover: 'Ready',
+    paymentPlan: 'Cash / Mortgage',
+    images: ['/gallery-exterior.png', '/property-card.png', '/property_detail_main.jpg'],
+  },
+  {
+    id: 'dubai-marina-penthouse-1',
+    price: 'AED 9,800,000',
+    type: 'Penthouse',
+    beds: 4,
+    baths: 5,
+    builtUp: '4,650 sqft',
+    plot: '4,650 sqft',
+    title: '4BR Sky Penthouse with Private Pool | Dubai Marina',
+    location: 'Dubai Marina, Dubai',
+    validationDate: '12th of October',
+    handover: 'Ready',
+    paymentPlan: 'Cash / Mortgage',
+    images: ['/property_detail_main.jpg', '/gallery-exterior.png', '/property-card.png'],
+  },
+  {
+    id: 'creek-duplex-1',
+    price: 'AED 4,850,000',
+    type: 'Duplex',
+    beds: 3,
+    baths: 4,
+    builtUp: '2,750 sqft',
+    plot: '2,750 sqft',
+    title: '3BR Waterfront Duplex | Dubai Creek Harbour',
+    location: 'Dubai Creek Harbour, Dubai',
+    validationDate: '14th of October',
+    handover: 'Q1 2028',
+    paymentPlan: '50/50',
+    images: ['/bannerimg.png', '/property-card.png', '/gallery-exterior.png'],
+  },
+  {
+    id: 'palm-jumeirah-land-1',
+    price: 'AED 18,500,000',
+    type: 'Land',
+    beds: 0,
+    baths: 0,
+    builtUp: '8,500 sqft',
+    plot: '11,200 sqft',
+    title: 'Prime Beachfront Villa Plot | Palm Jumeirah',
+    location: 'Palm Jumeirah, Dubai',
+    validationDate: '15th of October',
+    handover: 'Ready',
+    paymentPlan: 'Direct from Master Developer',
+    images: ['/dubai hills.png', '/bannerimg.png', '/gallery-exterior.png'],
+  },
+  {
+    id: 'business-bay-building-1',
+    price: 'AED 65,000,000',
+    type: 'Whole Building',
+    beds: 24,
+    baths: 28,
+    builtUp: '34,500 sqft',
+    plot: '18,000 sqft',
+    title: 'G+8 Residential Investment Building | Business Bay',
+    location: 'Business Bay, Dubai',
+    validationDate: '18th of October',
+    handover: 'Ready',
+    paymentPlan: 'High Rental Yield Asset',
+    images: ['/thevalley.png', '/property_detail_main.jpg', '/gallery-exterior.png'],
+  },
 ];
 
 interface AgentItem {
@@ -255,12 +330,60 @@ export default function BuyPropertyListingsSection({
     }
     return propertiesList;
   });
+  const [filterState, setFilterState] = useState<{
+    query: string;
+    type: string;
+    beds: number | 'Any';
+    price: string;
+    status: string;
+    sort: string;
+    viewMode: 'List' | 'Map';
+  }>({
+    query: '',
+    type: 'All',
+    beds: 'Any',
+    price: 'Any',
+    status: 'All',
+    sort: 'Popular',
+    viewMode: 'List',
+  });
+
   const [favorites, setFavorites] = useState<{ [key: string]: boolean }>({});
   const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({});
   const [viewMode, setViewMode] = useState<'List' | 'Map'>('List');
   const [downloading, setDownloading] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isAboutExpanded, setIsAboutExpanded] = useState<boolean>(true);
+
+  // Listen for filter changes from BuySearchFilterSection
+  useEffect(() => {
+    const handleFilterChange = (e: any) => {
+      if (e.detail) {
+        setFilterState((prev) => ({ ...prev, ...e.detail }));
+        if (e.detail.viewMode) {
+          setViewMode(e.detail.viewMode);
+        }
+      }
+    };
+    window.addEventListener('fs-property-filter-change', handleFilterChange);
+    return () => window.removeEventListener('fs-property-filter-change', handleFilterChange);
+  }, []);
+
+  // Emit counts to BuySearchFilterSection whenever liveProperties change
+  useEffect(() => {
+    if (!liveProperties || liveProperties.length === 0) return;
+    const c = {
+      total: liveProperties.length,
+      apartments: liveProperties.filter((p) => p.type.toLowerCase().includes('apartment')).length,
+      villas: liveProperties.filter((p) => p.type.toLowerCase().includes('villa')).length,
+      townhouses: liveProperties.filter((p) => p.type.toLowerCase().includes('townhouse')).length,
+      land: liveProperties.filter((p) => p.type.toLowerCase().includes('land') || p.type.toLowerCase().includes('plot')).length,
+      penthouses: liveProperties.filter((p) => p.type.toLowerCase().includes('penthouse')).length,
+      wholeBuildings: liveProperties.filter((p) => p.type.toLowerCase().includes('building')).length,
+      duplexes: liveProperties.filter((p) => p.type.toLowerCase().includes('duplex')).length,
+    };
+    window.dispatchEvent(new CustomEvent('fs-property-counts', { detail: c }));
+  }, [liveProperties]);
 
   useEffect(() => {
     const getDeletedSet = (extraDeleted: string[] = []) => {
@@ -398,6 +521,69 @@ export default function BuyPropertyListingsSection({
     window.open('https://wa.me/971500000000?text=Hello%20FS%20Advisory%2C%20I%20am%20interested%20in%20R.%20Hills.', '_blank');
   };
 
+  const filteredProperties = liveProperties
+    .filter((p) => {
+      // 1. Text Query Search
+      if (filterState.query.trim()) {
+        const q = filterState.query.toLowerCase().trim();
+        const match =
+          p.title.toLowerCase().includes(q) ||
+          p.location.toLowerCase().includes(q) ||
+          p.type.toLowerCase().includes(q) ||
+          p.handover.toLowerCase().includes(q);
+        if (!match) return false;
+      }
+
+      // 2. Property Type
+      if (filterState.type && filterState.type !== 'All') {
+        const t = filterState.type.toLowerCase().trim();
+        const pType = p.type.toLowerCase().trim();
+        if (!pType.includes(t) && !t.includes(pType)) {
+          return false;
+        }
+      }
+
+      // 3. Bedrooms
+      if (filterState.beds !== 'Any' && typeof filterState.beds === 'number') {
+        if (p.beds < filterState.beds) return false;
+      }
+
+      // 4. Price
+      if (filterState.price && filterState.price !== 'Any') {
+        const rawPrice = Number(String(p.price).replace(/[^0-9.]/g, '')) || 0;
+        if (filterState.price === '<3M' && rawPrice >= 3000000) return false;
+        if (filterState.price === '3M-4.5M' && (rawPrice < 3000000 || rawPrice > 4500000)) return false;
+        if (filterState.price === '4.5M-6M' && (rawPrice < 4500000 || rawPrice > 6000000)) return false;
+        if (filterState.price === '>6M' && rawPrice < 6000000) return false;
+      }
+
+      // 5. Status (Off-plan / Ready)
+      if (filterState.status && filterState.status !== 'All') {
+        const s = filterState.status.toLowerCase();
+        const isReady = p.handover.toLowerCase().includes('ready') || p.type.toLowerCase().includes('ready');
+        if (s === 'ready' && !isReady) return false;
+        if (s === 'off-plan' && isReady) return false;
+      }
+
+      return true;
+    })
+    .sort((a, b) => {
+      if (filterState.sort === 'Price: Low to High') {
+        const pa = Number(String(a.price).replace(/[^0-9.]/g, '')) || 0;
+        const pb = Number(String(b.price).replace(/[^0-9.]/g, '')) || 0;
+        return pa - pb;
+      }
+      if (filterState.sort === 'Price: High to Low') {
+        const pa = Number(String(a.price).replace(/[^0-9.]/g, '')) || 0;
+        const pb = Number(String(b.price).replace(/[^0-9.]/g, '')) || 0;
+        return pb - pa;
+      }
+      if (filterState.sort === 'Bedrooms: High to Low') {
+        return (b.beds || 0) - (a.beds || 0);
+      }
+      return 0;
+    });
+
   return (
     <section className={`w-full py-6 sm:py-8 ${className}`}>
       <div className="max-w-[1440px] mx-auto px-3 sm:px-5 lg:px-8 w-full">
@@ -405,7 +591,7 @@ export default function BuyPropertyListingsSection({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           
           {/* ======================================================== */}
-          {/* LEFT COLUMN: 9 COLUMNS (Properties Header + 10 Listings) */}
+          {/* LEFT COLUMN: 9 COLUMNS (Properties Header + Listings)    */}
           {/* ======================================================== */}
           <div className="lg:col-span-9 space-y-5 sm:space-y-6">
             
@@ -415,20 +601,24 @@ export default function BuyPropertyListingsSection({
                 className="text-lg sm:text-xl lg:text-[22px] font-normal text-[#6B7280] tracking-tight"
                 style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
               >
-                Properties for sale in R. Hills
+                Properties for sale in {filterState.type !== 'All' ? filterState.type + 's' : (filterState.query ? `"${filterState.query}"` : 'UAE')} ({filteredProperties.length} listed)
               </h2>
 
               <div className="flex items-center gap-3 self-start sm:self-auto">
-                {/* Popular Dropdown Button */}
+                {/* Popular / Sort Dropdown Button */}
                 <button
                   type="button"
+                  onClick={() => {
+                    const nextSort = filterState.sort === 'Popular' ? 'Price: Low to High' : filterState.sort === 'Price: Low to High' ? 'Price: High to Low' : 'Popular';
+                    setFilterState((prev) => ({ ...prev, sort: nextSort }));
+                  }}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-200/90 bg-white text-xs font-medium text-stone-700 hover:bg-stone-50 transition-colors shadow-2xs cursor-pointer"
                   style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
                 >
                   <svg className="w-3.5 h-3.5 text-stone-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" />
                   </svg>
-                  <span>Popular</span>
+                  <span>{filterState.sort}</span>
                   <svg className="w-3 h-3 text-stone-400" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
                   </svg>
@@ -472,232 +662,325 @@ export default function BuyPropertyListingsSection({
               </div>
             </div>
 
-            {/* 10 Properties Stacked Cards */}
-            <div className="space-y-5">
-              {liveProperties.map((property) => {
-                const currentImgIdx = imageIndices[property.id] || 0;
-                const isFav = !!favorites[property.id];
-                const detailHref = property.slug ? `/buy-detail?slug=${property.slug}` : '/buy-detail';
+            {/* View Mode: Map */}
+            {viewMode === 'Map' && (
+              <div className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-sm p-6 text-center space-y-4">
+                <div className="relative w-full h-[400px] sm:h-[460px] rounded-xl overflow-hidden bg-stone-100 flex items-center justify-center">
+                  <iframe
+                    title="Dubai Real Estate Properties Map"
+                    src="https://maps.google.com/maps?q=Dubai%20Hills%20Estate,%20Dubai&t=&z=12&ie=UTF8&iwloc=&output=embed"
+                    className="w-full h-full border-0"
+                    loading="lazy"
+                  />
+                  <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-xl shadow-md border border-stone-200 text-xs font-semibold text-stone-800 flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
+                    <span>{filteredProperties.length} Properties mapped in Dubai</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
-                return (
-                  <div
-                    key={property.id}
-                    className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-sm overflow-hidden flex flex-col md:flex-row items-stretch hover:shadow-md transition-shadow group"
-                  >
-                    {/* Left Side: Image Slider Container */}
-                    <div className="relative md:w-[48%] lg:w-[46%] min-h-[250px] sm:min-h-[280px] bg-stone-100 overflow-hidden shrink-0">
-                      <Image
-                        src={property.images[currentImgIdx] || '/property-card.png'}
-                        alt={property.title}
-                        fill
-                        className="object-cover object-center group-hover:scale-102 transition-transform duration-500"
-                        sizes="(max-width: 768px) 100vw, 45vw"
-                      />
+            {/* View Mode: List - Empty State */}
+            {viewMode === 'List' && filteredProperties.length === 0 && (
+              <div className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-sm p-10 sm:p-14 text-center space-y-4">
+                <div className="w-16 h-16 rounded-full bg-[#FAF9F6] border border-[#EAE6DF] mx-auto flex items-center justify-center text-stone-400">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-stone-900 font-poppins">No matching properties found</h3>
+                  <p className="text-xs sm:text-sm text-stone-500 mt-1 max-w-md mx-auto">
+                    We couldn&apos;t find properties matching your current filters. Try searching with different keywords, relaxing the price range, or clicking Reset Filters.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFilterState({
+                      query: '',
+                      type: 'All',
+                      beds: 'Any',
+                      price: 'Any',
+                      status: 'All',
+                      sort: 'Popular',
+                      viewMode: 'List',
+                    });
+                    window.dispatchEvent(new CustomEvent('fs-property-filter-change', {
+                      detail: { query: '', type: 'All', beds: 'Any', price: 'Any', status: 'All', sort: 'Popular', viewMode: 'List' }
+                    }));
+                  }}
+                  className="px-5 py-2.5 rounded-xl bg-[#BFA16A] hover:bg-[#aa8e59] text-white text-xs font-semibold transition shadow-md shadow-[#BFA16A]/20 cursor-pointer"
+                >
+                  Reset All Filters
+                </button>
+              </div>
+            )}
 
-                      {/* Image Navigation Arrows */}
-                      <button
-                        type="button"
-                        onClick={(e) => handlePrevImage(property.id, property.images.length, e)}
-                        className="absolute left-2.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-700 flex items-center justify-center shadow-xs cursor-pointer transition-all opacity-0 group-hover:opacity-100"
-                        title="Previous Image"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                        </svg>
-                      </button>
+            {/* View Mode: List - Properties Stacked Cards */}
+            {viewMode === 'List' && filteredProperties.length > 0 && (
+              <div className="space-y-5">
+                {filteredProperties.map((property) => {
+                  const currentImgIdx = imageIndices[property.id] || 0;
+                  const isFav = !!favorites[property.id];
+                  const detailHref = property.slug ? `/buy-detail?slug=${property.slug}` : '/buy-detail';
 
-                      <button
-                        type="button"
-                        onClick={(e) => handleNextImage(property.id, property.images.length, e)}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-700 flex items-center justify-center shadow-xs cursor-pointer transition-all opacity-0 group-hover:opacity-100"
-                        title="Next Image"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                      </button>
+                  return (
+                    <div
+                      key={property.id}
+                      className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-sm overflow-hidden flex flex-col md:flex-row items-stretch hover:shadow-md transition-shadow group"
+                    >
+                      {/* Left Side: Image Slider Container */}
+                      <div className="relative md:w-[48%] lg:w-[46%] min-h-[250px] sm:min-h-[280px] bg-stone-100 overflow-hidden shrink-0">
+                        <Image
+                          src={property.images[currentImgIdx] || '/property-card.png'}
+                          alt={property.title}
+                          fill
+                          className="object-cover object-center group-hover:scale-102 transition-transform duration-500"
+                          sizes="(max-width: 768px) 100vw, 45vw"
+                        />
 
-                      {/* Bottom Badges on Image: Off-Plan Pill (Left) & Heart Button (Right) */}
-                      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                        <span
-                          className="px-2.5 py-1 rounded-md bg-black/75 backdrop-blur-xs text-white text-[10px] sm:text-[11px] font-medium tracking-wide pointer-events-auto"
-                          style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
+                        {/* Image Navigation Arrows */}
+                        <button
+                          type="button"
+                          onClick={(e) => handlePrevImage(property.id, property.images.length, e)}
+                          className="absolute left-2.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-700 flex items-center justify-center shadow-xs cursor-pointer transition-all opacity-0 group-hover:opacity-100"
+                          title="Previous Image"
                         >
-                          OFF-PLAN | Initial Sale
-                        </span>
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                          </svg>
+                        </button>
 
                         <button
                           type="button"
-                          onClick={(e) => toggleFavorite(property.id, e)}
-                          className="w-8 h-8 rounded-full bg-white hover:bg-stone-50 text-stone-700 hover:text-red-500 flex items-center justify-center shadow-sm cursor-pointer transition-colors pointer-events-auto"
-                          title="Save Property"
+                          onClick={(e) => handleNextImage(property.id, property.images.length, e)}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-700 flex items-center justify-center shadow-xs cursor-pointer transition-all opacity-0 group-hover:opacity-100"
+                          title="Next Image"
                         >
-                          <svg
-                            className={`w-4 h-4 transition-colors ${
-                              isFav ? 'fill-red-500 text-red-500' : 'fill-none stroke-current'
-                            }`}
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-                            />
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                           </svg>
                         </button>
-                      </div>
-                    </div>
 
-                    {/* Right Side: Property Details & Actions */}
-                    <div className="p-5 sm:p-6 flex flex-col justify-between flex-1">
-                      <div>
-                        {/* Price & Signature Badge Row */}
-                        <div className="flex items-start justify-between gap-2">
+                        {/* Bottom Badges on Image: Off-Plan Pill (Left) & Heart Button (Right) */}
+                        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none">
                           <span
-                            className="text-xl sm:text-2xl font-bold text-stone-900 tracking-tight font-poppins"
-                            style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
-                          >
-                            {property.price}
-                          </span>
-                          <span
-                            className="px-2.5 py-0.5 rounded bg-[#BAE6FD]/60 text-[#0284C7] font-semibold text-[10.5px] uppercase tracking-wider"
+                            className="px-2.5 py-1 rounded-md bg-black/75 backdrop-blur-xs text-white text-[10px] sm:text-[11px] font-medium tracking-wide pointer-events-auto"
                             style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
                           >
-                            SIGNATURE
+                            {property.handover.toLowerCase().includes('ready') ? 'READY' : 'OFF-PLAN'} | Initial Sale
                           </span>
-                        </div>
 
-                        {/* Specs Row */}
-                        <div
-                          className="flex items-center flex-wrap gap-2 text-xs sm:text-[13px] text-stone-600 font-medium mt-1.5"
-                          style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
-                        >
-                          <span>{property.type}</span>
-                          <span className="flex items-center gap-1">
-                            {/* Bed Icon */}
-                            <svg className="w-3.5 h-3.5 text-stone-400 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0l-3-3m3 3l3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
-                            </svg>
-                            {property.beds}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            {/* Bath Icon */}
-                            <svg className="w-3.5 h-3.5 text-stone-400 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-                            </svg>
-                            {property.baths}
-                          </span>
-                          <span className="text-stone-300">|</span>
-                          <span>Built-up: {property.builtUp}</span>
-                          <span>Plot: {property.plot}</span>
-                        </div>
-
-                        {/* Title */}
-                        <h3
-                          className="text-sm sm:text-base font-bold text-stone-900 leading-snug mt-2"
-                          style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
-                        >
-                          <Link href={detailHref} className="hover:text-[#BA955C] transition-colors">
-                            {property.title}
-                          </Link>
-                        </h3>
-
-                        {/* Location */}
-                        <div
-                          className="flex items-center gap-1 text-xs text-stone-500 mt-1"
-                          style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
-                        >
-                          <svg className="w-3.5 h-3.5 text-stone-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                          </svg>
-                          <span>{property.location}</span>
-                        </div>
-
-                        {/* Validation Note with Sparkle */}
-                        <div
-                          className="flex items-center gap-1.5 text-[11px] text-[#BA955C] italic mt-2"
-                          style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
-                        >
-                          <svg className="w-3.5 h-3.5 text-[#BA955C] fill-[#BA955C]" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
-                          <span>Property authenticity was validated on {property.validationDate}</span>
-                        </div>
-
-                        {/* Handover & Payment Plan Badges */}
-                        <div className="flex items-center gap-2.5 mt-3.5">
-                          <div className="px-3 py-1.5 rounded-lg bg-[#F8F8F8] border border-stone-200/60 text-left">
-                            <span className="text-[9.5px] uppercase tracking-wider text-stone-400 block font-semibold leading-tight">
-                              HANDOVER
-                            </span>
-                            <span className="text-xs font-bold text-stone-800 block mt-0.5 leading-tight">
-                              {property.handover}
-                            </span>
-                          </div>
-
-                          <div className="px-3 py-1.5 rounded-lg bg-[#F8F8F8] border border-stone-200/60 text-left">
-                            <span className="text-[9.5px] uppercase tracking-wider text-stone-400 block font-semibold leading-tight">
-                              PAYMENT PLAN
-                            </span>
-                            <span className="text-xs font-bold text-stone-800 block mt-0.5 leading-tight">
-                              {property.paymentPlan}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Bottom Action Buttons Row */}
-                      <div className="pt-4 mt-2 flex items-center justify-between border-t border-stone-100 gap-2">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          {/* Email Button */}
-                          <a
-                            href="mailto:advisor@fs-properties.com?subject=Enquiry%20regarding%20R.%20Hills"
-                            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#BA955C] hover:bg-[#a6834d] text-white text-xs font-semibold transition-colors shadow-2xs cursor-pointer"
-                            style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                            </svg>
-                            <span>Email</span>
-                          </a>
-
-                          {/* Call Button */}
-                          <a
-                            href="tel:+971500000000"
-                            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#BA955C] hover:bg-[#a6834d] text-white text-xs font-semibold transition-colors shadow-2xs cursor-pointer"
-                            style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-                            </svg>
-                            <span>Call</span>
-                          </a>
-
-                          {/* WhatsApp Icon Button */}
                           <button
                             type="button"
-                            onClick={handleWhatsAppContact}
-                            className="w-8 h-8 rounded-lg bg-[#10B981] hover:bg-[#059669] text-white flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
-                            title="Chat on WhatsApp"
+                            onClick={(e) => toggleFavorite(property.id, e)}
+                            className="w-8 h-8 rounded-full bg-white hover:bg-stone-50 text-stone-700 hover:text-red-500 flex items-center justify-center shadow-sm cursor-pointer transition-colors pointer-events-auto"
+                            title="Save Property"
                           >
-                            <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.668-.699c.971.53 1.77.822 2.791.822 3.184 0 5.77-2.587 5.771-5.767.001-3.183-2.585-5.807-5.77-5.807zm3.374 8.212c-.144.405-.837.774-1.17.824-.312.045-.694.072-2.12-.519-1.572-.65-2.581-2.239-2.66-2.344-.077-.105-.638-.85-.638-1.621 0-.771.404-1.15.548-1.306.144-.156.314-.195.42-.195.105 0 .21.002.302.007.098.005.23-.037.36.275.144.346.495 1.206.538 1.294.043.088.072.19.014.305-.058.115-.088.187-.175.289-.088.102-.185.228-.264.306-.089.088-.182.185-.078.363.104.178.463.764.993 1.237.684.61 1.26.799 1.439.887.179.088.283.073.389-.044.106-.117.452-.527.573-.708.121-.181.242-.151.406-.09.164.06 1.04.49 1.218.579.178.088.297.132.341.205.044.073.044.422-.1.827z" />
-                              <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.98-1.398A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.685 0-3.25-.502-4.568-1.365l-.328-.215-2.964.832.842-2.883-.217-.346A8.125 8.125 0 013.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z" />
+                            <svg
+                              className={`w-4 h-4 transition-colors ${
+                                isFav ? 'fill-red-500 text-red-500' : 'fill-none stroke-current'
+                              }`}
+                              viewBox="0 0 24 24"
+                              strokeWidth={2}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                              />
                             </svg>
                           </button>
                         </div>
+                      </div>
 
-                        {/* Developer Logo Mark */}
-                        <div className="text-stone-300 font-serif italic text-lg tracking-wider select-none font-bold">
-                          JR
+                      {/* Right Side: Property Details & Actions */}
+                      <div className="p-5 sm:p-6 flex flex-col justify-between flex-1">
+                        <div>
+                          {/* Price & Signature Badge Row */}
+                          <div className="flex items-start justify-between gap-2">
+                            <span
+                              className="text-xl sm:text-2xl font-bold text-stone-900 tracking-tight font-poppins"
+                              style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
+                            >
+                              {property.price}
+                            </span>
+                            <span
+                              className="px-2.5 py-0.5 rounded bg-[#BAE6FD]/60 text-[#0284C7] font-semibold text-[10.5px] uppercase tracking-wider"
+                              style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
+                            >
+                              SIGNATURE
+                            </span>
+                          </div>
+
+                          {/* Specs Row */}
+                          <div
+                            className="flex items-center flex-wrap gap-2 text-xs sm:text-[13px] text-stone-600 font-medium mt-1.5"
+                            style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
+                          >
+                            <span>{property.type}</span>
+                            <span className="flex items-center gap-1">
+                              {/* Bed Icon */}
+                              <svg className="w-3.5 h-3.5 text-stone-400 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0l-3-3m3 3l3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                              </svg>
+                              {property.beds}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              {/* Bath Icon */}
+                              <svg className="w-3.5 h-3.5 text-stone-400 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+                              </svg>
+                              {property.baths}
+                            </span>
+                            <span className="text-stone-300">|</span>
+                            <span>Built-up: {property.builtUp}</span>
+                            <span>Plot: {property.plot}</span>
+                          </div>
+
+                          {/* Title */}
+                          <h3
+                            className="text-sm sm:text-base font-bold text-stone-900 leading-snug mt-2"
+                            style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
+                          >
+                            <Link href={detailHref} className="hover:text-[#BA955C] transition-colors">
+                              {property.title}
+                            </Link>
+                          </h3>
+
+                          {/* Location */}
+                          <div
+                            className="flex items-center gap-1 text-xs text-stone-500 mt-1"
+                            style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
+                          >
+                            <svg className="w-3.5 h-3.5 text-stone-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                            </svg>
+                            <span>{property.location}</span>
+                          </div>
+
+                          {/* Validation Note with Sparkle */}
+                          <div
+                            className="flex items-center gap-1.5 text-[11px] text-[#BA955C] italic mt-2"
+                            style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
+                          >
+                            <svg className="w-3.5 h-3.5 text-[#BA955C] fill-[#BA955C]" viewBox="0 0 20 20">
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <span>Property authenticity was validated on {property.validationDate}</span>
+                          </div>
+
+                          {/* Handover & Payment Plan Badges */}
+                          <div className="flex items-center gap-2.5 mt-3.5">
+                            <div className="px-3 py-1.5 rounded-lg bg-[#F8F8F8] border border-stone-200/60 text-left">
+                              <span className="text-[9.5px] uppercase tracking-wider text-stone-400 block font-semibold leading-tight">
+                                HANDOVER
+                              </span>
+                              <span className="text-xs font-bold text-stone-800 block mt-0.5 leading-tight">
+                                {property.handover}
+                              </span>
+                            </div>
+
+                            <div className="px-3 py-1.5 rounded-lg bg-[#F8F8F8] border border-stone-200/60 text-left">
+                              <span className="text-[9.5px] uppercase tracking-wider text-stone-400 block font-semibold leading-tight">
+                                PAYMENT PLAN
+                              </span>
+                              <span className="text-xs font-bold text-stone-800 block mt-0.5 leading-tight">
+                                {property.paymentPlan}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Bottom Action Buttons Row */}
+                        <div className="pt-4 mt-2 flex items-center justify-between border-t border-stone-100 gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {/* Email Button */}
+                            <a
+                              href="mailto:advisor@fs-properties.com?subject=Enquiry%20regarding%20R.%20Hills"
+                              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#BA955C] hover:bg-[#a6834d] text-white text-xs font-semibold transition-colors shadow-2xs cursor-pointer"
+                              style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                              </svg>
+                              <span>Email</span>
+                            </a>
+
+                            {/* Call Button */}
+                            <a
+                              href="tel:+971500000000"
+                              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#BA955C] hover:bg-[#a6834d] text-white text-xs font-semibold transition-colors shadow-2xs cursor-pointer"
+                              style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                              </svg>
+                              <span>Call</span>
+                            </a>
+
+                            {/* WhatsApp Icon Button */}
+                            <button
+                              type="button"
+                              onClick={handleWhatsAppContact}
+                              className="w-8 h-8 rounded-lg bg-[#10B981] hover:bg-[#059669] text-white flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
+                              title="Chat on WhatsApp"
+                            >
+                              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.668-.699c.971.53 1.77.822 2.791.822 3.184 0 5.77-2.587 5.771-5.767.001-3.183-2.585-5.807-5.77-5.807zm3.374 8.212c-.144.405-.837.774-1.17.824-.312.045-.694.072-2.12-.519-1.572-.65-2.581-2.239-2.66-2.344-.077-.105-.638-.85-.638-1.621 0-.771.404-1.15.548-1.306.144-.156.314-.195.42-.195.105 0 .21.002.302.007.098.005.23-.037.36.275.144.346.495 1.206.538 1.294.043.088.072.19.014.305-.058.115-.088.187-.175.289-.088.102-.185.228-.264.306-.089.088-.182.185-.078.363.104.178.463.764.993 1.237.684.61 1.26.799 1.439.887.179.088.283.073.389-.044.106-.117.452-.527.573-.708.121-.181.242-.151.406-.09.164.06 1.04.49 1.218.579.178.088.297.132.341.205.044.073.044.422-.1.827z" />
+                                <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.98-1.398A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.685 0-3.25-.502-4.568-1.365l-.328-.215-2.964.832.842-2.883-.217-.346A8.125 8.125 0 013.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z" />
+                              </svg>
+                            </button>
+                          </div>
+
+                          {/* Developer Logo Mark */}
+                          <div className="text-stone-300 font-serif italic text-lg tracking-wider select-none font-bold">
+                            JR
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Pagination Controls */}
+            <div className="flex items-center justify-between pt-4 pb-2 border-t border-stone-200/80">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                {[1, 2, 3, 4, 5].map((pageNum) => (
+                  <button
+                    key={pageNum}
+                    type="button"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center justify-center ${
+                      currentPage === pageNum
+                        ? 'border border-[#BA955C] text-[#BA955C] bg-[#BA955C]/10 shadow-2xs'
+                        : 'border border-stone-200/90 text-stone-600 hover:border-stone-400 bg-white'
+                    }`}
+                    style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
+                  >
+                    {pageNum}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((p) => Math.min(5, p + 1))}
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-stone-200/90 text-stone-600 hover:border-stone-400 bg-white flex items-center justify-center text-xs cursor-pointer transition-all"
+                  title="Next Page"
+                >
+                  <span className="text-[10px]">▶</span>
+                </button>
+              </div>
+
+              <span
+                className="text-xs text-stone-400 font-medium"
+                style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
+              >
+                Showing 1 to {filteredProperties.length} of {filteredProperties.length} Properties
+              </span>
             </div>
 
             {/* Pagination Controls: 1 2 3 4 5 ▶ + Total Properties Count */}

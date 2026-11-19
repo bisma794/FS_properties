@@ -44,16 +44,25 @@ const defaultCommunities: CommunityItem[] = [
   },
 ];
 
-export default function ExploreCommunity() {
-  const [heading, setHeading] = useState('Explore by Community');
-  const [tagline, setTagline] = useState('FEATURED DISTRICTS');
-  const [description, setDescription] = useState('');
-  const [items, setItems] = useState<CommunityItem[]>(defaultCommunities);
+interface ExploreCommunityProps {
+  initialData?: any;
+}
+
+export default function ExploreCommunity({ initialData }: ExploreCommunityProps = {}) {
+  const [heading, setHeading] = useState(() => initialData?.heading !== undefined ? initialData.heading : 'Explore by Community');
+  const [tagline, setTagline] = useState(() => initialData?.tagline !== undefined ? initialData.tagline : 'FEATURED DISTRICTS');
+  const [description, setDescription] = useState(() => initialData?.description ?? initialData?.contentText ?? '');
+  const [items, setItems] = useState<CommunityItem[]>(() => {
+    if (Array.isArray(initialData?.items) && initialData.items.length > 0) {
+      return initialData.items;
+    }
+    return defaultCommunities;
+  });
 
   const applyCommData = (comm: any) => {
     if (!comm) return;
-    if (comm.heading) setHeading(comm.heading);
-    if (comm.tagline || comm.badge) setTagline(comm.tagline || comm.badge);
+    if (comm.heading !== undefined) setHeading(comm.heading);
+    if (comm.tagline !== undefined || comm.badge !== undefined) setTagline(comm.tagline ?? comm.badge ?? '');
     if (comm.description !== undefined || comm.contentText !== undefined) {
       setDescription(comm.description ?? comm.contentText ?? '');
     }
@@ -63,28 +72,18 @@ export default function ExploreCommunity() {
   };
 
   useEffect(() => {
-    // 1. Read from localStorage for immediate preview
-    try {
-      const localPage = typeof window !== 'undefined' ? localStorage.getItem('fs_page_home') : null;
-      if (localPage) {
-        const parsed = JSON.parse(localPage);
-        applyCommData(parsed?.content?.community);
-      }
-    } catch (_) {}
-
-    // 2. Fetch live data from backend API
-    fetch('http://127.0.0.1:8000/api/pages/home', { cache: 'no-store' })
+    // 1. Fetch live data from /api/cms-sync
+    fetch('/api/cms-sync', { cache: 'no-store' })
       .then((res) => res.json())
       .then((json) => {
-        if (json.success && json.data?.content?.community) {
-          applyCommData(json.data.content.community);
+        const home = json?.data?.pages?.home || json?.data?.pages?.homepage;
+        if (home?.content?.community) {
+          applyCommData(home.content.community);
         }
       })
-      .catch(() => {
-        // Fallback to default
-      });
+      .catch(() => {});
 
-    // 3. Storage listener for cross-tab sync
+    // 2. Storage listener for cross-tab sync
     const handleStorage = (e: StorageEvent) => {
       if (e.key === 'fs_page_home' && e.newValue) {
         try {

@@ -18,16 +18,30 @@ export default async function CompareCommunitiesPage() {
   const heroData = page?.content?.customSections?.['compare-hero'] || page?.content?.hero || {};
   const tableData = page?.content?.customSections?.['compare-table'] || {};
 
+  const heroTitle =
+    heroData.title !== undefined
+      ? heroData.title
+      : heroData.titleLine1
+      ? `${heroData.titleLine1}\n${heroData.titleLine2 || ''}`
+      : 'COMPARE\nCOMMUNITIES';
+
+  const heroSubtitle =
+    heroData.subheading !== undefined
+      ? heroData.subheading
+      : heroData.contentText !== undefined
+      ? heroData.contentText
+      : 'Select communities to compare side by side.';
+
   return (
     <main className="min-h-screen bg-[#FAF9F6]">
       <CompareCommunitiesHero
-        title={heroData.title || (heroData.titleLine1 ? `${heroData.titleLine1}\n${heroData.titleLine2 || ''}` : 'COMPARE\nCOMMUNITIES')}
-        subtitle={heroData.subheading || heroData.contentText || 'Select communities to compare side by side.'}
+        title={heroTitle}
+        subtitle={heroSubtitle}
         bgImage={heroData.bgImage || heroData.backgroundImage || '/compare-comm-hero.png'}
       />
       <CommunityComparisonSection
-        bannerText={tableData.contentText || tableData.description}
-        buttonText={tableData.buttonText || tableData.ctaText}
+        bannerText={tableData.contentText !== undefined ? tableData.contentText : tableData.description}
+        buttonText={tableData.buttonText !== undefined ? tableData.buttonText : tableData.ctaText}
         buttonLink={tableData.buttonLink || tableData.ctaLink || '/advisory-report'}
       />
       <BuyerGuideFaqSection pageSlug="compare-communities" />

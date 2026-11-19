@@ -16,12 +16,25 @@ export const metadata: Metadata = {
 
 export default async function CommunitiesPage() {
   const page = (await getPageBySlug('communities')) || (await getPageBySlug('community'));
-  const commGuideHtml = page?.content?.customSections?.['comm-guide']?.detailHtml;
+  const customSec = page?.content?.customSections || {};
+  const commHero = customSec['comm-hero'] || page?.content?.hero || {};
+  const commGuideHtml = customSec['comm-guide']?.detailHtml;
+
+  const heroHeading = commHero.heading !== undefined ? commHero.heading : (commHero.title !== undefined ? commHero.title : undefined);
+  const headingParts = heroHeading ? heroHeading.split('\n') : [];
+  const headingLine1 = commHero.titleLine1 !== undefined ? commHero.titleLine1 : (headingParts[0] !== undefined ? headingParts[0] : (heroHeading !== undefined ? heroHeading : undefined));
+  const headingLine2 = commHero.titleLine2 !== undefined ? commHero.titleLine2 : (headingParts[1] !== undefined ? headingParts[1] : (heroHeading !== undefined ? '' : undefined));
 
   return (
     <main className="min-h-[calc(100vh-80px)] bg-[#FAF9F6]">
       {/* 1. Hero Section */}
-      <CommunityHeroSection />
+      <CommunityHeroSection
+        breadcrumb={commHero.tagline !== undefined ? commHero.tagline : commHero.badge}
+        headingLine1={headingLine1}
+        headingLine2={headingLine2}
+        description={commHero.subheading !== undefined ? commHero.subheading : commHero.description}
+        imageSrc={commHero.bgImage || commHero.backgroundImage}
+      />
 
       {/* 2. Six Distinct Ways - 12 Community Cards Grid (3 in one row, 4 rows) */}
       <CommunityGridSection />

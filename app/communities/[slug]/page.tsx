@@ -69,31 +69,49 @@ export default async function DynamicCommunityPage({
     <main className="min-h-[calc(100vh-80px)] bg-[#FAF9F6]">
       {/* 1. Community Detail Hero Section (Live dynamic data from CMS) */}
       <CommunityDetailHero
-        breadcrumb={commHeroSection.tagline || hero.breadcrumb || `Communities / ${communityNameFormatted}`}
-        headingWord1={commHeroSection.title?.split(' ')[0] || hero.titleLine1 || defaultWord1}
+        breadcrumb={
+          commHeroSection.tagline !== undefined
+            ? commHeroSection.tagline
+            : hero.breadcrumb !== undefined
+            ? hero.breadcrumb
+            : `Communities / ${communityNameFormatted}`
+        }
+        headingWord1={
+          commHeroSection.title !== undefined
+            ? commHeroSection.title.split(' ')[0] || ''
+            : hero.titleLine1 !== undefined
+            ? hero.titleLine1
+            : defaultWord1
+        }
         headingWord2={
-          commHeroSection.title?.split(' ').slice(1).join(' ') ||
-          hero.titleLine2 ||
-          defaultWord2
+          commHeroSection.title !== undefined
+            ? commHeroSection.title.split(' ').slice(1).join(' ') || ''
+            : hero.titleLine2 !== undefined
+            ? hero.titleLine2
+            : defaultWord2
         }
         description={
-          commHeroSection.contentText ||
-          hero.subheading ||
-          `A modern waterfront and suburban district with open views, connected promenades and a premier collection of homes in ${communityNameFormatted}.`
+          commHeroSection.contentText !== undefined
+            ? commHeroSection.contentText
+            : hero.subheading !== undefined
+            ? hero.subheading
+            : `A modern waterfront and suburban district with open views, connected promenades and a premier collection of homes in ${communityNameFormatted}.`
         }
         imageSrc={heroImage}
       />
 
       {/* 2. Community Overview Section (Live dynamic data from CMS) */}
       <CommunityOverviewSection
-        tagline={overviewData.tagline || 'Community overview'}
+        tagline={overviewData.tagline !== undefined ? overviewData.tagline : 'Community overview'}
         title={overviewData.title}
         headingLine1={overviewData.headingLine1}
         headingLine2={overviewData.headingLine2}
         content={
-          overviewData.contentText ||
-          overviewData.content ||
-          `${communityNameFormatted} combines a relaxed lifestyle with a contemporary residential skyline, creating a setting that feels both modern and connected. Walkable promenades, open scenic views, landscaped spaces, and seamless connectivity make the community highly appealing to both end users and investors. As the district continues to flourish, comparing projects within the community helps identify the ideal location and investment opportunity that best match your priorities.`
+          overviewData.contentText !== undefined
+            ? overviewData.contentText
+            : overviewData.content !== undefined
+            ? overviewData.content
+            : `${communityNameFormatted} combines a relaxed lifestyle with a contemporary residential skyline, creating a setting that feels both modern and connected. Walkable promenades, open scenic views, landscaped spaces, and seamless connectivity make the community highly appealing to both end users and investors. As the district continues to flourish, comparing projects within the community helps identify the ideal location and investment opportunity that best match your priorities.`
         }
       />
 

@@ -20,10 +20,21 @@ export default async function AIAssessmentPage() {
   const hero = page?.content?.hero || {};
   const assessment = page?.content?.assessment || {};
 
-  const heroWords = (hero.heading || hero.mainHeading || '').trim().split(/\s+/).filter(Boolean);
-  const headingWord1 = hero.titleLine1 || (heroWords.length > 0 ? heroWords[0] : 'AI ADVISORY');
-  const headingWord2 = hero.titleLine2 || (heroWords.length > 1 ? heroWords.slice(1).join(' ') : 'ENGINE');
-  const headingWord3 = hero.titleLine3 || undefined;
+  const rawHeading = hero.heading !== undefined ? hero.heading : hero.mainHeading;
+  const heroWords = (rawHeading || '').trim().split(/\s+/).filter(Boolean);
+  const headingWord1 =
+    hero.titleLine1 !== undefined
+      ? hero.titleLine1
+      : rawHeading !== undefined
+      ? heroWords[0] || ''
+      : 'AI ADVISORY';
+  const headingWord2 =
+    hero.titleLine2 !== undefined
+      ? hero.titleLine2
+      : rawHeading !== undefined
+      ? heroWords.slice(1).join(' ')
+      : 'ENGINE';
+  const headingWord3 = hero.titleLine3 !== undefined ? hero.titleLine3 : undefined;
 
   return (
     <main className="min-h-screen bg-[#FAF9F6]">
@@ -31,13 +42,13 @@ export default async function AIAssessmentPage() {
         headingWord1={headingWord1}
         headingWord2={headingWord2}
         headingWord3={headingWord3}
-        subheading={hero.subheading || hero.tagline}
+        subheading={hero.subheading !== undefined ? hero.subheading : hero.tagline}
         detailHtml={hero.detailHtml}
         backgroundImage={hero.backgroundImage || hero.coverImage || '/ai_engine_hero.jpg'}
       />
       <GoalSelectionStep
-        heading={assessment.heading || 'What is your primary goal?'}
-        subheading={assessment.subheading || 'This helps us tailor recommendations to what matters most to you.'}
+        heading={assessment.heading !== undefined ? assessment.heading : 'What is your primary goal?'}
+        subheading={assessment.subheading !== undefined ? assessment.subheading : 'This helps us tailor recommendations to what matters most to you.'}
         detailHtml={assessment.detailHtml}
         goals={assessment.goals}
       />

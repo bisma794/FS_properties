@@ -28,10 +28,27 @@ export default async function BuyPage() {
   const guideSec = customSec['buy-guide'] || page?.content?.longContent || page?.content?.offPlanGuide || {};
   const faqsSec = customSec['buy-faqs'] || page?.content?.faqs || {};
 
+  const heroHeading = heroSec.heading !== undefined ? heroSec.heading : (heroSec.title !== undefined ? heroSec.title : undefined);
+  const heroWords = heroHeading ? heroHeading.trim().split(/\s+/) : [];
+  const headingLine1 = heroSec.titleLine1 !== undefined
+    ? heroSec.titleLine1
+    : heroHeading !== undefined
+      ? (heroWords.length > 2 ? heroWords.slice(0, Math.ceil(heroWords.length / 2)).join(' ') : heroHeading)
+      : undefined;
+  const headingLine2 = heroSec.titleLine2 !== undefined
+    ? heroSec.titleLine2
+    : heroHeading !== undefined
+      ? (heroWords.length > 2 ? heroWords.slice(Math.ceil(heroWords.length / 2)).join(' ') : '')
+      : undefined;
+
   return (
     <main className="min-h-screen bg-[#FAF9F6]">
       {/* 1. Buy Hero Section */}
       <BuyHeroSection
+        breadcrumb={heroSec.tagline !== undefined ? heroSec.tagline : heroSec.badge}
+        headingLine1={headingLine1}
+        headingLine2={headingLine2}
+        description={heroSec.content !== undefined ? heroSec.content : heroSec.subheading}
         detailHtml={heroSec.detailHtml}
         imageSrc={heroSec.bgImage || heroSec.backgroundImage || '/buy-hero.png'}
       />

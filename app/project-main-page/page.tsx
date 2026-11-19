@@ -25,8 +25,8 @@ export default async function ProjectMainPage() {
   return (
     <main className="min-h-screen bg-white">
       <ProjectHeroSection
-        titleLine1={heroSec.titleLine1 || globalHero.titleLine1 || 'OFF-PLAN PROPERTY'}
-        titleLine2={heroSec.titleLine2 || globalHero.titleLine2 || 'FOR SALE IN DUBAI'}
+        titleLine1={heroSec.titleLine1 !== undefined ? heroSec.titleLine1 : (globalHero.titleLine1 !== undefined ? globalHero.titleLine1 : 'OFF-PLAN PROPERTY')}
+        titleLine2={heroSec.titleLine2 !== undefined ? heroSec.titleLine2 : (globalHero.titleLine2 !== undefined ? globalHero.titleLine2 : 'FOR SALE IN DUBAI')}
         description={
           heroSec.description ||
           [heroSec.descriptionLine1, heroSec.descriptionLine2].filter(Boolean).join(' ') ||

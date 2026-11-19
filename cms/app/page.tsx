@@ -1924,7 +1924,6 @@ export default function CMSDashboard() {
       case 'communities':
         return [
           { id: 'comm-hero', label: 'Communities Hero', desc: '12 distinct ways to live in Dubai intro banner' },
-          { id: 'comm-grid', label: '12 Communities Grid', desc: 'District directory with photos, badges and pricing' },
           { id: 'comm-guide', label: 'Off-Plan Investment Guide', desc: 'Educational framework for Dubai real estate' },
           { id: 'faqs', label: 'Buyer Guide & FAQs', desc: 'Frequently asked questions & community guide' },
         ];
@@ -5544,7 +5543,7 @@ export default function CMSDashboard() {
                       : isBlog
                       ? `http://${liveHost}:3000/blog-details?slug=${pageSlug || editingPage.slug}`
                       : isCommSlug
-                      ? `http://${liveHost}:3000/communities/${pageSlug || editingPage.slug}`
+                      ? ((pageSlug || editingPage.slug) === 'communities' || (pageSlug || editingPage.slug) === 'community' ? `http://${liveHost}:3000/communities` : `http://${liveHost}:3000/communities/${pageSlug || editingPage.slug}`)
                       : isDevSlug
                       ? `http://${liveHost}:3000/developers/${pageSlug || editingPage.slug}`
                       : `http://${liveHost}:3000/${(pageSlug || editingPage.slug) === 'home' ? '' : (pageSlug || editingPage.slug)}`;

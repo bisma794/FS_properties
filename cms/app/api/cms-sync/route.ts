@@ -3,14 +3,14 @@ import { promises as fs } from 'fs';
 import path from 'path';
 
 function getStorePath(): string {
-  const inParent = path.resolve(process.cwd(), '..', '.cms-sync.json');
+  const inFrontend = path.resolve(process.cwd(), '..', 'frontend', '.cms-sync.json');
   const inCurrent = path.resolve(process.cwd(), '.cms-sync.json');
   try {
     const fsSync = require('fs');
-    if (fsSync.existsSync(inParent)) return inParent;
+    if (fsSync.existsSync(inFrontend)) return inFrontend;
     if (fsSync.existsSync(inCurrent)) return inCurrent;
   } catch {}
-  return inParent;
+  return inFrontend;
 }
 
 const corsHeaders = {
